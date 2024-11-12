@@ -147,21 +147,24 @@ export default function Benefit() {
         <div className="flex flex-wrap max-w-[1200px] xl:px-0 px-6 mx-auto lg:pt-28 pt-14">
           <div className="lg:w-1/2">
             <p className="text-xl text-orange pb-4">Join to us</p>
-            <p className="lg:text-[50px] text-3xl text-textColor font-semibold">Not a Member Yet?</p>
+            <p className="lg:text-[50px] text-3xl text-textColor font-semibold">
+              Not a Member Yet?
+            </p>
             <p className="text-[#757783] py-4">
-              Join us! Our members can access savings of up to 50% and earn Trip Coins while booking.
+              Join us! Our members can access savings of up to 50% and earn Trip
+              Coins while booking.
             </p>
             <div className="flex gap-4 pt-6">
-              <button className="bg-orange text-white text-xs font-bold rounded flex gap-2 px-8 h-12 hoverBtn">
-                <MdArrowCircleRight size={20} /> SIGN IN
+              <button className="bg-orange text-white text-xs font-bold rounded flex gap-2 px-8 h-12 items-center hoverBtn hover:bg-orange hover:text-textColor">
+                <MdArrowCircleRight size={20} /> &nbsp;SIGN IN&nbsp;
               </button>
-              <button className="bg-white text-textColor text-xs font-bold rounded flex gap-2 px-8 h-12 hoverBtn">
+              <button className="bg-white text-textColor text-xs font-bold rounded flex gap-2 px-8 h-12 items-center hoverBtn hover:bg-orange">
                 <MdPerson size={20} /> REGISTER
               </button>
             </div>
           </div>
           <div className="flex justify-center lg:w-1/2 w-full lg:mt-0 mt-14">
-            <img src="/image-app.png" alt="App Image" />
+            <img src="/image-app.png" alt="" />
           </div>
         </div>
       </div>

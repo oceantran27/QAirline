@@ -105,33 +105,40 @@ export default function Hero() {
       </div>
 
       <div className="py-16 lg:-mt-24 relative z-10 max-w-[1200px] px-6 mx-auto">
-        <Carousel
-          partialVisible={false}
-          swipeable
-          draggable={false}
-          responsive={responsive}
-          ssr={false}
-          infinite
-          autoPlay
-          arrows
-          keyBoardControl
-          itemClass="carouselItem"
-        >
-          {[
-            { icon: <GiDeer size={40} />, label: "Wildlife" },
-            { icon: <MdOutlineParagliding size={40} />, label: "Paragliding" },
-            { icon: <CiFlag1 size={40} />, label: "Adventure" },
-            { icon: <GiHangGlider size={40} />, label: "Hang Gliding" },
-            { icon: <GiFishingBoat size={40} />, label: "Sightseeing" },
-          ].map((item, index) => (
-            <div key={index} className="shadow-xl bg-white p-8 rounded-lg flex flex-col justify-center items-center gap-4">
-              <div className="rounded-full w-20 h-20 p-4 hover:bg-orange hover:text-white">
-                {item.icon}
-              </div>
-              <p className="font-bold">{item.label}</p>
-            </div>
-          ))}
-        </Carousel>
+      <Carousel
+            partialVisible={false}
+            swipeable={true}
+            draggable={false}
+            responsive={responsive}
+            ssr={true}
+            infinite
+            autoPlay={true}
+            arrows={true}
+            keyBoardControl={true}
+            itemClass="carouselItem"
+          >
+          <div className="shadow-xl bg-white p-8 rounded-lg flex flex-col justify-center items-center gap-4">
+            <GiDeer className="rounded-full w-20 h-20 p-4 bg-[#e5faf5] text-[#3fd2a8] hover:bg-orange hover:text-white" />
+            <p className="font-bold">Wildlife</p>
+          </div>
+          <div className="shadow-xl bg-white p-8 rounded-lg flex flex-col justify-center items-center gap-4">
+            <MdOutlineParagliding className="rounded-full w-20 h-20 p-4 bg-[#26B2EC24] text-[#06aff6] hover:bg-orange hover:text-white" />
+            <p className="font-bold">Paragliding</p>
+          </div>
+          <div className="shadow-xl bg-white p-8 rounded-lg flex flex-col justify-center items-center gap-4">
+            <CiFlag1 className="rounded-full w-20 h-20 p-4 bg-[#f5ecfd] text-[#9e60e5] hover:bg-orange hover:text-white" />
+            <p className="font-bold">Adventure</p>
+          </div>
+          <div className="shadow-xl bg-white p-8 rounded-lg flex flex-col justify-center items-center gap-4">
+            <GiHangGlider className="rounded-full w-20 h-20 p-4 bg-[#fff4de] text-[#f6b23b] hover:bg-orange hover:text-white" />
+            <p className="font-bold">Hang Gliding</p>
+          </div>
+          <div className="shadow-xl bg-white p-8 rounded-lg flex flex-col justify-center items-center gap-4">
+            <GiFishingBoat className="rounded-full w-20 h-20 p-4 bg-[#D036321C] text-[#d03632] hover:bg-orange hover:text-white" />
+            <p className="font-bold">Sightseeing</p>
+          </div>
+         
+          </Carousel>
       </div>
     </div>
   );

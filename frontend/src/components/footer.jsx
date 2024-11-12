@@ -67,7 +67,7 @@ export default function Footer() {
             SUBSCRIBE
           </button>
           <label className="text-[#A9A8B6]">
-            <input type="checkbox" className="mr-2" /> I agree to all terms and policies
+            <input type="checkbox" className="mr-2" />I agree to all terms and policies
           </label>
         </div>
       </div>
