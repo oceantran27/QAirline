@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": "src", // Thiết lập thư mục gốc là `src`
     "paths": {
+      "@/*": ["./*"], // Alias cho thư mục gốc
       "@/components/*": ["components/*"], // Alias cho components
       "@/hooks/*": ["hooks/*"], // Alias cho hooks
       "@/layouts/*": ["layouts/*"], // Alias cho layouts

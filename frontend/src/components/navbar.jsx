@@ -30,12 +30,16 @@ export default function Navbar() {
             <Link href="/contact" className="leading-normal no-underline text-lg hover:text-orange">Contact</Link>
           </ul>
           <div className="flex gap-4 max-lg:hidden w-40 justify-center">
-            <button className="rounded-full bg-[#faf5ee] text-gray w-10 h-10 flex items-center justify-center hover:bg-orange hover:text-white">
-              <CiSearch size={20} />
-            </button>
-            <button className="rounded-full bg-[#faf5ee] text-gray w-10 h-10 flex items-center justify-center hover:bg-orange hover:text-white">
-              <BsPersonCircle size={20} />
-            </button>
+            
+              <button className="rounded-full bg-[#faf5ee] text-gray w-10 h-10 flex items-center justify-center hover:bg-orange hover:text-white">
+                <CiSearch size={20} />
+              </button>
+              
+              <Link href="/login">
+                <button className="rounded-full bg-[#faf5ee] text-gray w-10 h-10 flex items-center justify-center hover:bg-orange hover:text-white">
+                  <BsPersonCircle size={20} />
+                </button>
+              </Link>        
           </div>
           {dropdown ? (
             <div onClick={showDropdown} className="lg:hidden text-[22px] cursor-pointer">
