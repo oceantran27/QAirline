@@ -1,11 +1,11 @@
 // components/Hero.js
-import { MdSearch, MdOutlineParagliding } from "react-icons/md";
+import { MdSearch, MdOutlineDateRange, MdLocationOn,  MdUpgrade, MdEventSeat, MdShoppingBag, MdHotel, MdMiscellaneousServices } from "react-icons/md";
 import dynamic from "next/dynamic";
 import "react-multi-carousel/lib/styles.css";
 import { GiDeer, GiHangGlider, GiFishingBoat } from "react-icons/gi";
 import { CiFlag1 } from "react-icons/ci";
 import { WiTime3 } from "react-icons/wi";
-import { FaPeopleCarry } from "react-icons/fa";
+import { FaPeopleCarry, FaLocationArrow, FaCalendarCheck } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
 
 // Import `Carousel` với dynamic import để tắt SSR
@@ -49,9 +49,9 @@ export default function Hero() {
 
         <div className="bg-white grid lg:grid-cols-5 grid-cols-1 rounded-lg w-full">
           <span className="flex items-center py-7 border-r border-gray relative pl-4">
-            <MdOutlineParagliding className="text-4xl text-orange" />
+            <MdLocationOn className="text-4xl text-orange" />
             <span className="flex flex-col justify-center absolute h-full left-16 right-2">
-              <p className="text-gray text-sm">Location</p>
+              <p className="text-gray text-sm">From</p>
               <select className="text-sm font-bold w-full">
                 <option>Destinations</option>
                 <option>Asia</option>
@@ -63,9 +63,9 @@ export default function Hero() {
           </span>
 
           <span className="flex items-center py-7 border-r border-gray relative pl-4">
-            <FaPeopleCarry className="text-4xl text-orange" />
+            <FaLocationArrow className="text-4xl text-orange" />
             <span className="flex flex-col justify-center absolute h-full left-16 right-2">
-              <p className="text-gray text-sm">Type</p>
+              <p className="text-gray text-sm">To</p>
               <select className="text-sm font-bold w-full">
                 <option>Activity</option>
                 <option>Adventure</option>
@@ -80,24 +80,26 @@ export default function Hero() {
           </span>
 
           <span className="flex items-center py-7 border-r border-gray relative pl-4">
-            <WiTime3 className="text-4xl text-orange" />
+            <MdOutlineDateRange className="text-4xl text-orange" />
             <span className="flex flex-col justify-center absolute h-full left-16 right-2">
-              <p className="text-gray text-sm">Date From</p>
+              <p className="text-gray text-sm">Depart Date</p>
               <input type="date" className="text-sm font-bold w-full" />
             </span>
           </span>
 
           <span className="flex items-center py-7 border-r border-gray relative pl-4">
-            <FaPeopleGroup className="text-4xl text-orange" />
+            <FaCalendarCheck className="text-4xl text-orange" />
             <span className="flex flex-col justify-center absolute h-full left-16 right-2">
-              <p className="text-gray text-sm">Guests</p>
-              <input type="text" placeholder="0" className="font-semibold placeholder:text-black outline-none" />
+              <p className="text-gray text-sm">Return Date</p>
+              <input type="date" className="text-sm font-bold w-full" />
             </span>
           </span>
+          
 
-          <button className="bg-orange text-white flex items-center justify-center gap-4 py-6 outline-none border-none rounded-r-lg font-semibold text-sm">
+          <button className="bg-orange text-white flex items-center justify-center gap-4 py-6 outline-none border-none rounded-r-lg font-semibold text-sm transition duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-500/50">
             <MdSearch size={20} /> SEARCH
           </button>
+
         </div>
 
         <img src="/line-arrow.png" alt="Arrow" className="my-4" />
@@ -108,7 +110,7 @@ export default function Hero() {
       <Carousel
             partialVisible={false}
             swipeable={true}
-            draggable={false}
+            draggable={false} 
             responsive={responsive}
             ssr={true}
             infinite
@@ -117,27 +119,30 @@ export default function Hero() {
             keyBoardControl={true}
             itemClass="carouselItem"
           >
-          <div className="shadow-xl bg-white p-8 rounded-lg flex flex-col justify-center items-center gap-4">
-            <GiDeer className="rounded-full w-20 h-20 p-4 bg-[#e5faf5] text-[#3fd2a8] hover:bg-orange hover:text-white" />
-            <p className="font-bold">Wildlife</p>
-          </div>
-          <div className="shadow-xl bg-white p-8 rounded-lg flex flex-col justify-center items-center gap-4">
-            <MdOutlineParagliding className="rounded-full w-20 h-20 p-4 bg-[#26B2EC24] text-[#06aff6] hover:bg-orange hover:text-white" />
-            <p className="font-bold">Paragliding</p>
-          </div>
-          <div className="shadow-xl bg-white p-8 rounded-lg flex flex-col justify-center items-center gap-4">
-            <CiFlag1 className="rounded-full w-20 h-20 p-4 bg-[#f5ecfd] text-[#9e60e5] hover:bg-orange hover:text-white" />
-            <p className="font-bold">Adventure</p>
-          </div>
-          <div className="shadow-xl bg-white p-8 rounded-lg flex flex-col justify-center items-center gap-4">
-            <GiHangGlider className="rounded-full w-20 h-20 p-4 bg-[#fff4de] text-[#f6b23b] hover:bg-orange hover:text-white" />
-            <p className="font-bold">Hang Gliding</p>
-          </div>
-          <div className="shadow-xl bg-white p-8 rounded-lg flex flex-col justify-center items-center gap-4">
-            <GiFishingBoat className="rounded-full w-20 h-20 p-4 bg-[#D036321C] text-[#d03632] hover:bg-orange hover:text-white" />
-            <p className="font-bold">Sightseeing</p>
-          </div>
-         
+            <div className="shadow-xl bg-white p-8 mb-10 rounded-lg flex flex-col justify-center items-center gap-4">
+              <MdUpgrade className="rounded-full w-20 h-20 p-4 bg-[#e5faf5] text-[#3fd2a8] hover:bg-orange hover:text-white" />
+              <p className="font-bold">Upgrade</p>
+            </div>
+
+            <div className="shadow-xl bg-white p-8 mb-10 rounded-lg flex flex-col justify-center items-center gap-4">
+              <MdEventSeat className="rounded-full w-20 h-20 p-4 bg-[#26B2EC24] text-[#06aff6] hover:bg-orange hover:text-white" />
+              <p className="font-bold">Seat Selection</p>
+            </div>
+
+            <div className="shadow-xl bg-white p-8 mb-10 rounded-lg flex flex-col justify-center items-center gap-4">
+              <MdShoppingBag className="rounded-full w-20 h-20 p-4 bg-[#f5ecfd] text-[#9e60e5] hover:bg-orange hover:text-white" />
+              <p className="font-bold">Shopping</p>
+            </div>
+
+            <div className="shadow-xl bg-white p-8 mb-10 rounded-lg flex flex-col justify-center items-center gap-4">
+              <MdHotel className="rounded-full w-20 h-20 p-4 bg-[#fff4de] text-[#f6b23b] hover:bg-orange hover:text-white" />
+              <p className="font-bold">Hotels & Tours</p>
+            </div>
+
+            <div className="shadow-xl bg-white p-8 mb-10 rounded-lg flex flex-col justify-center items-center gap-4">
+              <MdMiscellaneousServices className="rounded-full w-20 h-20 p-4 bg-[#D036321C] text-[#d03632] hover:bg-orange hover:text-white" />
+              <p className="font-bold">Other Services</p>
+            </div>
           </Carousel>
       </div>
     </div>
