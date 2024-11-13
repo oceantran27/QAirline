@@ -1,14 +1,22 @@
 // pages/index.js
 import React from 'react';
-import Navbar from '../components/navbar';
 import Hero from '../components/hero';
 import Destination from '../components/destination';
 import About from "../components/about";
 import Review from "../components/review";
 import Benefit from "../components/benefit";
-import Footer from "../components/footer";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect } from "react";
+
 
 function Home() {
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1500,
+    });
+}, []);
   return (
     <div>
       <Hero />

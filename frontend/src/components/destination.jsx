@@ -145,8 +145,8 @@ export default function Destination() {
       </div>
 
       <div className="text-center my-10 px-6" data-aos="fade-down">
-        <p className="text-orange text-xl pb-2">Featured tours</p>
-        <h4 className="lg:text-[50px] text-[30px] font-bold">Most popular tours</h4>
+        <p className="text-orange text-xl pb-2">Featured flights</p>
+        <h4 className="lg:text-[50px] text-[30px] font-bold">Our Most Popular Flights</h4>
         <div className="pt-8">
           <Carousel
             partialVisible={false}
