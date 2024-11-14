@@ -1,7 +1,14 @@
 // components/Destination.js
 import dynamic from "next/dynamic";
+import { useEffect, useState } from 'react';
 import "react-multi-carousel/lib/styles.css";
+import Image from 'next/image';
 import { CiHeart, CiCamera } from "react-icons/ci";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+
+import flights from "@/data/featuredFlights.json";
+
 import {
   MdStar,
   MdCheck,
@@ -33,6 +40,43 @@ const responsive = {
     items: 1,
   },
 };
+
+const FlightCard = ({ flight }) => (
+  <Card key={flight.id} className="relative overflow-hidden group cursor-pointer h-[400px] text-left">
+    {/* Flight Image */}
+    <Image
+      src={flight.image}
+      alt={`${flight.from} đến ${flight.to}`}
+      width={600}
+      height={400}
+      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+    />
+
+    {/* Flight Position */}
+    <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-sm">
+      {flight.position}
+    </div>
+
+    {/* Card Content */}
+    <div className="absolute bottom-0 w-full h-1/2 bg-orange/70  p-4">
+      {/* Flight Info (Top Left) */}
+      <div className="text-white">
+        <h4 className="text-lg font-semibold">
+          {flight.from} đến {flight.to}
+        </h4>
+        <p className="text-sm">{flight.date}</p>
+      </div>
+
+      {/* Flight Details (Bottom Right) */}
+      <div className="absolute bottom-4 right-4 text-white text-right">
+        <div className="text-sm">Từ</div>
+        <div className="text-xl font-bold">{flight.price} VND*</div>
+        <div className="text-sm">{flight.views}</div>
+        <div className="text-sm">Một chiều / Phổ thông</div>
+      </div>
+    </div>
+  </Card>
+);
 
 const Places = ({ image, country, tours, column }) => (
   <div className={`relative overflow-hidden h-[270px] lg:col-span-${column}`}>
@@ -78,7 +122,7 @@ const Tours = ({ image, name }) => (
         <h4 className="text-xl font-semibold py-2 hover:text-orange">{name}</h4>
         <span className="flex items-center gap-2">
           <MdLocationPin className="text-orange text-xl" />
-          <p className="text-[#757783] text-sm">Central Park West NY, USA</p>
+          <p className="text-[#757783] text-sm">Ha Noi, Viet Nam</p>
         </span>
         <span className="text-[#757783] flex py-4">
           From <p className="text-orange">$59.00</p>
@@ -100,19 +144,43 @@ const Tours = ({ image, name }) => (
 );
 
 export default function Destination() {
+
+  const [visibleCount, setVisibleCount] = useState(4);
+
+  // Xử lý khi bấm nút "Xem thêm"
+  const handleShowMore = () => {
+    setVisibleCount((prevCount) => prevCount + 4);
+  };
+
+  // Kiểm tra nếu đã hiển thị hết thẻ
+  const isShowMoreVisible = visibleCount < flights.length;
+
   return (
     <div className="lg:mt-60 mt-10" data-aos="fade-down">
+      
       <div className="max-w-[1200px] px-6 mx-auto text-center">
-        <p className="text-orange text-xl">Destination Lists</p>
-        <h4 className="font-bold lg:text-[50px] text-[30px] py-4">Go exotic places</h4>
-        <div className="grid lg:grid-cols-4 grid-cols-1 gap-2">
-          <Places country="Morocco" image="/image-2.jpg" tours="4" column="1" />
-          <Places country="United Kingdom" image="/image-1.jpg" tours="6" column="2" />
-          <Places country="Singapore" image="/image-3.jpg" tours="3" column="1" />
-          <Places country="Hungary" image="/image-4.jpg" tours="2" column="2" />
-          <Places country="Italy" image="/image-5.jpg" tours="5" column="2" />
+      {/* <p className="text-orange text-xl">Featured Flights</p> */}
+      <h4 className="font-bold lg:text-[50px] text-[30px] py-4">Các Chuyến Bay Phổ Biến Nhất</h4>
+
+      {/* Flights List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {flights.slice(0, visibleCount).map((flight) => (
+            <FlightCard key={flight.id} flight={flight} />
+          ))}
         </div>
-      </div>
+
+        {/* Nút "Xem thêm" */}
+        {isShowMoreVisible && (
+          <div className="text-center mt-8">
+            <Button onClick={handleShowMore} className="bg-orange text-white px-6 py-2 rounded-md">
+              Xem thêm
+            </Button>
+          </div>
+        )}
+    
+    </div>
+      
+      
       <div className="bg-[url(/bg-line-bird.png)] bg-no-repeat py-16">
         <div className="lg:flex max-w-[1200px] px-6 mx-auto gap-8">
           <div className="relative lg:w-1/2" data-aos="fade-down">
@@ -145,8 +213,8 @@ export default function Destination() {
       </div>
 
       <div className="text-center my-10 px-6" data-aos="fade-down">
-        <p className="text-orange text-xl pb-2">Featured flights</p>
-        <h4 className="lg:text-[50px] text-[30px] font-bold">Our Most Popular Flights</h4>
+        <p className="text-orange text-xl pb-2">Featured news</p>
+        <h4 className="lg:text-[50px] text-[30px] font-bold">Highlighted Information</h4>
         <div className="pt-8">
           <Carousel
             partialVisible={false}
@@ -160,11 +228,11 @@ export default function Destination() {
             keyBoardControl
             itemClass="carouselItem"
           >
-            <Tours image="/tour-1.jpg" name="Brooklyn Christmas Lights Tour" />
-            <Tours image="/tour-2.jpg" name="Discovery Islands Kayaking Tour" />
-            <Tours image="/tour-3.jpg" name="Yucatán Peninsula & Caribbean" />
-            <Tours image="/tour-4.jpg" name="Java & Bali One Life Adventures" />
-            <Tours image="/tour-5.jpg" name="Mykonos and Santorini Tour" />
+            <Tours image="/tour-1.jpg" name="Ha Noi to Ho Chi Minh city" />
+            <Tours image="/tour-2.jpg" name="Ha Noi to Da Nang city" />
+            <Tours image="/tour-3.jpg" name="Ha Noi to Da Lat" />
+            <Tours image="/tour-4.jpg" name="Ha Noi to Hue" />
+            <Tours image="/tour-5.jpg" name="Ha Noi to Bangkok" />
           </Carousel>
         </div>
       </div>
