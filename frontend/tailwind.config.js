@@ -12,6 +12,7 @@ module.exports = {
   			orange: '#e8604c',
   			textColor: '#313041',
   			gray: '#A9A8B6',
+			red : '#E8604C',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

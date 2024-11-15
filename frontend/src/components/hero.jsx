@@ -9,6 +9,8 @@ import {
 import dynamic from "next/dynamic";
 import "react-multi-carousel/lib/styles.css";
 import SearchForm from "./searchFlightsForm";
+import FlightBookingTabs from '@/components/flightBookingTabs';
+
 
 // Import `Carousel` với dynamic import để tắt SSR
 const Carousel = dynamic(() => import("react-multi-carousel"), { ssr: false });
@@ -52,6 +54,8 @@ export default function Hero() {
 
         {/* Gọi component SearchForm */}
         <SearchForm />
+
+        {/* <FlightBookingTabs /> */}
 
         <img src="/line-arrow.png" alt="Arrow" className="my-4" />
         <p className="text-white font-semibold text-[28px]">or browse the selected type</p>
