@@ -9,6 +9,7 @@ import {
 import { RiFlightTakeoffFill } from "react-icons/ri";
 import { GiRuleBook } from "react-icons/gi";
 import "react-multi-carousel/lib/styles.css";
+import Link from "next/link";
 
 // Import `Carousel` với dynamic import để tắt SSR
 const Carousel = dynamic(() => import("react-multi-carousel"), { ssr: false });
@@ -116,9 +117,11 @@ export default function Benefit() {
               <p className="text-xl text-orange pb-4">From the blog post</p>
               <p className="lg:text-[50px] text-3xl text-textColor font-semibold">News & Articles</p>
             </span>
-            <button className="bg-orange text-white text-xs font-bold rounded-md px-8 h-12 hoverBtn">
-              VIEW ALL POSTS
-            </button>
+            <Link href="/news">
+              <button className="bg-orange text-white text-xs font-bold rounded-md px-8 h-12 hoverBtn">
+                VIEW ALL POSTS
+              </button>
+            </Link>
           </div>
           <div className="pt-16">
             <Carousel

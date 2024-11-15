@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { CiHeart, CiCamera } from "react-icons/ci";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import Link from "next/link";
 
 import flights from "@/data/featuredFlights.json";
 
@@ -186,27 +187,35 @@ export default function Destination() {
           <div className="relative lg:w-1/2" data-aos="fade-down">
             <img src="/image-6.jpg" alt="" />
             <div className="absolute top-4 right-4">
-              <p className="text-orange font-semibold text-[80px]">30%</p>
-              <p className="text-[50px] font-semibold -mt-8">Discount</p>
+              <p className="text-orange font-semibold text-[80px]">10%</p>
+              <p className="text-[50px] font-semibold -mt-8">Giảm giá</p>
             </div>
             <button className="bg-white shadow-md px-12 py-4 absolute left-4 top-1/2 rounded-xl">
-              <p className="text-gray text-xs font-medium">Book Tour Now</p>
+              <p className="text-gray text-xs font-medium">Đặt chuyến bay ngay</p>
               <p className="font-semibold text-lg">66888000</p>
             </button>
           </div>
           <div className="lg:w-1/2" data-aos="fade-up">
-            <p className="text-orange text-xl">Get to know us</p>
-            <h4 className="font-bold lg:text-[50px] text-[30px] py-4">Plan Your Trip with Trevily</h4>
+            <p className="text-orange text-xl">Hãy đến với chúng tôi</p>
+            <h4 className="font-bold lg:text-[50px] text-[30px] py-4">Tận hưởng chuyến bay của bạn với QAirline</h4>
             <p className="text-[#757783] leading-8 mb-8">
-              There are many variations of passages available, but the majority have suffered alteration.
+                Có nhiều lựa chọn chuyến bay, đảm bảo an toàn và thoải mái cho bạn.
             </p>
             <span className="flex items-center gap-4 py-2 font-medium">
-              <MdCheck className="bg-orange text-white rounded-xl" /> Invest in your simply neighborhood
+              <MdCheck className="bg-orange text-white rounded-xl" /> Đầu tư vào hành trình khám phá của chính bạn.
+            </span>
+            <span className="flex items-center gap-4 py-2 font-medium">
+              <MdCheck className="bg-orange text-white rounded-xl" /> Đồng hành cùng bạn trên mọi hành trình đầy cảm xúc.
+            </span>
+            <span className="flex items-center gap-4 py-2 font-medium">
+              <MdCheck className="bg-orange text-white rounded-xl" /> Trải nghiệm dịch vụ đẳng cấp, mang đến sự hài lòng tuyệt đối.
             </span>
             <div className="mt-8">
-              <button className="bg-orange text-white text-xs font-bold rounded-md px-8 h-12 hoverBtn">
-                BOOK WITH US NOW
-              </button>
+              <Link href="/">
+                <button className="bg-orange text-white text-xs font-bold rounded-md px-8 h-12 hoverBtn">
+                  ĐẶT CHUYẾN BAY NGAY
+                </button>
+              </Link>
             </div>
           </div>
         </div>

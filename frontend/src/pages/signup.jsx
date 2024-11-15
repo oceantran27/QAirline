@@ -1,5 +1,4 @@
 import React from 'react'
-// src/pages/signup.jsx
 import Link from "next/link";
 
 import { useState } from 'react'
