@@ -15,7 +15,9 @@ export default function About() {
               <button className="animate-pulse rounded-lg bg-orange w-20 h-20 flex justify-center items-center mb-8">
                 <FaPlay className="text-white" />
               </button>
-              <p className="text-orange text-xl pb-2">Are you ready to travel?</p>
+              <p className="text-orange text-xl pb-2">
+                Are you ready to travel?
+              </p>
             </span>
             <p
               className="lg:text-[50px] leading-normal text-2xl font-bold text-white lg:pb-0 pb-4"
@@ -26,7 +28,10 @@ export default function About() {
           </div>
 
           {/* Phần các loại tour */}
-          <div className="grid md:grid-cols-2 grid-cols-1 gap-2" data-aos="fade-up-right">
+          <div
+            className="grid md:grid-cols-2 grid-cols-1 gap-2"
+            data-aos="fade-up-right"
+          >
             <div
               className="border border-gray rounded-lg p-10 flex flex-col items-center gap-4 text-orange hover:bg-orange hover:text-white transition-bg hover:border-transparent"
               data-aos="fade-down-right"
@@ -39,21 +44,27 @@ export default function About() {
               data-aos="fade-down-right"
             >
               <MdOutlineParagliding className="text-2xl w-20 h-20" />
-              <p className="text-white text-xl font-semibold">Paragliding Tours</p>
+              <p className="text-white text-xl font-semibold">
+                Paragliding Tours
+              </p>
             </div>
             <div
               className="border border-gray rounded-lg p-10 flex flex-col items-center gap-4 text-orange hover:bg-orange hover:text-white transition-bg hover:border-transparent"
               data-aos="fade-down-right"
             >
               <CiFlag1 className="text-2xl w-20 h-20" />
-              <p className="text-white text-xl font-semibold">Adventure Tours</p>
+              <p className="text-white text-xl font-semibold">
+                Adventure Tours
+              </p>
             </div>
             <div
               className="border border-gray rounded-lg p-10 flex flex-col items-center gap-4 text-orange hover:bg-orange hover:text-white transition-bg hover:border-transparent"
               data-aos="fade-down-right"
             >
               <GiHangGlider className="text-2xl w-20 h-20" />
-              <p className="text-white text-xl font-semibold">Hand Gliding Tours</p>
+              <p className="text-white text-xl font-semibold">
+                Hand Gliding Tours
+              </p>
             </div>
           </div>
         </div>
@@ -65,7 +76,9 @@ export default function About() {
         data-aos="fade-down"
       >
         <div className="flex lg:flex-nowrap flex-wrap justify-between gap-16 max-w-[1200px] xl:px-0 px-6 mx-auto">
-          <p className="text-[40px] font-bold text-white whitespace-pre">Our partners</p>
+          <p className="text-[40px] font-bold text-white whitespace-pre">
+            Our partners
+          </p>
           <div className="flex flex-wrap gap-8 justify-between w-full">
             <img src="/brand-1.png" alt="Brand 1" />
             <img src="/brand-2.png" alt="Brand 2" />
