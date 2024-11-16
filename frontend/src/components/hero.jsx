@@ -8,8 +8,8 @@ import {
 } from "react-icons/md";
 import dynamic from "next/dynamic";
 import "react-multi-carousel/lib/styles.css";
-import SearchForm from "./searchFlightsForm";
-import FlightBookingTabs from '@/components/flightBookingTabs';
+import SearchForm from "./SearchFlightsForm";
+import FlightBookingTabs from '@/components/FlightBookingTabs';
 
 
 // Import `Carousel` với dynamic import để tắt SSR
@@ -46,19 +46,24 @@ export default function Hero() {
       >
         <source src="/video.mp4" type="video/mp4" />
       </video>
+    
 
-      <div className="flex flex-col items-center justify-center relative z-10 lg:h-full h-screen max-w-[1200px] px-6 lg:pt-0 pt-16 mx-auto">
-        <p className="text-3xl text-orange">Hãy cùng khám phá</p>
-        <h4 className="lg:text-[52px] text-3xl text-white mt-5">Bạn muốn bay đến những đâu?</h4>
-        <p className="text-gray text-2xl my-8">Khám phá những điểm đến tuyệt đẹp.</p>
+      <div className="relative z-20 lg:h-full h-screen max-w-[1200px] px-6 lg:pt-0 pt-16 mx-auto flex flex-col items-center justify-center">
+        {/* Nội dung văn bản */}
+        <div className="text-center mb-8">
+          <p className="text-3xl text-orange">Hãy cùng khám phá</p>
+          <h4 className="lg:text-[52px] text-3xl text-white mt-5">
+            Bạn muốn bay đến những đâu?
+          </h4>
+          <p className="text-gray text-2xl my-8">
+            Khám phá những điểm đến tuyệt đẹp.
+          </p>
+        </div>
 
-        {/* Gọi component SearchForm */}
-        <SearchForm />
-
-        {/* <FlightBookingTabs /> */}
-
-        <img src="/line-arrow.png" alt="Arrow" className="my-4" />
-        <p className="text-white font-semibold text-[28px]">or browse the selected type</p>
+        {/* SearchForm với vị trí tuyệt đối */}
+        <div className="w-full flex items-center justify-center">
+          <SearchForm />
+        </div>
       </div>
 
       <div className="py-16 lg:-mt-24 relative z-10 max-w-[1200px] px-6 mx-auto">
@@ -100,6 +105,7 @@ export default function Hero() {
             </div>
           </Carousel>
       </div>
+    
     </div>
   );
 }

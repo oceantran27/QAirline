@@ -16,14 +16,14 @@ export default function About() {
                 <FaPlay className="text-white" />
               </button>
               <p className="text-orange text-xl pb-2">
-                Are you ready to travel?
+                Bạn đã sẵn sàng để bay chưa?
               </p>
             </span>
             <p
               className="lg:text-[50px] leading-normal text-2xl font-bold text-white lg:pb-0 pb-4"
               data-aos="fade-up-right"
             >
-              Tevily is a World Leading Online Tour Booking Platform
+              QAirline là nền tảng đặt vé máy bay hàng đầu thế giới
             </p>
           </div>
 
@@ -77,14 +77,12 @@ export default function About() {
       >
         <div className="flex lg:flex-nowrap flex-wrap justify-between gap-16 max-w-[1200px] xl:px-0 px-6 mx-auto">
           <p className="text-[40px] font-bold text-white whitespace-pre">
-            Our partners
+            Đối tác của chúng tôi
           </p>
           <div className="flex flex-wrap gap-8 justify-between w-full">
-            <img src="/brand-1.png" alt="Brand 1" />
-            <img src="/brand-2.png" alt="Brand 2" />
-            <img src="/brand-3.png" alt="Brand 3" />
-            <img src="/brand-4.png" alt="Brand 4" />
-            <img src="/brand-5.png" alt="Brand 5" />
+            <img src="/vietnam_airline.png" alt="Brand 1" height={100} width={200} />
+            <img src="/air_france.png" alt="Brand 3" height={100} width={200}/>
+            <img src="/aeroflot.png" alt="Brand 5" height={100} width={200}/>
           </div>
         </div>
       </div>

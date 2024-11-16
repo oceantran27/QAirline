@@ -5,7 +5,7 @@ import "react-multi-carousel/lib/styles.css";
 import Image from 'next/image';
 import { CiHeart, CiCamera } from "react-icons/ci";
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import Link from "next/link";
 
 import flights from "@/data/featuredFlights.json";

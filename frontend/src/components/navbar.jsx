@@ -22,12 +22,12 @@ export default function Navbar() {
             </div>
           </div>
           <ul className="flex items-center xl:gap-12 gap-x-4 max-lg:hidden">
-            <Link href="/" className="leading-normal no-underline text-lg hover:text-orange">Home</Link>
-            <Link href="/tours" className="leading-normal no-underline text-lg hover:text-orange">Tours Page</Link>
+            <Link href="/" className="leading-normal no-underline text-lg hover:text-orange">Trang chủ</Link>
+            <Link href="/tours" className="leading-normal no-underline text-lg hover:text-orange">Chuyến bay</Link>
             <Link href="/destination" className="leading-normal no-underline text-lg hover:text-orange">Destination</Link>
-            <Link href="/news" className="leading-normal no-underline text-lg hover:text-orange">News</Link>
+            <Link href="/news" className="leading-normal no-underline text-lg hover:text-orange">Tin tức</Link>
             <Link href="/pages" className="leading-normal no-underline text-lg hover:text-orange">Pages</Link>
-            <Link href="/contact" className="leading-normal no-underline text-lg hover:text-orange">Contact</Link>
+            <Link href="/contact" className="leading-normal no-underline text-lg hover:text-orange">Liên hệ</Link>
           </ul>
           <div className="flex gap-4 max-lg:hidden w-40 justify-center">
             
@@ -55,12 +55,12 @@ export default function Navbar() {
           <div className="lg:hidden w-full fixed top-24 bg-white transition-all">
             <div className="w-full flex flex-col items-baseline gap-4">
               <ul className="flex flex-col justify-center w-full">
-                <Link href="/" className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg text-[15px] border-0 border-b border-[#ffffff1a] border-solid">Home</Link>
-                <Link href="/tours" className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg text-[15px] border-0 border-b border-[#ffffff1a] border-solid">Tours Page</Link>
+                <Link href="/" className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg text-[15px] border-0 border-b border-[#ffffff1a] border-solid">Trang chủ</Link>
+                <Link href="/tours" className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg text-[15px] border-0 border-b border-[#ffffff1a] border-solid">Chuyến bay</Link>
                 <Link href="/destination" className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg text-[15px] border-0 border-b border-[#ffffff1a] border-solid">Destination</Link>
-                <Link href="/news" className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg text-[15px] border-0 border-b border-[#ffffff1a] border-solid">News</Link>
+                <Link href="/news" className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg text-[15px] border-0 border-b border-[#ffffff1a] border-solid">Tin tức</Link>
                 <Link href="/pages" className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg text-[15px] border-0 border-b border-[#ffffff1a] border-solid">Pages</Link>
-                <Link href="/contact" className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg text-[15px] border-0 border-b border-[#ffffff1a] border-solid">Contact</Link>
+                <Link href="/contact" className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg text-[15px] border-0 border-b border-[#ffffff1a] border-solid">Liên hệ</Link>
               </ul>
             </div>
           </div>

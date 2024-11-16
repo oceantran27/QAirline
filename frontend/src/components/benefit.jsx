@@ -76,10 +76,10 @@ export default function Benefit() {
         <div className="relative lg:w-[55%] bg-[url(/bg-map-2.png)] bg-[#313041] bg-right-bottom bg-contain flex flex-col justify-center py-16">
           <div className="absolute lg:w-3 w-0 bg-orange left-0 rounded-r-[10px] top-[120px] bottom-[120px]"></div>
           <div className="lg:w-[55%] lg:pl-24 px-6">
-            <p className="text-xl text-orange" data-aos="fade-up">Our benefit lists</p>
-            <h4 className="text-white lg:text-[50px] text-[30px] py-4" data-aos="fade-up">Why Choose Tevily</h4>
+            <p className="text-xl text-orange" data-aos="fade-up">Danh sách lợi ích của chúng tôi</p>
+            <h4 className="text-white lg:text-[50px] text-[30px] py-4" data-aos="fade-up">Tại sao chọn Tevily</h4>
             <p className="text-gray leading-8" data-aos="fade-down">
-              There are many variations of passages of Lorem Ipsum is simply free text available in the market for you, but the majority have suffered alteration in some form.
+              Có nhiều biến thể của các đoạn văn của Lorem Ipsum chỉ đơn giản là văn bản miễn phí có sẵn trên thị trường cho bạn, nhưng phần lớn đã bị thay đổi dưới một số hình thức.
             </p>
 
             {/* Các lợi ích */}
@@ -88,9 +88,9 @@ export default function Benefit() {
                 <RiFlightTakeoffFill className="text-orange text-5xl" />
               </span>
               <span>
-                <h6 className="text-white text-xl">Professional and Certified</h6>
+                <h6 className="text-white text-xl">Chuyên nghiệp và được chứng nhận</h6>
                 <p className="text-gray leading-8 py-4">
-                  Lorem ipsum is simply free text dolor sit but the majority have suffered amet, consectetur notted.
+                  Lorem ipsum chỉ đơn giản là văn bản miễn phí dolor sit nhưng phần lớn đã bị thay đổi amet, consectetur notted.
                 </p>
               </span>
             </div>
@@ -99,9 +99,9 @@ export default function Benefit() {
                 <GiRuleBook className="text-orange text-5xl" />
               </span>
               <span>
-                <h6 className="text-white text-xl">Get Instant Tour Bookings</h6>
+                <h6 className="text-white text-xl">Đặt tour ngay lập tức</h6>
                 <p className="text-gray leading-8 py-4">
-                  Lorem ipsum is simply free text dolor sit but the majority have suffered amet, consectetur notted.
+                  Lorem ipsum chỉ đơn giản là văn bản miễn phí dolor sit nhưng phần lớn đã bị thay đổi amet, consectetur notted.
                 </p>
               </span>
             </div>
@@ -114,12 +114,12 @@ export default function Benefit() {
         <div className="max-w-[1200px] xl:px-0 px-6 mx-auto">
           <div className="lg:flex items-center justify-between">
             <span>
-              <p className="text-xl text-orange pb-4">From the blog post</p>
-              <p className="lg:text-[50px] text-3xl text-textColor font-semibold">News & Articles</p>
+              <p className="text-xl text-orange pb-4">Từ trang tin tức</p>
+              <p className="lg:text-[50px] text-3xl text-textColor font-semibold">Tin tức và Bài viết</p>
             </span>
             <Link href="/news">
               <button className="bg-orange text-white text-xs font-bold rounded-md px-8 h-12 hoverBtn">
-                VIEW ALL POSTS
+                XEM TOÀN BỘ
               </button>
             </Link>
           </div>
@@ -136,10 +136,10 @@ export default function Benefit() {
               keyBoardControl
               itemClass="carouselItem"
             >
-              <Card image="/post-1.jpg" text="Things to See and Do When Visiting Japan" />
-              <Card image="/post-2.jpg" text="A Place where Start New Life with Peace" />
-              <Card image="/post-3.jpg" text="Journeys are Best Measured with Friends" />
-              <Card image="/post-4.jpg" text="Travel the Most Beautiful Places in the World" />
+              <Card image="/post-1.jpg" text="Những điều cần xem và làm khi đến thăm Nhật Bản" />
+              <Card image="/post-2.jpg" text="Một nơi để bắt đầu cuộc sống mới với sự bình yên" />
+              <Card image="/post-3.jpg" text="Những hành trình được đo lường tốt nhất với bạn bè" />
+              <Card image="/post-4.jpg" text="Du lịch đến những nơi đẹp nhất trên thế giới" />
             </Carousel>
           </div>
         </div>
@@ -149,20 +149,19 @@ export default function Benefit() {
       <div className="bg-[#faf5ee]" data-aos="fade-down">
         <div className="flex flex-wrap max-w-[1200px] xl:px-0 px-6 mx-auto lg:pt-28 pt-14">
           <div className="lg:w-1/2">
-            <p className="text-xl text-orange pb-4">Join to us</p>
+            <p className="text-xl text-orange pb-4">Tham gia với chúng tôi</p>
             <p className="lg:text-[50px] text-3xl text-textColor font-semibold">
-              Not a Member Yet?
+              Bạn đã là thành viên chưa?
             </p>
             <p className="text-[#757783] py-4">
-              Join us! Our members can access savings of up to 50% and earn Trip
-              Coins while booking.
+              Tham gia với chúng tôi! Các thành viên của chúng tôi có thể tiết kiệm lên đến 50%.
             </p>
             <div className="flex gap-4 pt-6">
               <button className="bg-orange text-white text-xs font-bold rounded flex gap-2 px-8 h-12 items-center hoverBtn hover:bg-orange hover:text-textColor">
-                <MdArrowCircleRight size={20} /> &nbsp;SIGN IN&nbsp;
+                <MdArrowCircleRight size={20} /> &nbsp;ĐĂNG NHẬP&nbsp;
               </button>
               <button className="bg-white text-textColor text-xs font-bold rounded flex gap-2 px-8 h-12 items-center hoverBtn hover:bg-orange">
-                <MdPerson size={20} /> REGISTER
+                <MdPerson size={20} /> ĐĂNG KÝ
               </button>
             </div>
           </div>
