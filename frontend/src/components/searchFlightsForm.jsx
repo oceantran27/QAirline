@@ -1,13 +1,34 @@
-// components/SearchFlightsForm.js
 import { useState } from "react";
 import { MdSearch, MdOutlineDateRange, MdLocationOn } from "react-icons/md";
-import { FaLocationArrow, FaCalendarCheck } from "react-icons/fa";
+import {
+  FaLocationArrow,
+  FaCalendarCheck,
+  FaExchangeAlt,
+} from "react-icons/fa";
 import AirportSelect from "./AirportSelect";
-import { Calendar } from "@/components/ui/calendar"
+
+import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+import { format } from "date-fns";
 
 function SearchFlightsForm() {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [tripType, setTripType] = useState("roundTrip"); // "roundTrip", "oneWay", "multiLeg"
+  const [tripType, setTripType] = useState("roundTrip");
+  const [selectedDepartureDate, setSelectedDepartureDate] = useState(null);
+  const [selectedReturnDate, setSelectedReturnDate] = useState(null);
+  const [passengerCount, setPassengerCount] = useState(1);
+  const [promoCode, setPromoCode] = useState("");
+
+  // State for airport selection
+  const [fromAirport, setFromAirport] = useState("");
+  const [toAirport, setToAirport] = useState("");
 
   const handleExpand = () => {
     setIsExpanded(true);
@@ -17,11 +38,18 @@ function SearchFlightsForm() {
     setIsExpanded(false);
   };
 
+  // Function to swap the selected airports
+  const swapAirports = () => {
+    setFromAirport((prevFromAirport) => {
+      setToAirport(prevFromAirport);
+      return toAirport;
+    });
+  };
+
   return (
     <>
       {isExpanded && (
         <div
-
           className="fixed w-full h-full top-0 bg-black bg-opacity-50 z-80"
           onClick={handleCollapse}
         ></div>
@@ -33,116 +61,183 @@ function SearchFlightsForm() {
         }`}
       >
         <div
-          className={`grid lg:grid-cols-5 grid-cols-1 ${
-            isExpanded ? "gap-4" : ""
+          className={`grid lg:grid-cols-[1fr,auto,1fr,1fr,1fr,0.7fr] grid-cols-1 gap-2 items-center ${
+                    isExpanded ? "gap-4" : ""
           }`}
           onClick={!isExpanded ? handleExpand : undefined}
         >
-          {/* Các trường nhập liệu ban đầu */}
-          <span className="flex items-center py-7 border-r border-gray relative pl-4">
+          {/* "From" Airport Field */}
+          <span className="flex items-center py-7 relative pl-4">
             <MdLocationOn className="text-4xl text-orange" />
             <span className="flex flex-col justify-center absolute h-full left-16 right-2">
               <p className="text-gray text-sm">Từ</p>
-              <AirportSelect placeholder="Chọn khu vực" />
+              <AirportSelect
+                placeholder="Chọn khu vực"
+                value={fromAirport}
+                onChange={setFromAirport}
+              />
             </span>
           </span>
 
-          <span className="flex items-center py-7 border-r border-gray relative pl-4">
+          {/* Swap Button */}
+          <span className="flex items-center justify-center py-0">
+            <button
+              type="button"
+              onClick={swapAirports}
+              className="text-orange hover:text-darkorange"
+            >
+              <FaExchangeAlt size={24} />
+            </button>
+          </span>
+
+          {/* "To" Airport Field */}
+          <span className="flex items-center py-7 relative pl-4">
             <FaLocationArrow className="text-4xl text-orange" />
             <span className="flex flex-col justify-center absolute h-full left-16 right-2">
               <p className="text-gray text-sm">Đến</p>
-              <AirportSelect placeholder="Chọn điểm đến" />
+              <AirportSelect
+                placeholder="Chọn điểm đến"
+                value={toAirport}
+                onChange={setToAirport}
+              />
             </span>
           </span>
 
-          <span className="flex items-center py-7 border-r border-gray relative pl-4">
+          {/* Departure Date Field */}
+          <span className="flex items-center py-7 relative pl-4 border-l border-gray-300">
             <MdOutlineDateRange className="text-4xl text-orange" />
             <span className="flex flex-col justify-center absolute h-full left-16 right-2">
               <p className="text-gray text-sm">Ngày đi</p>
-              <input type="date" className="text-sm font-bold w-full" />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="text-sm font-bold w-full justify-start text-left pl-0 border-none">
+                    {selectedDepartureDate
+                      ? format(selectedDepartureDate, "PPP")
+                      : "Chọn ngày đi"}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 border-none">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDepartureDate}
+                    onSelect={setSelectedDepartureDate}
+                    className="border-none shadow-none"
+                  />
+                </PopoverContent>
+              </Popover>
             </span>
           </span>
 
-          <span className="flex items-center py-7 border-r border-gray relative pl-4">
-            <FaCalendarCheck className="text-4xl text-orange" />
-            <span className="flex flex-col justify-center absolute h-full left-16 right-2">
-              <p className="text-gray text-sm">Ngày về</p>
-              <input type="date" className="text-sm font-bold w-full" />
+          {/* Return Date Field (if round trip) */}
+          {tripType === "roundTrip" && (
+            <span className="flex items-center py-7 relative pl-4">
+              <FaCalendarCheck className="text-4xl text-orange" />
+              <span className="flex flex-col justify-center absolute h-full left-16 right-2">
+                <p className="text-gray text-sm">Ngày về</p>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className="text-sm font-bold w-full justify-start text-left pl-0 border-none">
+                      {selectedReturnDate
+                        ? format(selectedReturnDate, "PPP")
+                        : "Chọn ngày về"}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 border-none">
+                    <Calendar
+                      mode="single"
+                      selected={selectedReturnDate}
+                      onSelect={setSelectedReturnDate}
+                      className="border-none shadow-none"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </span>
             </span>
-          </span>
+          )}
 
+          {/* Search Button */}
           <button
             aria-label="Tìm chuyến bay"
-            className="bg-orange text-white flex items-center justify-center gap-4 py-6 outline-none border-none rounded-r-lg font-semibold text-sm transition duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-500/50"
+            className="bg-orange text-white flex items-center justify-center h-full gap-0 py-6 outline-none border-none rounded-r-lg font-semibold text-sm transition duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-500/50"
           >
             <MdSearch size={20} /> SEARCH
           </button>
         </div>
 
-        {/* Nội dung mở rộng */}
+        {/* Expanded Content */}
         {isExpanded && (
           <div className="mt-6">
-            {/* Nút chọn loại chuyến bay */}
-            <div className="flex gap-4 mb-4">
-              <button
-                className={`py-2 px-4 rounded ${
-                  tripType === "roundTrip"
-                    ? "bg-orange text-white"
-                    : "bg-gray-200"
-                }`}
-                onClick={() => setTripType("roundTrip")}
-              >
-                Khứ hồi
-              </button>
-              <button
-                className={`py-2 px-4 rounded ${
-                  tripType === "oneWay" ? "bg-orange text-white" : "bg-gray-200"
-                }`}
-                onClick={() => setTripType("oneWay")}
-              >
-                Một chiều
-              </button>
-              <button
-                className={`py-2 px-4 rounded ${
-                  tripType === "multiLeg"
-                    ? "bg-orange text-white"
-                    : "bg-gray-200"
-                }`}
-                onClick={() => setTripType("multiLeg")}
-              >
-                Nhiều chặng
-              </button>
-            </div>
+            {/* Trip Type Selection */}
+            <RadioGroup
+              value={tripType}
+              onValueChange={setTripType}
+              className="flex gap-4 mb-4"
+            >
+              <div className="flex items-center">
+                <RadioGroupItem value="roundTrip" id="roundTrip" />
+                <label
+                  htmlFor="roundTrip"
+                  className={`ml-2 py-2 px-4 rounded cursor-pointer ${
+                    tripType === "roundTrip"
+                      ? "bg-orange text-white"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  Khứ hồi
+                </label>
+              </div>
+              <div className="flex items-center">
+                <RadioGroupItem value="oneWay" id="oneWay" />
+                <label
+                  htmlFor="oneWay"
+                  className={`ml-2 py-2 px-4 rounded cursor-pointer ${
+                    tripType === "oneWay"
+                      ? "bg-orange text-white"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  Một chiều
+                </label>
+              </div>
+              <div className="flex items-center">
+                <RadioGroupItem value="multiLeg" id="multiLeg" />
+                <label
+                  htmlFor="multiLeg"
+                  className={`ml-2 py-2 px-4 rounded cursor-pointer ${
+                    tripType === "multiLeg"
+                      ? "bg-orange text-white"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  Nhiều chặng
+                </label>
+              </div>
+            </RadioGroup>
 
-            {/* Số hành khách */}
+            {/* Passenger Count */}
             <div className="mb-4">
               <label className="block text-gray-700">Số hành khách</label>
-              <input
+              <Input
                 type="number"
                 min="1"
-                className="w-full border border-gray-300 rounded py-2 px-3 mt-1"
+                value={passengerCount}
+                onChange={(e) => setPassengerCount(e.target.value)}
+                className="mt-1"
                 placeholder="Nhập số hành khách"
               />
             </div>
 
-            {/* Mã khuyến mại */}
+            {/* Promo Code */}
             <div className="mb-4">
               <label className="block text-gray-700">Mã khuyến mại</label>
-              <input
+              <Input
                 type="text"
-                className="w-full border border-gray-300 rounded py-2 px-3 mt-1"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+                className="mt-1"
                 placeholder="Nhập mã khuyến mại (nếu có)"
               />
             </div>
-
-            {/* Nút tìm kiếm */}
-            <button
-              aria-label="Tìm chuyến bay"
-              className="w-full bg-orange text-white py-3 rounded font-semibold text-sm transition duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-500/50"
-            >
-              <MdSearch size={20} className="inline-block mr-2" />
-              SEARCH
-            </button>
           </div>
         )}
       </div>

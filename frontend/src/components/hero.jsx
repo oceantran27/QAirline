@@ -48,8 +48,7 @@ export default function Hero() {
       </video>
     
 
-      <div className="relative z-20 lg:h-full h-screen max-w-[1200px] px-6 lg:pt-0 pt-16 mx-auto flex flex-col items-center justify-center">
-        {/* Nội dung văn bản */}
+      <div className="relative z-20 lg:h-full h-screen max-w-[1200px] px-2 lg:pt-0 pt-16 mx-auto flex flex-col items-center justify-center">
         <div className="text-center mb-8">
           <p className="text-3xl text-orange">Hãy cùng khám phá</p>
           <h4 className="lg:text-[52px] text-3xl text-white mt-5">
@@ -60,7 +59,6 @@ export default function Hero() {
           </p>
         </div>
 
-        {/* SearchForm với vị trí tuyệt đối */}
         <div className="w-full flex items-center justify-center">
           <SearchForm />
         </div>
