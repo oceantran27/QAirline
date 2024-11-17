@@ -11,14 +11,15 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format } from 'date-fns';
 import { CalendarIcon, Plane, TicketIcon, UserCircle } from 'lucide-react';
+import SearchForm from "./SearchFlightsForm";
 
 const FlightBookingTabs = () => {
   const [date, setDate] = useState();
   const [returnDate, setReturnDate] = useState();
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div className="w-full flex items-center justify-center">
+      <div className="w-full  mx-auto p-3 bg-white shadow-lg rounded-lg">
         
         <Tabs defaultValue="buy" className="w-full">
           {/* Tab Navigation */}
@@ -47,91 +48,26 @@ const FlightBookingTabs = () => {
             </TabsList>
 
           {/* Mua Vé Tab */}
-          <TabsContent value="buy" className="mt-6">
-            <div className="space-y-6">
-              <RadioGroup defaultValue="one-way" className="flex space-x-4">
-                <RadioGroupItem value="one-way" id="one-way" />
-                <Label htmlFor="one-way">Một chiều</Label>
-                <RadioGroupItem value="round-trip" id="round-trip" />
-                <Label htmlFor="round-trip">Khứ hồi</Label>
-                <RadioGroupItem value="multi-city" id="multi-city" />
-                <Label htmlFor="multi-city">Nhiều chặng</Label>
-              </RadioGroup>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Từ</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Hà Nội (HAN), Việt Nam" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="han">Hà Nội (HAN), Việt Nam</SelectItem>
-                      <SelectItem value="sgn">Hồ Chí Minh (SGN), Việt Nam</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Đến</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn điểm đến" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="sgn">Hồ Chí Minh (SGN), Việt Nam</SelectItem>
-                      <SelectItem value="han">Hà Nội (HAN), Việt Nam</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Ngày đi</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline">
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ? format(date, 'dd/MM/yyyy') : '(DD/MM/YYYY)'}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <Calendar selected={date} onSelect={setDate} />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Ngày về</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline">
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {returnDate ? format(returnDate, 'dd/MM/yyyy') : '(DD/MM/YYYY)'}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <Calendar selected={returnDate} onSelect={setReturnDate} />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </div>
-
-              <Button className="w-full bg-red">TÌM CHUYẾN BAY</Button>
-            </div>
+          <TabsContent value="buy" className="mt-2">
+            <SearchForm />
           </TabsContent>
 
           {/* Quản Lý Đặt Chỗ Tab */}
-          <TabsContent value="manage" className="mt-6">
-            <Input placeholder="Mã đặt chỗ/Số vé điện tử" />
-            <Input placeholder="Họ" />
-            <Button className="w-full bg-red">TÌM KIẾM</Button>
+          <TabsContent value="manage" className="mt-2">
+            <div className='flex flex-col gap-2'>
+              <Input placeholder="Mã đặt chỗ/Số vé điện tử" />
+              <Input placeholder="Họ" />
+              <Button className="w-full bg-red">TÌM KIẾM</Button>  
+            </div>
           </TabsContent>
 
           {/* Làm Thủ Tục Tab */}
-          <TabsContent value="checkin" className="mt-6">
-            <Input placeholder="Mã đặt chỗ" />
-            <Input placeholder="Họ" />
-            <Button className="w-full bg-red">LÀM THỦ TỤC</Button>
+          <TabsContent value="checkin" className="mt-2">
+            <div className='flex flex-col gap-2'>
+              <Input placeholder="Mã đặt chỗ" />
+              <Input placeholder="Họ" />
+              <Button className="w-full bg-red">LÀM THỦ TỤC</Button>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

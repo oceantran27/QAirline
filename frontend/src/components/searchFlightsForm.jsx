@@ -50,7 +50,7 @@ function SearchFlightsForm() {
     <>
       {isExpanded && (
         <div
-          className="fixed w-full h-full top-0 bg-black bg-opacity-50 z-80"
+          className="fixed w-full h-full top-0 bg-transparent z-80"
           onClick={handleCollapse}
         ></div>
       )}
@@ -160,85 +160,84 @@ function SearchFlightsForm() {
             aria-label="Tìm chuyến bay"
             className="bg-orange text-white flex items-center justify-center h-full gap-0 py-6 outline-none border-none rounded-r-lg font-semibold text-sm transition duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-500/50"
           >
-            <MdSearch size={20} /> SEARCH
+            <MdSearch size={20} /> TÌM CHUYẾN
           </button>
         </div>
 
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="mt-6">
-            {/* Trip Type Selection */}
-            <RadioGroup
-              value={tripType}
-              onValueChange={setTripType}
-              className="flex gap-4 mb-4"
-            >
-              <div className="flex items-center">
-                <RadioGroupItem value="roundTrip" id="roundTrip" />
-                <label
-                  htmlFor="roundTrip"
-                  className={`ml-2 py-2 px-4 rounded cursor-pointer ${
-                    tripType === "roundTrip"
-                      ? "bg-orange text-white"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  Khứ hồi
-                </label>
-              </div>
-              <div className="flex items-center">
-                <RadioGroupItem value="oneWay" id="oneWay" />
-                <label
-                  htmlFor="oneWay"
-                  className={`ml-2 py-2 px-4 rounded cursor-pointer ${
-                    tripType === "oneWay"
-                      ? "bg-orange text-white"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  Một chiều
-                </label>
-              </div>
-              <div className="flex items-center">
-                <RadioGroupItem value="multiLeg" id="multiLeg" />
-                <label
-                  htmlFor="multiLeg"
-                  className={`ml-2 py-2 px-4 rounded cursor-pointer ${
-                    tripType === "multiLeg"
-                      ? "bg-orange text-white"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  Nhiều chặng
-                </label>
-              </div>
-            </RadioGroup>
-
-            {/* Passenger Count */}
-            <div className="mb-4">
-              <label className="block text-gray-700">Số hành khách</label>
-              <Input
-                type="number"
-                min="1"
-                value={passengerCount}
-                onChange={(e) => setPassengerCount(e.target.value)}
-                className="mt-1"
-                placeholder="Nhập số hành khách"
-              />
+          <div className="mt-2 flex items-start gap-4">
+          {/* Trip Type Selection */}
+          <RadioGroup
+            value={tripType}
+            onValueChange={setTripType}
+            className="flex gap-4 flex-wrap"
+          >
+            <div className="flex items-center">
+              <RadioGroupItem value="roundTrip" id="roundTrip" />
+              <label
+                htmlFor="roundTrip"
+                className={`ml-2 py-2 px-4 rounded cursor-pointer ${
+                  tripType === "roundTrip" ? "bg-orange text-white" : "bg-gray-200"
+                }`}
+              >
+                Khứ hồi
+              </label>
             </div>
-
-            {/* Promo Code */}
-            <div className="mb-4">
-              <label className="block text-gray-700">Mã khuyến mại</label>
-              <Input
-                type="text"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value)}
-                className="mt-1"
-                placeholder="Nhập mã khuyến mại (nếu có)"
-              />
+            <div className="flex items-center">
+              <RadioGroupItem value="oneWay" id="oneWay" />
+              <label
+                htmlFor="oneWay"
+                className={`ml-2 py-2 px-4 rounded cursor-pointer ${
+                  tripType === "oneWay" ? "bg-orange text-white" : "bg-gray-200"
+                }`}
+              >
+                Một chiều
+              </label>
             </div>
+            <div className="flex items-center">
+              <RadioGroupItem value="multiLeg" id="multiLeg" />
+              <label
+                htmlFor="multiLeg"
+                className={`ml-2 py-2 px-4 rounded cursor-pointer ${
+                  tripType === "multiLeg" ? "bg-orange text-white" : "bg-gray-200"
+                }`}
+              >
+                Nhiều chặng
+              </label>
+            </div>
+          </RadioGroup>
+        
+          {/* Passenger Count */}
+          <div className="flex flex-grow items-center ml-10 w-full max-w-xs">
+            <label className="block text-gray whitespace-nowrap mr-3">Số hành khách</label>
+            <Input
+              type="number"
+              min="1"
+              value={passengerCount}
+              onChange={(e) => setPassengerCount(e.target.value)}
+              className="mt-1 w-full"
+              placeholder="Nhập số hành khách"
+            />
           </div>
+
+          {/* Chọn hạng chuyến bay */}
+          <div className="flex items-center gap-4">
+            <p className="text-gray text-sm">Chọn hạng</p>
+            <select
+              className="border border-gray-300 rounded-lg p-2"
+              name="flightClass"
+              id="flightClass"
+            >
+              <option value="economy">Phổ thông</option>
+              <option value="business">Thương gia</option>
+              <option value="firstClass">Hạng nhất</option>
+            </select>
+          </div>
+          
+        </div>
+        
+        
         )}
       </div>
     </>

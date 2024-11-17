@@ -77,9 +77,9 @@ export default function Benefit() {
           <div className="absolute lg:w-3 w-0 bg-orange left-0 rounded-r-[10px] top-[120px] bottom-[120px]"></div>
           <div className="lg:w-[55%] lg:pl-24 px-6">
             <p className="text-xl text-orange" data-aos="fade-up">Danh sách lợi ích của chúng tôi</p>
-            <h4 className="text-white lg:text-[50px] text-[30px] py-4" data-aos="fade-up">Tại sao chọn Tevily</h4>
+            <h4 className="text-white lg:text-[50px] text-[30px] py-4" data-aos="fade-up">Tại sao chọn QAirline</h4>
             <p className="text-gray leading-8" data-aos="fade-down">
-              Có nhiều biến thể của các đoạn văn của Lorem Ipsum chỉ đơn giản là văn bản miễn phí có sẵn trên thị trường cho bạn, nhưng phần lớn đã bị thay đổi dưới một số hình thức.
+              Chúng tôi tự hào mang đến trải nghiệm đặt vé máy bay trực tuyến tiện lợi và an toàn, với những tính năng vượt trội và dịch vụ khách hàng tận tâm, giúp bạn dễ dàng tìm kiếm chuyến bay tốt nhất với giá cả hợp lý.
             </p>
 
             {/* Các lợi ích */}
@@ -90,7 +90,7 @@ export default function Benefit() {
               <span>
                 <h6 className="text-white text-xl">Chuyên nghiệp và được chứng nhận</h6>
                 <p className="text-gray leading-8 py-4">
-                  Lorem ipsum chỉ đơn giản là văn bản miễn phí dolor sit nhưng phần lớn đã bị thay đổi amet, consectetur notted.
+                Chúng tôi hợp tác với các hãng hàng không uy tín và đã được chứng nhận, đảm bảo chuyến bay của bạn luôn an toàn và chất lượng. Đội ngũ chuyên nghiệp luôn hỗ trợ bạn 24/7.
                 </p>
               </span>
             </div>
@@ -99,9 +99,9 @@ export default function Benefit() {
                 <GiRuleBook className="text-orange text-5xl" />
               </span>
               <span>
-                <h6 className="text-white text-xl">Đặt tour ngay lập tức</h6>
+                <h6 className="text-white text-xl">Đặt vé ngay lập tức</h6>
                 <p className="text-gray leading-8 py-4">
-                  Lorem ipsum chỉ đơn giản là văn bản miễn phí dolor sit nhưng phần lớn đã bị thay đổi amet, consectetur notted.
+                  Dễ dàng lên lịch trình và đặt vé chỉ trong vài bước. Nhận xác nhận tức thì và tận hưởng những ưu đãi hấp dẫn khi đặt vé trên nền tảng của chúng tôi.
                 </p>
               </span>
             </div>

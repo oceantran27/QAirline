@@ -60,7 +60,8 @@ export default function Hero() {
         </div>
 
         <div className="w-full flex items-center justify-center">
-          <SearchForm />
+          {/* <SearchForm /> */}
+          <FlightBookingTabs />
         </div>
       </div>
 
