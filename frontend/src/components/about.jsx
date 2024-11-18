@@ -3,11 +3,14 @@ import { FaPlay } from "react-icons/fa";
 import { GiDeer, GiHangGlider } from "react-icons/gi";
 import { CiFlag1 } from "react-icons/ci";
 import { MdOutlineParagliding } from "react-icons/md";
+import { FaPlaneDeparture } from 'react-icons/fa';
+import { MdFlight } from 'react-icons/md';
+import { GiPriceTag } from 'react-icons/gi';
+import { AiOutlineCheckCircle } from 'react-icons/ai'
 
 export default function About() {
   return (
     <div>
-      {/* Phần giới thiệu với nền hình ảnh */}
       <div className="bg-[url(/bg-1.jpg)] bg-cover bg-center bg-no-repeat py-24 w-full">
         <div className="lg:flex gap-12 max-w-[1200px] px-6 mx-auto">
           <div className="lg:w-1/2 w-full">
@@ -27,7 +30,7 @@ export default function About() {
             </p>
           </div>
 
-          {/* Phần các loại tour */}
+
           <div
             className="grid md:grid-cols-2 grid-cols-1 gap-2"
             data-aos="fade-up-right"
@@ -36,41 +39,38 @@ export default function About() {
               className="border border-gray rounded-lg p-10 flex flex-col items-center gap-4 text-orange hover:bg-orange hover:text-white transition-bg hover:border-transparent"
               data-aos="fade-down-right"
             >
-              <GiDeer className="text-2xl w-20 h-20" />
-              <p className="text-white text-xl font-semibold">Wildlife Tours</p>
+              <FaPlaneDeparture className="text-2xl w-20 h-20" />
+              <p className="text-white text-xl font-semibold">Flight Booking</p>
             </div>
+
             <div
               className="border border-gray rounded-lg p-10 flex flex-col items-center gap-4 text-orange hover:bg-orange hover:text-white transition-bg hover:border-transparent"
               data-aos="fade-down-right"
             >
-              <MdOutlineParagliding className="text-2xl w-20 h-20" />
-              <p className="text-white text-xl font-semibold">
-                Paragliding Tours
-              </p>
+              <MdFlight className="text-2xl w-20 h-20" />
+              <p className="text-white text-xl font-semibold">Flight Status</p>
             </div>
+
             <div
               className="border border-gray rounded-lg p-10 flex flex-col items-center gap-4 text-orange hover:bg-orange hover:text-white transition-bg hover:border-transparent"
               data-aos="fade-down-right"
             >
-              <CiFlag1 className="text-2xl w-20 h-20" />
-              <p className="text-white text-xl font-semibold">
-                Adventure Tours
-              </p>
+              <GiPriceTag className="text-2xl w-20 h-20" />
+              <p className="text-white text-xl font-semibold">Travel Deals</p>
             </div>
+
             <div
               className="border border-gray rounded-lg p-10 flex flex-col items-center gap-4 text-orange hover:bg-orange hover:text-white transition-bg hover:border-transparent"
               data-aos="fade-down-right"
             >
-              <GiHangGlider className="text-2xl w-20 h-20" />
-              <p className="text-white text-xl font-semibold">
-                Hand Gliding Tours
-              </p>
+              <AiOutlineCheckCircle className="text-2xl w-20 h-20" />
+              <p className="text-white text-xl font-semibold">Check-in Online</p>
             </div>
           </div>
+
         </div>
       </div>
 
-      {/* Phần đối tác */}
       <div
         className="bg-[url(/bg-line.png)] bg-contain bg-bottom bg-orange py-[100px]"
         data-aos="fade-down"
@@ -80,9 +80,10 @@ export default function About() {
             Đối tác của chúng tôi
           </p>
           <div className="flex flex-wrap gap-8 justify-between w-full">
-            <img src="/vietnam_airline.png" alt="Brand 1" height={100} width={200} />
-            <img src="/air_france.png" alt="Brand 3" height={100} width={200}/>
-            <img src="/aeroflot.png" alt="Brand 5" height={100} width={200}/>
+            <img src="/vietnam_airline.png" alt="vietnam airline logo" width="40%" height="40%" loading="lazy"/>
+            <img src="/vietjet.png" alt="vietjet logo" width="40%" height="40%" loading="lazy"/>
+            <img src="/china_airline.png" alt="china airline logo" width="40%" height="40%" loading="lazy"/>
+            <img src="/hongkong_airline.png" alt="hongkong airline logo" width="40%" height="40%" loading="lazy"/>
           </div>
         </div>
       </div>
