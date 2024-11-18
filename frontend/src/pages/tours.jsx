@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { User } from 'lucide-react'
+import { User, ChevronsRight, Info } from 'lucide-react'
 import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
@@ -14,18 +14,26 @@ const flights = [
   {
     departureTime: "22:00",
     arrivalTime: "00:10",
+    departureCode: "HAN",
+    arrivalCode: "SGN",
     duration: "2 giờ 10 phút",
     airline: "Vietnam Airlines",
     economyPrice: 3582000,
     businessPrice: 5860000,
+    seatsLeft: 2,
+    flightNumber: "VN 267"
   },
   {
     departureTime: "23:10",
     arrivalTime: "01:10",
+    departureCode: "SGN",
+    arrivalCode: "HAN",
     duration: "2 giờ 0 phút",
     airline: "Pacific Airlines",
     economyPrice: 2340000,
     businessPrice: 5860000,
+    seatsLeft: 7,
+    flightNumber: "VN 6025"
   },
 ]
 
@@ -52,11 +60,11 @@ export default function FlightBooking() {
       {/* Flight Info Bar */}
       <div className="sticky top-24 border-t-2 border-orange bg-white shadow-md z-50">
         <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between flex-wrap gap-4 max-w-5xl m-auto">
+            <div className="flex items-center gap-12">
               <div className="flex items-center gap-2">
                 <span className="font-semibold">HAN</span>
-                <span className="text-gray-400">⋯⋯⋯⋯⋯⋯⋯⋯⋯⋯➜</span>
+                <span className="text-gray-400">⋯⋯⋯⋯⋯⋯⋯⋯➜</span>
                 <span className="font-semibold">SGN</span>
               </div>
               <div className="text-sm text-gray-600">
@@ -64,7 +72,7 @@ export default function FlightBooking() {
                 <div>TP. Hồ Chí Minh</div>
               </div>
             </div>
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-12">
               <div>
                 <div className="text-sm text-gray-600">Chuyến đi</div>
                 <div className="font-semibold">Th 5, 14 thg 11</div>
@@ -85,7 +93,7 @@ export default function FlightBooking() {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 p-4 bg-gray-100 min-h-screen">
+      <div className="flex flex-col md:flex-row gap-4 p-4 bg-gray-100 min-h-screen max-w-6xl m-auto">
         
         {/* Side filter */}
         <Card className="w-full md:w-64 h-fit">
@@ -162,25 +170,50 @@ export default function FlightBooking() {
             <Card key={index}>
               <CardContent className="p-4">
                 <div className="flex justify-between items-center">
-                  <div className="space-y-1">
-                    <div className="text-lg font-semibold">{flight.departureTime} - {flight.arrivalTime}</div>
-                    <div className="text-sm text-gray-500">{flight.duration}</div>
-                    <div className="text-sm">{flight.airline}</div>
+
+                  <div className="flex-1">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="flex flex-col items-center">
+                        <span className="text-2xl font-bold">{flight.departureTime}</span>
+                        <span className="text-sm text-gray-500">{flight.departureCode}</span>
+                      </div>
+                      <div className="flex-1 relative">
+                        <div className="border-t border-gray-300 absolute w-full top-4"></div>
+                        <ChevronsRight className="text-orange-500 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+                      </div>
+                      <div className="flex flex-col items-center mr-10">
+                        <span className="text-2xl font-bold">{flight.arrivalTime}</span>
+                        <span className="text-sm text-gray-500">{flight.arrivalCode}</span>
+                      </div>
+                    </div>
+                    <div className="items-center gap-4 text-sm text-gray-600 mb-2">
+                      <span className="inline-block mr-8">• Thời gian bay dự kiến: {flight.duration}</span>
+                      <span className="inline-block">• Số hiệu: {flight.flightNumber}</span>
+                    </div>
+                    <button className="text-sm text-blue-600 hover:underline flex items-center gap-1">
+                      Chi tiết hành trình
+                      <Info className="h-4 w-4" />
+                    </button>
                   </div>
-                  <div className="space-y-2 text-right">
-                    <Button className="w-full bg-teal-700 hover:bg-teal-800">
+
+                  <div className="flex flex-col space-y-2 text-right w-44">
+                    <Button className="flex-1 w-full bg-teal-700 hover:bg-teal-800 relative">
                       <div>
                         <div className="font-semibold">Phổ thông</div>
                         <div>{flight.economyPrice.toLocaleString()} VND</div>
                       </div>
+                      <span className="absolute -top-2 -right-2 bg-red text-white text-xs px-1.5 py-0.5 rounded-full">
+                        Còn {flight.seatsLeft} ghế
+                      </span>
                     </Button>
-                    <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black">
+                    <Button className="flex-1 w-full bg-yellow-500 hover:bg-yellow-600 text-black">
                       <div>
                         <div className="font-semibold">Thương gia</div>
                         <div>{flight.businessPrice.toLocaleString()} VND</div>
                       </div>
                     </Button>
                   </div>
+
                 </div>
               </CardContent>
             </Card>
