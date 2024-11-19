@@ -23,12 +23,10 @@ export default function Navbar() {
               </Link>
             </div>
           </div>
-          <ul className="flex items-center xl:gap-12 gap-x-4 max-lg:hidden">
+          <ul className="flex items-center flex-1 justify-evenly xl:gap-12 gap-x-4 max-lg:hidden">
             <Link href="/" className="leading-normal no-underline text-lg hover:text-orange">Trang chủ</Link>
             <Link href="/tours" className="leading-normal no-underline text-lg hover:text-orange">Chuyến bay</Link>
-            <Link href="/destination" className="leading-normal no-underline text-lg hover:text-orange">Destination</Link>
             <Link href="/news" className="leading-normal no-underline text-lg hover:text-orange">Tin tức</Link>
-            <Link href="/pages" className="leading-normal no-underline text-lg hover:text-orange">Pages</Link>
             <Link href="/contact" className="leading-normal no-underline text-lg hover:text-orange">Liên hệ</Link>
           </ul>
           <div className="flex gap-4 max-lg:hidden w-40 justify-center">

@@ -34,12 +34,12 @@ const responsive = {
 };
 
 // Component Card
-const Card = ({ image, text }) => (
+const Card = ({ image, text, date, author, comments, description, link }) => (
   <div>
     <div className="relative overflow-hidden rounded-t-lg">
       <img src={image} alt="" className="rounded-t-lg hoverImg" />
       <p className="font-bold text-white bg-orange flex flex-col w-fit pt-3 pb-7 px-6 absolute right-0 bottom-0 rounded-tl-lg">
-        08 <span className="font-normal text-xs">DEC</span>
+        {date.day} <span className="font-normal text-xs">{date.month}</span>
       </p>
     </div>
     <div className="border border-[#ebe6de] rounded-b-lg relative">
@@ -47,18 +47,16 @@ const Card = ({ image, text }) => (
       <div className="p-6">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1 text-xs">
-            <MdPerson className="text-orange text-base" /> ADMIN
+            <MdPerson className="text-orange text-base" /> {author}
           </span>
           <span className="flex items-center gap-1 text-xs">
-            <MdComment className="text-orange text-base" /> 0 COMMENTS
+            <MdComment className="text-orange text-base" /> {comments} BÌNH LUẬN
           </span>
         </div>
         <h4 className="text-2xl font-semibold py-2 hover:text-orange">{text}</h4>
-        <p className="pt-2 leading-8">
-          There are many variations of but the majority have simply free text available not suffered.
-        </p>
-        <a href="#" className="flex items-center gap-2 text-orange text-sm font-bold mt-2">
-          READ MORE <MdArrowRight />
+        <p className="pt-2 leading-8">{description}</p>
+        <a href={link} className="flex items-center gap-2 text-orange text-sm font-bold mt-2">
+          ĐỌC THÊM <MdArrowRight />
         </a>
       </div>
     </div>
@@ -136,11 +134,43 @@ export default function Benefit() {
               keyBoardControl
               itemClass="carouselItem"
             >
-              <Card image="/post-1.jpg" text="Những điều cần xem và làm khi đến thăm Nhật Bản" />
-              <Card image="/post-2.jpg" text="Một nơi để bắt đầu cuộc sống mới với sự bình yên" />
-              <Card image="/post-3.jpg" text="Những hành trình được đo lường tốt nhất với bạn bè" />
-              <Card image="/post-4.jpg" text="Du lịch đến những nơi đẹp nhất trên thế giới" />
-            </Carousel>
+              <Card
+                image="/post-1.jpg"
+                text="Những điều cần xem và làm khi đến thăm Nhật Bản"
+                date={{ day: "08", month: "Tháng 12" }}
+                author="Quản lý"
+                comments={0}
+                description="Khám phá văn hóa Nhật Bản với những địa điểm đẹp và những hoạt động thú vị."
+                link="#"
+              />
+              <Card
+                image="/post-2.jpg"
+                text="Một nơi để bắt đầu cuộc sống mới với sự bình yên"
+                date={{ day: "15", month: "Tháng 12" }}
+                author="Quản lý"
+                comments={3}
+                description="Địa điểm lý tưởng để nghỉ ngơi và tận hưởng cuộc sống chậm lại."
+                link="#"
+              />
+              <Card
+                image="/post-3.jpg"
+                text="Những hành trình được đo lường tốt nhất với bạn bè"
+                date={{ day: "20", month: "Tháng 12" }}
+                author="Quản lý"
+                comments={5}
+                description="Cùng bạn bè khám phá những hành trình đầy ý nghĩa và kỷ niệm đáng nhớ."
+                link="#"
+              />
+              <Card
+                image="/post-4.jpg"
+                text="Du lịch đến những nơi đẹp nhất trên thế giới"
+                date={{ day: "25", month: "Tháng 12" }}
+                author="Quản lý"
+                comments={2}
+                description="Những địa danh nổi tiếng mang vẻ đẹp mê hoặc trên thế giới."
+                link="#"
+              />
+            </Carousel>;
           </div>
         </div>
       </section>
@@ -170,6 +200,7 @@ export default function Benefit() {
           </div>
         </div>
       </div>
+    
     </div>
   );
 }

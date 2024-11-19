@@ -80,27 +80,27 @@ export default function Hero() {
           >
             <div className="shadow-xl bg-white p-8 mb-10 rounded-lg flex flex-col justify-center items-center gap-4">
               <MdUpgrade className="rounded-full w-20 h-20 p-4 bg-[#e5faf5] text-[#3fd2a8] hover:bg-orange hover:text-white" />
-              <p className="font-bold">Upgrade</p>
+              <p className="font-bold">Nâng cấp vé</p>
             </div>
 
             <div className="shadow-xl bg-white p-8 mb-10 rounded-lg flex flex-col justify-center items-center gap-4">
               <MdEventSeat className="rounded-full w-20 h-20 p-4 bg-[#26B2EC24] text-[#06aff6] hover:bg-orange hover:text-white" />
-              <p className="font-bold">Seat Selection</p>
+              <p className="font-bold">Chọn chỗ ngồi</p>
             </div>
 
             <div className="shadow-xl bg-white p-8 mb-10 rounded-lg flex flex-col justify-center items-center gap-4">
               <MdShoppingBag className="rounded-full w-20 h-20 p-4 bg-[#f5ecfd] text-[#9e60e5] hover:bg-orange hover:text-white" />
-              <p className="font-bold">Shopping</p>
+              <p className="font-bold">Mua sắm</p>
             </div>
 
             <div className="shadow-xl bg-white p-8 mb-10 rounded-lg flex flex-col justify-center items-center gap-4">
               <MdHotel className="rounded-full w-20 h-20 p-4 bg-[#fff4de] text-[#f6b23b] hover:bg-orange hover:text-white" />
-              <p className="font-bold">Hotels & Tours</p>
+              <p className="font-bold">Khách sạn</p>
             </div>
 
             <div className="shadow-xl bg-white p-8 mb-10 rounded-lg flex flex-col justify-center items-center gap-4">
               <MdMiscellaneousServices className="rounded-full w-20 h-20 p-4 bg-[#D036321C] text-[#d03632] hover:bg-orange hover:text-white" />
-              <p className="font-bold">Other Services</p>
+              <p className="font-bold">Những dịch vụ khác</p>
             </div>
           </Carousel>
       </div>
