@@ -13,6 +13,10 @@
 }
 
 
+.nav-shadow {
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4);
+}
+
 
 .carouselItem{
   padding-right: 2rem;

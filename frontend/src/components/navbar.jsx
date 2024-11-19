@@ -13,7 +13,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full h-24 flex flex-col justify-center items-center sticky top-0 z-50 bg-white">
+    <nav className="w-full h-24 flex flex-col justify-center items-center sticky top-0 z-50 bg-white nav-shadow">
       <div className="container mx-auto lg:px-3 w-full">
         <div className="lg:w-full w-11/12 mx-auto h-full flex lg:justify-center justify-between gap-16 items-center">
           <div className="flex flex-col gap-y-4">
