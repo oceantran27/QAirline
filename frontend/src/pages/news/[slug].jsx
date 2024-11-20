@@ -16,7 +16,7 @@ import {
   MessageSquareIcon,
 } from "lucide-react";
 
-const NewsDetail = ({ article }) => {
+const NewsDetail = ({ article, relatedArticles }) => {
   const router = useRouter();
 
   if (router.isFallback) {
@@ -36,9 +36,10 @@ const NewsDetail = ({ article }) => {
 
       <main className="container mx-auto px-4 py-8">
         <article className="max-w-4xl mx-auto">
+          {/* Nút Quay lại */}
           <Button variant="ghost" className="mb-4 -ml-2" onClick={() => window.history.back()}>
             <ArrowLeftIcon className="mr-2 h-4 w-4" />
-            Quay Lại Trang Trước
+            Quay lại trang trước
           </Button>
 
           {/* Header */}
@@ -53,7 +54,7 @@ const NewsDetail = ({ article }) => {
               </div>
               <div className="flex items-center">
                 <ClockIcon className="h-5 w-5 mr-2" />
-                <span>{article.readTime} min read</span>
+                <span>{article.readTime} phút đọc</span>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -85,40 +86,40 @@ const NewsDetail = ({ article }) => {
             <div className="flex space-x-4">
               <Button variant="outline" size="sm">
                 <ThumbsUpIcon className="h-4 w-4 mr-2" />
-                Like
+                Thích
               </Button>
               <Button variant="outline" size="sm">
                 <MessageSquareIcon className="h-4 w-4 mr-2" />
-                Comment
+                Bình luận
               </Button>
               <Button variant="outline" size="sm">
                 <ShareIcon className="h-4 w-4 mr-2" />
-                Share
+                Chia sẻ
               </Button>
             </div>
             <Button variant="outline" size="sm">
               <BookmarkIcon className="h-4 w-4 mr-2" />
-              Save
+              Lưu
             </Button>
           </div>
 
           {/* Bài viết liên quan */}
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Related Articles</h3>
+            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Bài viết liên quan</h3>
             <ul className="space-y-4">
-              {[1, 2, 3].map((item) => (
-                <li key={item} className="flex space-x-4">
+              {relatedArticles.map((item) => (
+                <li key={item.slug} className="flex space-x-4">
                   <img
-                    src={`/placeholder.svg?height=80&width=120`}
-                    alt={`Related article ${item} thumbnail`}
+                    src={item.image}
+                    alt={item.title}
                     className="w-24 h-16 object-cover rounded"
                   />
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white">
-                      Related Article Title {item}
+                      {item.title}
                     </h4>
                     <p className="text-sm text-gray-600 dark:text-gray-300">
-                      Short description of the related article goes here.
+                      {item.description}
                     </p>
                   </div>
                 </li>
@@ -128,7 +129,7 @@ const NewsDetail = ({ article }) => {
 
           {/* Phần bình luận */}
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Comments</h3>
+            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Bình luận</h3>
             <div className="space-y-4">
               {[1, 2].map((item) => (
                 <div key={item} className="flex space-x-4">
@@ -146,8 +147,8 @@ const NewsDetail = ({ article }) => {
               ))}
             </div>
             <div className="mt-4">
-              <Input placeholder="Add a comment..." />
-              <Button className="mt-2">Post Comment</Button>
+              <Input placeholder="Viết gì đó..." />
+              <Button className="mt-2">Đăng bình luận</Button>
             </div>
           </div>
         </article>
@@ -175,6 +176,10 @@ export async function getStaticProps({ params }) {
   const allArticles = [...latestNews, ...featuredArticles];
   const article = allArticles.find((item) => item.slug === slug);
 
+  const relatedArticles = allArticles
+    .filter((item) => item.slug !== slug)
+    .slice(0, 3);
+
   if (!article) {
     return {
       notFound: true,
@@ -184,6 +189,7 @@ export async function getStaticProps({ params }) {
   return {
     props: {
       article,
+      relatedArticles,
     },
   };
 }

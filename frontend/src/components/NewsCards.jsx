@@ -78,7 +78,7 @@ const NewsCard = React.forwardRef(
       </Link>
       {content && (
         <CardContent>
-          <p className="text-gray-600 dark:text-gray-300">{content}</p>
+          <p className="text-gray-600 dark:text-gray-300 line-clamp-3">{content}</p>
         </CardContent>
       )}
       <CardFooter>
@@ -143,5 +143,4 @@ const FeaturedNewsCard = React.forwardRef(
   )
 );
 FeaturedNewsCard.displayName = "FeaturedNewsCard";
-
 export { HomeNewsCard, FeaturedNewsCard, NewsCard };

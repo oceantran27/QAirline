@@ -10,7 +10,7 @@
     "buttonText": "Đọc thêm",
     "author": "Phạm Nhật D",
     "authorTitle": "Chuyên gia văn hóa",
-    "authorImage": "/avatars/avatar-4.jpg",
+    "authorImage": "/AvatarUser/no_avatar.jpg",
     "readTime": 7
   },
   {
@@ -24,7 +24,7 @@
     "buttonText": "Đọc thêm",
     "author": "Nguyễn Văn E",
     "authorTitle": "Nhà thám hiểm",
-    "authorImage": "/avatars/avatar-5.jpg",
+    "authorImage": "/AvatarUser/no_avatar.jpg",
     "readTime": 12
   },
   {
@@ -38,7 +38,7 @@
     "buttonText": "Đọc thêm",
     "author": "Trần Thanh F",
     "authorTitle": "Đầu bếp chuyên nghiệp",
-    "authorImage": "/avatars/avatar-6.jpg",
+    "authorImage": "/AvatarUser/no_avatar.jpg",
     "readTime": 9
   }
 ]

@@ -10,7 +10,7 @@
     "category": "Cuộc sống",
     "author": "Nguyễn Văn A",
     "authorTitle": "Chuyên gia du lịch",
-    "authorImage": "/avatars/avatar-1.jpg",
+    "authorImage": "/AvatarUser/no_avatar.jpg",
     "readTime": 6
   },
   {
@@ -24,7 +24,7 @@
     "category": "Phiêu lưu",
     "author": "Trần Thị B",
     "authorTitle": "Nhà văn du ký",
-    "authorImage": "/avatars/avatar-2.jpg",
+    "authorImage": "/AvatarUser/no_avatar.jpg",
     "readTime": 8
   },
   {
@@ -38,7 +38,7 @@
     "category": "Du lịch",
     "author": "Lê Minh C",
     "authorTitle": "Nhiếp ảnh gia",
-    "authorImage": "/avatars/avatar-3.jpg",
+    "authorImage": "/AvatarUser/no_avatar.jpg",
     "readTime": 10
   },
   {
@@ -52,7 +52,7 @@
     "category": "Ẩm thực",
     "author": "Phạm Thị D",
     "authorTitle": "Nhà phê bình ẩm thực",
-    "authorImage": "/avatars/avatar-4.jpg",
+    "authorImage": "/AvatarUser/no_avatar.jpg",
     "readTime": 9
   },
   {
@@ -66,7 +66,7 @@
     "category": "Thiên nhiên",
     "author": "Nguyễn Văn E",
     "authorTitle": "Nhà nghiên cứu văn hóa",
-    "authorImage": "/avatars/avatar-5.jpg",
+    "authorImage": "/AvatarUser/no_avatar.jpg",
     "readTime": 7
   },
   {
@@ -80,7 +80,7 @@
     "category": "Nghỉ dưỡng",
     "author": "Trần Thanh F",
     "authorTitle": "Chuyên gia nghỉ dưỡng",
-    "authorImage": "/avatars/avatar-6.jpg",
+    "authorImage": "/AvatarUser/no_avatar.jpg",
     "readTime": 5
   },
   {
@@ -94,7 +94,7 @@
     "category": "Văn hóa",
     "author": "Hoàng Anh G",
     "authorTitle": "Nhà sử học",
-    "authorImage": "/avatars/avatar-7.jpg",
+    "authorImage": "/AvatarUser/no_avatar.jpg",
     "readTime": 8
   },
   {
@@ -108,7 +108,7 @@
     "category": "Đô thị",
     "author": "Lê Quang H",
     "authorTitle": "Nhà báo",
-    "authorImage": "/avatars/avatar-8.jpg",
+    "authorImage": "/AvatarUser/no_avatar.jpg",
     "readTime": 7
   }
 ]

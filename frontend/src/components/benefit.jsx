@@ -103,41 +103,45 @@ export default function Benefit() {
               itemClass="carouselItem"
             >
               <HomeNewsCard
+                slug="nhung-dieu-can-xem-va-lam-khi-den-tham-nhat-ban"
                 image="/post-1.jpg"
                 title="Những điều cần xem và làm khi đến thăm Nhật Bản"
                 date={{ day: "08", month: "Tháng 12" }}
                 author="Quản lý"
                 comments={0}
                 description="Khám phá văn hóa Nhật Bản với những địa điểm đẹp và những hoạt động thú vị."
-                link="#"
               />
+
               <HomeNewsCard
+                slug="mot-noi-de-bat-dau-cuoc-song-moi-voi-su-binh-yen"
                 image="/post-2.jpg"
                 title="Một nơi để bắt đầu cuộc sống mới với sự bình yên"
                 date={{ day: "15", month: "Tháng 12" }}
                 author="Quản lý"
                 comments={3}
                 description="Địa điểm lý tưởng để nghỉ ngơi và tận hưởng cuộc sống chậm lại."
-                link="#"
               />
+
               <HomeNewsCard
+                slug="nhung-hanh-trinh-duoc-do-luong-tot-nhat-voi-ban-be"
                 image="/post-3.jpg"
                 title="Những hành trình được đo lường tốt nhất với bạn bè"
                 date={{ day: "20", month: "Tháng 12" }}
                 author="Quản lý"
                 comments={5}
                 description="Cùng bạn bè khám phá những hành trình đầy ý nghĩa và kỷ niệm đáng nhớ."
-                link="#"
               />
+
               <HomeNewsCard
+                slug="du-lich-den-nhung-noi-dep-nhat-tren-the-gioi"
                 image="/post-4.jpg"
                 title="Du lịch đến những nơi đẹp nhất trên thế giới"
                 date={{ day: "25", month: "Tháng 12" }}
                 author="Quản lý"
                 comments={2}
                 description="Những địa danh nổi tiếng mang vẻ đẹp mê hoặc trên thế giới."
-                link="#"
               />
+
             </Carousel>
           </div>
         </div>
