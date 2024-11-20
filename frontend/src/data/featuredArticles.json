@@ -1,0 +1,27 @@
+[
+    {
+      "image": "/News/featured_post-1.jpg",
+      "title": "Những điều cần xem và làm khi đến thăm Nhật Bản",
+      "description": "Khám phá văn hóa Nhật Bản với những địa điểm đẹp và những hoạt động thú vị.",
+      "date": "08 Tháng 12",
+      "category": "Du lịch",
+      "buttonText": "Đọc thêm"
+    },
+    {
+      "image": "/News/featured_post-2.jpg",
+      "title": "Khám phá vẻ đẹp hùng vĩ của dãy Himalaya",
+      "description": "Trải nghiệm hành trình leo núi đầy thách thức và ngắm nhìn cảnh quan tuyệt đẹp.",
+      "date": "15 Tháng 12",
+      "category": "Phiêu lưu",
+      "buttonText": "Đọc thêm"
+    },
+    {
+      "image": "/News/featured_post-3.png",
+      "title": "Thưởng thức nghệ thuật ẩm thực Pháp tại Paris",
+      "description": "Tận hưởng những món ăn tinh tế và khám phá văn hóa ẩm thực độc đáo.",
+      "date": "22 Tháng 12",
+      "category": "Ẩm thực",
+      "buttonText": "Đọc thêm"
+    }
+  ]
+  

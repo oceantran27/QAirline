@@ -1,0 +1,38 @@
+[
+    {
+      "image": "/post-2.jpg",
+      "title": "Một nơi để bắt đầu cuộc sống mới với sự bình yên",
+      "description": "Địa điểm lý tưởng để nghỉ ngơi và tận hưởng cuộc sống chậm lại.",
+      "content": "Khám phá những vùng đất yên bình, nơi bạn có thể bắt đầu cuộc sống mới với sự an yên và hạnh phúc.",
+      "buttonText": "Đọc thêm"
+    },
+    {
+      "image": "/post-3.jpg",
+      "title": "Những hành trình được đo lường tốt nhất với bạn bè",
+      "description": "Cùng bạn bè khám phá những hành trình đầy ý nghĩa và kỷ niệm đáng nhớ.",
+      "content": "Những chuyến đi thú vị nhất luôn được chia sẻ với những người bạn thân thiết. Hãy cùng nhau tạo nên những kỷ niệm khó quên.",
+      "buttonText": "Đọc thêm"
+    },
+    {
+      "image": "/post-4.jpg",
+      "title": "Du lịch đến những nơi đẹp nhất trên thế giới",
+      "description": "Những địa danh nổi tiếng mang vẻ đẹp mê hoặc trên thế giới.",
+      "content": "Khám phá những kỳ quan thiên nhiên và kiến trúc nổi tiếng, mang đến cho bạn trải nghiệm tuyệt vời.",
+      "buttonText": "Đọc thêm"
+    },
+    {
+      "image": "/post-5.jpg",
+      "title": "Hành trình ẩm thực: Khám phá món ăn địa phương",
+      "description": "Thưởng thức những món ăn đặc sản và trải nghiệm văn hóa ẩm thực độc đáo.",
+      "content": "Ẩm thực là một phần quan trọng của văn hóa. Hãy cùng khám phá và thưởng thức những món ăn đặc sắc tại các địa phương.",
+      "buttonText": "Đọc thêm"
+    },
+    {
+      "image": "/post-5.jpg",
+      "title": "Hành trình ẩm thực: Khám phá món ăn địa phương",
+      "description": "Thưởng thức những món ăn đặc sản và trải nghiệm văn hóa ẩm thực độc đáo.",
+      "content": "Ẩm thực là một phần quan trọng của văn hóa. Hãy cùng khám phá và thưởng thức những món ăn đặc sắc tại các địa phương.",
+      "buttonText": "Đọc thêm"
+    }
+  ]
+  

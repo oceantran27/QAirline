@@ -10,7 +10,7 @@ import { RiFlightTakeoffFill } from "react-icons/ri";
 import { GiRuleBook } from "react-icons/gi";
 import "react-multi-carousel/lib/styles.css";
 import Link from "next/link";
-
+import { HomeNewsCard } from "./NewsCards";
 // Import `Carousel` với dynamic import để tắt SSR
 const Carousel = dynamic(() => import("react-multi-carousel"), { ssr: false });
 
@@ -32,36 +32,6 @@ const responsive = {
     items: 1,
   },
 };
-
-// Component Card
-const Card = ({ image, text, date, author, comments, description, link }) => (
-  <div>
-    <div className="relative overflow-hidden rounded-t-lg">
-      <img src={image} alt="" className="rounded-t-lg hoverImg" />
-      <p className="font-bold text-white bg-orange flex flex-col w-fit pt-3 pb-7 px-6 absolute right-0 bottom-0 rounded-tl-lg">
-        {date.day} <span className="font-normal text-xs">{date.month}</span>
-      </p>
-    </div>
-    <div className="border border-[#ebe6de] rounded-b-lg relative">
-      <div className="absolute w-full h-5 -top-5 bg-white rounded-t-[20px]"></div>
-      <div className="p-6">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1 text-xs">
-            <MdPerson className="text-orange text-base" /> {author}
-          </span>
-          <span className="flex items-center gap-1 text-xs">
-            <MdComment className="text-orange text-base" /> {comments} BÌNH LUẬN
-          </span>
-        </div>
-        <h4 className="text-2xl font-semibold py-2 hover:text-orange">{text}</h4>
-        <p className="pt-2 leading-8">{description}</p>
-        <a href={link} className="flex items-center gap-2 text-orange text-sm font-bold mt-2">
-          ĐỌC THÊM <MdArrowRight />
-        </a>
-      </div>
-    </div>
-  </div>
-);
 
 export default function Benefit() {
   return (
@@ -134,43 +104,43 @@ export default function Benefit() {
               keyBoardControl
               itemClass="carouselItem"
             >
-              <Card
+              <HomeNewsCard
                 image="/post-1.jpg"
-                text="Những điều cần xem và làm khi đến thăm Nhật Bản"
+                title="Những điều cần xem và làm khi đến thăm Nhật Bản"
                 date={{ day: "08", month: "Tháng 12" }}
                 author="Quản lý"
                 comments={0}
                 description="Khám phá văn hóa Nhật Bản với những địa điểm đẹp và những hoạt động thú vị."
                 link="#"
               />
-              <Card
+              <HomeNewsCard
                 image="/post-2.jpg"
-                text="Một nơi để bắt đầu cuộc sống mới với sự bình yên"
+                title="Một nơi để bắt đầu cuộc sống mới với sự bình yên"
                 date={{ day: "15", month: "Tháng 12" }}
                 author="Quản lý"
                 comments={3}
                 description="Địa điểm lý tưởng để nghỉ ngơi và tận hưởng cuộc sống chậm lại."
                 link="#"
               />
-              <Card
+              <HomeNewsCard
                 image="/post-3.jpg"
-                text="Những hành trình được đo lường tốt nhất với bạn bè"
+                title="Những hành trình được đo lường tốt nhất với bạn bè"
                 date={{ day: "20", month: "Tháng 12" }}
                 author="Quản lý"
                 comments={5}
                 description="Cùng bạn bè khám phá những hành trình đầy ý nghĩa và kỷ niệm đáng nhớ."
                 link="#"
               />
-              <Card
+              <HomeNewsCard
                 image="/post-4.jpg"
-                text="Du lịch đến những nơi đẹp nhất trên thế giới"
+                title="Du lịch đến những nơi đẹp nhất trên thế giới"
                 date={{ day: "25", month: "Tháng 12" }}
                 author="Quản lý"
                 comments={2}
                 description="Những địa danh nổi tiếng mang vẻ đẹp mê hoặc trên thế giới."
                 link="#"
               />
-            </Carousel>;
+            </Carousel>
           </div>
         </div>
       </section>
@@ -187,12 +157,16 @@ export default function Benefit() {
               Tham gia với chúng tôi! Các thành viên của chúng tôi có thể tiết kiệm lên đến 50%.
             </p>
             <div className="flex gap-4 pt-6">
-              <button className="bg-orange text-white text-xs font-bold rounded flex gap-2 px-8 h-12 items-center hoverBtn hover:bg-orange hover:text-textColor">
-                <MdArrowCircleRight size={20} /> &nbsp;ĐĂNG NHẬP&nbsp;
-              </button>
-              <button className="bg-white text-textColor text-xs font-bold rounded flex gap-2 px-8 h-12 items-center hoverBtn hover:bg-orange">
-                <MdPerson size={20} /> ĐĂNG KÝ
-              </button>
+              <Link href="/login">
+                <button className="bg-orange text-white text-xs font-bold rounded flex gap-2 px-8 h-12 items-center hoverBtn hover:bg-orange hover:text-textColor">
+                  <MdArrowCircleRight size={20} /> &nbsp;ĐĂNG NHẬP&nbsp;
+                </button>
+              </Link>
+              <Link href="/signup">
+                <button className="bg-white text-textColor text-xs font-bold rounded flex gap-2 px-8 h-12 items-center hoverBtn hover:bg-orange">
+                  <MdPerson size={20} /> ĐĂNG KÝ
+                </button>
+              </Link>
             </div>
           </div>
           <div className="flex justify-center lg:w-1/2 w-full lg:mt-0 mt-14">
