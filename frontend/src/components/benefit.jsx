@@ -2,8 +2,6 @@
 import dynamic from "next/dynamic";
 import {
   MdArrowCircleRight,
-  MdArrowRight,
-  MdComment,
   MdPerson,
 } from "react-icons/md";
 import { RiFlightTakeoffFill } from "react-icons/ri";

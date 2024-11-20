@@ -94,7 +94,7 @@ const FeaturedNewsCard = React.forwardRef(
             <CalendarIcon className="h-5 w-5" />
             <span className="text-sm">{date}</span>
           </div>
-          <Button variant="secondary" onClick={onButtonClick}>
+          <Button variant="orange" onClick={onButtonClick}>
             {buttonText}
           </Button>
         </div>
@@ -125,7 +125,7 @@ const NewsCard = React.forwardRef(
         </CardContent>
       )}
       <CardFooter>
-        <Button variant="outline" onClick={onButtonClick}>
+        <Button variant="orange" onClick={onButtonClick}>
           {buttonText}
         </Button>
       </CardFooter>
