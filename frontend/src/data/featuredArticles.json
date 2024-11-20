@@ -1,27 +1,44 @@
 [
-    {
-      "image": "/News/featured_post-1.jpg",
-      "title": "Những điều cần xem và làm khi đến thăm Nhật Bản",
-      "description": "Khám phá văn hóa Nhật Bản với những địa điểm đẹp và những hoạt động thú vị.",
-      "date": "08 Tháng 12",
-      "category": "Du lịch",
-      "buttonText": "Đọc thêm"
-    },
-    {
-      "image": "/News/featured_post-2.jpg",
-      "title": "Khám phá vẻ đẹp hùng vĩ của dãy Himalaya",
-      "description": "Trải nghiệm hành trình leo núi đầy thách thức và ngắm nhìn cảnh quan tuyệt đẹp.",
-      "date": "15 Tháng 12",
-      "category": "Phiêu lưu",
-      "buttonText": "Đọc thêm"
-    },
-    {
-      "image": "/News/featured_post-3.png",
-      "title": "Thưởng thức nghệ thuật ẩm thực Pháp tại Paris",
-      "description": "Tận hưởng những món ăn tinh tế và khám phá văn hóa ẩm thực độc đáo.",
-      "date": "22 Tháng 12",
-      "category": "Ẩm thực",
-      "buttonText": "Đọc thêm"
-    }
-  ]
-  
+  {
+    "slug": "nhung-dieu-can-xem-va-lam-khi-den-tham-nhat-ban",
+    "image": "/News/featured_post-1.jpg",
+    "title": "Những điều cần xem và làm khi đến thăm Nhật Bản",
+    "description": "Khám phá văn hóa Nhật Bản với những địa điểm đẹp và những hoạt động thú vị.",
+    "content": "Nội dung chi tiết về những điều cần xem và làm khi đến thăm Nhật Bản...",
+    "date": "08 Tháng 12, 2023",
+    "category": "Du lịch",
+    "buttonText": "Đọc thêm",
+    "author": "Phạm Nhật D",
+    "authorTitle": "Chuyên gia văn hóa",
+    "authorImage": "/avatars/avatar-4.jpg",
+    "readTime": 7
+  },
+  {
+    "slug": "kham-pha-ve-dep-hung-vi-cua-day-himalaya",
+    "image": "/News/featured_post-2.jpg",
+    "title": "Khám phá vẻ đẹp hùng vĩ của dãy Himalaya",
+    "description": "Trải nghiệm hành trình leo núi đầy thách thức và ngắm nhìn cảnh quan tuyệt đẹp.",
+    "content": "Nội dung chi tiết về hành trình khám phá dãy Himalaya...",
+    "date": "15 Tháng 12, 2023",
+    "category": "Phiêu lưu",
+    "buttonText": "Đọc thêm",
+    "author": "Nguyễn Văn E",
+    "authorTitle": "Nhà thám hiểm",
+    "authorImage": "/avatars/avatar-5.jpg",
+    "readTime": 12
+  },
+  {
+    "slug": "thuong-thuc-nghe-thuat-am-thuc-phap-tai-paris",
+    "image": "/News/featured_post-3.png",
+    "title": "Thưởng thức nghệ thuật ẩm thực Pháp tại Paris",
+    "description": "Tận hưởng những món ăn tinh tế và khám phá văn hóa ẩm thực độc đáo.",
+    "content": "Nội dung chi tiết về trải nghiệm ẩm thực tại Paris...",
+    "date": "22 Tháng 12, 2023",
+    "category": "Ẩm thực",
+    "buttonText": "Đọc thêm",
+    "author": "Trần Thanh F",
+    "authorTitle": "Đầu bếp chuyên nghiệp",
+    "authorImage": "/avatars/avatar-6.jpg",
+    "readTime": 9
+  }
+]
