@@ -83,22 +83,22 @@ const NewsDetail = ({ article, relatedArticles }) => {
           </div>
 
           {/* Hành động */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex space-x-4">
-              <Button variant="outline" size="sm">
+          <div className="flex flex-wrap items-center justify-between mb-8">
+            <div className="flex flex-wrap items-center space-x-0 space-y-2 md:space-x-4 md:space-y-0 mb-4 md:mb-0">
+              <Button variant="outline" size="sm" className="w-full md:w-auto">
                 <ThumbsUpIcon className="h-4 w-4 mr-2" />
                 Thích
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="w-full md:w-auto">
                 <MessageSquareIcon className="h-4 w-4 mr-2" />
                 Bình luận
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="w-full md:w-auto">
                 <ShareIcon className="h-4 w-4 mr-2" />
                 Chia sẻ
               </Button>
             </div>
-            <Button variant="orange" size="sm">
+            <Button variant="orange" size="sm" className="w-full md:w-auto">
               <BookmarkIcon className="h-4 w-4 mr-2" />
               Lưu
             </Button>

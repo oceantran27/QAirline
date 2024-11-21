@@ -33,11 +33,10 @@ function MyApp({ Component, pageProps }) {
   };
 
   const handleScrollToClick = (event) => {
-    // Bỏ qua nếu click xảy ra trên thẻ liên kết hoặc nút điều hướng
     if (event.target.tagName === "A" || event.target.tagName === "BUTTON") return;
 
     const mouseY = event.clientY;
-    const threshold = 200; // Ngưỡng để tránh cuộn không mong muốn
+    const threshold = 200; 
 
     if (Math.abs(mouseY - lastClickY) < threshold) return;
 
@@ -53,17 +52,14 @@ function MyApp({ Component, pageProps }) {
   };
 
   useEffect(() => {
-    // Tự động cuộn lên đầu khi chuyển trang
     const handleRouteChange = () => {
       window.scrollTo(0, 0);
     };
 
     router.events.on("routeChangeComplete", handleRouteChange);
 
-    // Lắng nghe sự kiện click để sử dụng handleScrollToClick
     document.addEventListener("click", handleScrollToClick);
 
-    // Lắng nghe sự kiện scroll để hiển thị nút cuộn lên đầu
     const handleScroll = () => {
       setShowScrollTopButton(window.scrollY > 300);
     };
