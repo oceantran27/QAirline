@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import latestNews from '../../data/latestNews.json';
 import featuredArticles from '../../data/featuredArticles.json';
 import Head from 'next/head';
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -97,7 +98,7 @@ const NewsDetail = ({ article, relatedArticles }) => {
                 Chia sẻ
               </Button>
             </div>
-            <Button variant="outline" size="sm">
+            <Button variant="orange" size="sm">
               <BookmarkIcon className="h-4 w-4 mr-2" />
               Lưu
             </Button>
@@ -109,19 +110,17 @@ const NewsDetail = ({ article, relatedArticles }) => {
             <ul className="space-y-4">
               {relatedArticles.map((item) => (
                 <li key={item.slug} className="flex space-x-4">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-24 h-16 object-cover rounded"
-                  />
-                  <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white">
-                      {item.title}
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">
-                      {item.description}
-                    </p>
-                  </div>
+                  <Link href={`/news/${item.slug}`} className="flex space-x-4">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-24 h-16 object-cover rounded"
+                    />
+                    <div>
+                      <h4 className="font-semibold text-gray-900 dark:text-white">{item.title}</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">{item.description}</p>
+                    </div>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -148,7 +147,7 @@ const NewsDetail = ({ article, relatedArticles }) => {
             </div>
             <div className="mt-4">
               <Input placeholder="Viết gì đó..." />
-              <Button className="mt-2">Đăng bình luận</Button>
+              <Button variant="orange" className="mt-2">Đăng bình luận</Button>
             </div>
           </div>
         </article>

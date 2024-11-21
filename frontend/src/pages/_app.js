@@ -2,10 +2,12 @@ import '../styles/index.css';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps }) {
   const [showScrollTopButton, setShowScrollTopButton] = useState(false);
   const [lastClickY, setLastClickY] = useState(0);
+  const router = useRouter();
 
   const smoothScroll = (targetPosition, duration) => {
     const startPosition = window.scrollY;
@@ -31,8 +33,11 @@ function MyApp({ Component, pageProps }) {
   };
 
   const handleScrollToClick = (event) => {
+    // Bỏ qua nếu click xảy ra trên thẻ liên kết hoặc nút điều hướng
+    if (event.target.tagName === "A" || event.target.tagName === "BUTTON") return;
+
     const mouseY = event.clientY;
-    const threshold = 200; 
+    const threshold = 200; // Ngưỡng để tránh cuộn không mong muốn
 
     if (Math.abs(mouseY - lastClickY) < threshold) return;
 
@@ -48,18 +53,28 @@ function MyApp({ Component, pageProps }) {
   };
 
   useEffect(() => {
+    // Tự động cuộn lên đầu khi chuyển trang
+    const handleRouteChange = () => {
+      window.scrollTo(0, 0);
+    };
+
+    router.events.on("routeChangeComplete", handleRouteChange);
+
+    // Lắng nghe sự kiện click để sử dụng handleScrollToClick
+    document.addEventListener("click", handleScrollToClick);
+
+    // Lắng nghe sự kiện scroll để hiển thị nút cuộn lên đầu
     const handleScroll = () => {
       setShowScrollTopButton(window.scrollY > 300);
     };
-
-    document.addEventListener("click", handleScrollToClick);
     window.addEventListener("scroll", handleScroll);
 
     return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
       document.removeEventListener("click", handleScrollToClick);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastClickY]);
+  }, [lastClickY, router.events]);
 
   return (
     <>
