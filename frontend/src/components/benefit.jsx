@@ -104,7 +104,7 @@ export default function Benefit() {
             >
               <HomeNewsCard
                 slug="nhung-dieu-can-xem-va-lam-khi-den-tham-nhat-ban"
-                image="/post-1.jpg"
+                image="/News/post-1.jpg"
                 title="Những điều cần xem và làm khi đến thăm Nhật Bản"
                 date={{ day: "08", month: "Tháng 12" }}
                 author="Quản lý"
