@@ -15,19 +15,11 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
+import useFlightSearch from "@/hooks/useFlightSearch";
 import { format } from "date-fns";
 
 function SearchFlightsForm() {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [tripType, setTripType] = useState("roundTrip");
-  const [selectedDepartureDate, setSelectedDepartureDate] = useState(null);
-  const [selectedReturnDate, setSelectedReturnDate] = useState(null);
-  const [passengerCount, setPassengerCount] = useState(1);
-
-  // State for airport selection
-  const [fromAirport, setFromAirport] = useState("");
-  const [toAirport, setToAirport] = useState("");
 
   const handleExpand = () => {
     setIsExpanded(true);
@@ -37,13 +29,23 @@ function SearchFlightsForm() {
     setIsExpanded(false);
   };
 
-  // Function to swap the selected airports
-  const swapAirports = () => {
-    setFromAirport((prevFromAirport) => {
-      setToAirport(prevFromAirport);
-      return toAirport;
-    });
-  };
+  const {
+    fromAirport,
+    setFromAirport,
+    toAirport,
+    setToAirport,
+    departureDate,
+    setDepartureDate,
+    returnDate,
+    setReturnDate,
+    passengerCount,
+    setPassengerCount,
+    tripType,
+    setTripType,
+    swapAirports,
+    errors,
+    isValid,
+  } = useFlightSearch();
 
   // Định nghĩa số cột dựa trên tripType
   const gridColumns =
@@ -116,16 +118,17 @@ function SearchFlightsForm() {
               <Popover>
                 <PopoverTrigger asChild>
                   <button className="text-sm font-bold w-full justify-start text-left pl-0 border-none">
-                    {selectedDepartureDate
-                      ? format(selectedDepartureDate, "PPP")
+                    {departureDate
+                      ? format(departureDate, "PPP")
                       : "Chọn ngày đi"}
                   </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 border-none">
+                <PopoverContent className="w-auto p-0 border-none shadow-lg">
                   <Calendar
                     mode="single"
-                    selected={selectedDepartureDate}
-                    onSelect={setSelectedDepartureDate}
+                    disableBefore={new Date()}
+                    selected={departureDate}
+                    onSelect={setDepartureDate}
                     className="border-none shadow-none"
                   />
                 </PopoverContent>
@@ -142,16 +145,17 @@ function SearchFlightsForm() {
                 <Popover>
                   <PopoverTrigger asChild>
                     <button className="text-sm font-bold w-full justify-start text-left pl-0 border-none">
-                      {selectedReturnDate
-                        ? format(selectedReturnDate, "PPP")
+                      {returnDate
+                        ? format(returnDate, "PPP")
                         : "Chọn ngày về"}
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 border-none">
+                  <PopoverContent className="w-auto p-0 border-none shadow-lg">
                     <Calendar
                       mode="single"
-                      selected={selectedReturnDate}
-                      onSelect={setSelectedReturnDate}
+                      disableBefore={departureDate} 
+                      selected={returnDate}
+                      onSelect={setReturnDate}
                       className="border-none shadow-none"
                     />
                   </PopoverContent>
@@ -163,7 +167,10 @@ function SearchFlightsForm() {
           {/* Nút tìm kiếm */}
           <button
             aria-label="Tìm chuyến bay"
-            className="bg-orange text-white flex items-center justify-center h-full gap-0 py-6 outline-none border-none rounded-r-lg font-semibold text-sm transition duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-500/50"
+            className={`bg-orange text-white flex items-center justify-center h-full gap-0 py-6 outline-none border-none rounded-r-lg font-semibold text-sm transition duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-500/50 ${
+              !isValid ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={!isValid}
           >
             <MdSearch size={20} /> TÌM CHUYẾN
           </button>
