@@ -1,10 +1,13 @@
 import { useState } from "react"
+import { useRouter } from "next/navigation"
+
 import { ChevronsRight, Info, Plane, RefreshCw, Luggage } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 export function FlightCard({ flights }) {
+    const router = useRouter()
     const [expandedFlight, setExpandedFlight] = useState(null)
     const [expandedClass, setExpandedClass] = useState(null)
   
@@ -18,6 +21,10 @@ export function FlightCard({ flights }) {
       }
     }
 
+    const handleSelectFlight = (flightId, optionId) => {
+        router.push(`/confirm?flightId=${flightId}&optionId=${optionId}`)
+    }
+
   return (
     <div className="flex-1 space-y-4">
         {flights.map((flight, index) => (
@@ -28,10 +35,10 @@ export function FlightCard({ flights }) {
 
                 <div className="flex-1">
                     <div className="flex items-center gap-4 mb-4">
-                    <div className="flex flex-col items-center">
-                        <span className="text-2xl font-bold">{flight.departureTime}</span>
-                        <span className="text-sm text-gray-500">{flight.departureCode}</span>
-                    </div>
+                        <div className="flex flex-col items-center">
+                            <span className="text-2xl font-bold">{flight.departureTime}</span>
+                            <span className="text-sm text-gray-500">{flight.departureCode}</span>
+                        </div>
                     <div className="flex-1 relative">
                         <div className="border-t border-gray-300 absolute w-full top-4"></div>
                         <ChevronsRight className="text-orange-500 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
@@ -165,7 +172,7 @@ export function FlightCard({ flights }) {
                             </div>
                             </div>
                         </div>
-                        <Button className="bg-orange w-full mt-4">Chọn</Button>
+                        <Button className="bg-orange w-full mt-4" onClick={() => handleSelectFlight(flight.id, option.id)}>Chọn</Button>
                         </div>
                     ))}
                     </div>
@@ -215,7 +222,7 @@ export function FlightCard({ flights }) {
                             </div>
                             </div>
                         </div>
-                        <Button className="bg-orange w-full mt-4">Chọn</Button>
+                        <Button className="bg-orange w-full mt-4" onClick={() => handleSelectFlight(flight.id, option.id)}>Chọn</Button>
                         </div>
                     ))}
                     </div>
