@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import latestNews from '../../data/latestNews.json';
 import featuredArticles from '../../data/featuredArticles.json';
@@ -17,15 +17,28 @@ import {
   MessageSquareIcon,
 } from "lucide-react";
 
-const NewsDetail = ({ article, relatedArticles }) => {
+const NewsDetail = () => {
   const router = useRouter();
+  const { slug } = router.query;
 
-  if (router.isFallback) {
-    return <div>Đang tải...</div>;
-  }
+  const [article, setArticle] = useState(null);
+  const [relatedArticles, setRelatedArticles] = useState([]);
+
+  useEffect(() => {
+    if (slug) {
+      const allArticles = [...latestNews, ...featuredArticles];
+      const foundArticle = allArticles.find((item) => item.slug === slug);
+      setArticle(foundArticle);
+
+      const related = allArticles
+        .filter((item) => item.slug !== slug)
+        .slice(0, 3);
+      setRelatedArticles(related);
+    }
+  }, [slug]);
 
   if (!article) {
-    return <div>Bài viết không tồn tại</div>;
+    return <div>Đang tải...</div>;
   }
 
   return (
@@ -38,7 +51,7 @@ const NewsDetail = ({ article, relatedArticles }) => {
       <main className="container mx-auto px-4 py-8">
         <article className="max-w-4xl mx-auto">
           {/* Nút Quay lại */}
-          <Button variant="ghost" className="mb-4 -ml-2" onClick={() => window.history.back()}>
+          <Button variant="ghost" className="mb-4 -ml-2" onClick={() => router.back()}>
             <ArrowLeftIcon className="mr-2 h-4 w-4" />
             Quay lại trang trước
           </Button>
@@ -139,7 +152,7 @@ const NewsDetail = ({ article, relatedArticles }) => {
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white">User {item}</p>
                     <p className="text-gray-600 dark:text-gray-300">
-                      This is a sample comment. Great article!
+                      Đây là một bình luận mẫu. Bài viết thật tuyệt!
                     </p>
                   </div>
                 </div>
@@ -155,42 +168,5 @@ const NewsDetail = ({ article, relatedArticles }) => {
     </div>
   );
 };
-
-export async function getStaticPaths() {
-  const allArticles = [...latestNews, ...featuredArticles];
-
-  const paths = allArticles.map((article) => ({
-    params: { slug: article.slug },
-  }));
-
-  return {
-    paths,
-    fallback: false,
-  };
-}
-
-export async function getStaticProps({ params }) {
-  const { slug } = params;
-
-  const allArticles = [...latestNews, ...featuredArticles];
-  const article = allArticles.find((item) => item.slug === slug);
-
-  const relatedArticles = allArticles
-    .filter((item) => item.slug !== slug)
-    .slice(0, 3);
-
-  if (!article) {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      article,
-      relatedArticles,
-    },
-  };
-}
 
 export default NewsDetail;

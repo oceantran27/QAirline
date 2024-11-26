@@ -86,14 +86,7 @@ export default function Navbar() {
                     Chuyến bay
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href="/destination"
-                    className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200"
-                  >
-                    Destination
-                  </Link>
-                </li>
+                
                 <li>
                   <Link
                     href="/news"
@@ -102,20 +95,29 @@ export default function Navbar() {
                     Tin tức
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href="/pages"
-                    className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200"
-                  >
-                    Pages
-                  </Link>
-                </li>
+                
                 <li>
                   <Link
                     href="/contact"
                     className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200"
                   >
                     Liên hệ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/login"
+                    className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200 text-orange"
+                  >
+                    Đăng nhập
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/signup"
+                    className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200 text-orange"
+                  >
+                    Đăng ký
                   </Link>
                 </li>
               </ul>

@@ -10,7 +10,7 @@ import {
   SelectLabel,
 } from "@/components/ui/select";
 
-export default function AirportSelect({ label, placeholder, value, onChange }) {
+export default function AirportSelect({ placeholder, value, onChange }) {
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="text-sm font-bold w-full border-none shadow-none outline-none">
