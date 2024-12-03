@@ -33,7 +33,7 @@ export default function PasswordChange() {
         </div>
 
         <div className="text-right">
-          <Button>LƯU</Button>
+          <Button className="bg-orange text-white hover:bg-orangeLight" >LƯU</Button>
         </div>
       </form>
     </div>

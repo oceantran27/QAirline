@@ -1,21 +1,19 @@
 'use client'
 
-import { useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import React, { useState } from 'react'
 import { MdChair } from "react-icons/md"
 import { cn } from '@/lib/utils'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 
 export default function SeatSelector() {
-  const [selectedSeat, setSelectedSeat] = useState(null)  // No type annotation
+  const [selectedSeat, setSelectedSeat] = useState(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [tempSelectedSeat, setTempSelectedSeat] = useState(null)  // No type annotation
+  const [tempSelectedSeat, setTempSelectedSeat] = useState(null)
   
   const columns = ['A', 'B', 'C', 'D', 'E', 'G']
   const rows = Array.from({ length: 44 }, (_, i) => i + 1)
 
-  // Initial seat state, no need for type annotations
   const initialSeats = rows.flatMap(row =>
     columns.map(col => ({
       id: `${row}${col}`,
@@ -30,11 +28,13 @@ export default function SeatSelector() {
 
   const handleSeatClick = (seatId) => {
     const seat = seats.find(s => s.id === seatId)
+    console.log('Seat clicked:', seat);
     if (seat?.type === 'available') {
       setTempSelectedSeat(seatId)
       setIsDialogOpen(true)
     }
   }
+  
 
   const confirmSeatSelection = () => {
     if (tempSelectedSeat) {
@@ -57,7 +57,7 @@ export default function SeatSelector() {
       <div className="w-full md:w-72 space-y-4">
         <div className="border rounded-lg p-4">
           <div className="flex items-center gap-2 text-sm">
-            <div className="w-6 h-6 rounded-full bg-gray-600 text-white flex items-center justify-center">1</div>
+            <div className="w-6 h-6 rounded-full bg-zinc-600 text-white flex items-center justify-center">1</div>
             <div className="font-medium">TRI...</div>
             <div className="text-amber-500 flex items-center gap-1">
               ⚠️ {selectedSeat ? `Đã chọn ${selectedSeat}` : 'Chưa chọn chỗ ngồi'}
@@ -81,7 +81,7 @@ export default function SeatSelector() {
               <span className="text-sm">Không còn trống</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 flex items-center justify-center text-gray-500 bg-white border-2 border-gray-300 rounded">
+              <div className="w-8 h-8 flex items-center justify-center text-zinc-500 bg-white border-2 border-zinc-300 rounded">
                 <MdChair size={24} />
               </div>
               <span className="text-sm">Chỗ ngồi còn trống</span>
@@ -98,18 +98,7 @@ export default function SeatSelector() {
 
       {/* Right Panel - Seat Map */}
       <div className="flex-1 relative overflow-auto max-h-[80vh] md:max-h-none">
-        <div className="sticky left-0 top-1/2 -translate-y-1/2">
-          <button className="p-2 hover:bg-gray-100 rounded-full">
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="sticky right-0 top-1/2 -translate-y-1/2">
-          <button className="p-2 hover:bg-gray-100 rounded-full">
-            <ChevronRight className="w-6 h-6" />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-[auto_repeat(6,1fr)] gap-2 px-12">
+        <div className="grid grid-cols-[auto_repeat(6,1fr)] gap-x-2 px-12">
           {/* Column Headers */}
           <div className="h-8"></div>
           {columns.map(col => (
@@ -120,30 +109,31 @@ export default function SeatSelector() {
 
           {/* Seats Grid */}
           {rows.map(row => (
-            <>
-              <div key={`row-${row}`} className="flex items-center justify-center h-8 text-sm font-medium">
+            <React.Fragment key={`row-${row}`}>
+              <div className="flex items-center justify-end h-8 text-sm font-medium pr-2">
                 {row}
               </div>
               {columns.map(col => {
                 const seat = seats.find(s => s.id === `${row}${col}`)
                 return (
-                  <button
-                    key={`${row}${col}`}
-                    onClick={() => handleSeatClick(`${row}${col}`)}
-                    disabled={seat?.type === 'blocked' || seat?.type === 'unavailable'}
-                    className={cn(
-                      "w-8 h-8 rounded border-2 transition-colors flex items-center justify-center",
-                      seat?.type === 'available' && "bg-white border-gray-300 hover:border-gray-400 text-gray-500",
-                      seat?.type === 'selected' && "bg-blue-100 border-blue-400 text-blue-500",
-                      seat?.type === 'unavailable' && "bg-amber-50 border-amber-200 text-amber-500",
-                      seat?.type === 'blocked' && "bg-red-100 border-red-400 text-red-500"
-                    )}
-                  >
-                    <MdChair size={20} />
-                  </button>
+                  <div key={`${row}${col}`} className="flex items-center justify-center">
+                    <button
+                      onClick={() => handleSeatClick(`${row}${col}`)}
+                      disabled={seat?.type === 'blocked' || seat?.type === 'unavailable'}
+                      className={cn(
+                        "w-8 h-8 rounded transition-colors flex items-center justify-center",
+                        seat?.type === 'available' && "bg-white border-zinc-300 hover:border-zinc-400 text-zinc-500",
+                        seat?.type === 'selected' && "bg-cyan-100 border-cyan-400 text-cyan-500",
+                        seat?.type === 'unavailable' && "bg-amber-50 border-amber-200 text-amber-500",
+                        seat?.type === 'blocked' && "bg-red-100 border-red-400 text-red-500"
+                      )}
+                    >
+                      <MdChair size={30} />
+                    </button>
+                  </div>
                 )
               })}
-            </>
+            </React.Fragment>
           ))}
         </div>
       </div>

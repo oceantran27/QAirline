@@ -57,7 +57,7 @@ const FlightBookingTabs = () => {
             <div className='flex flex-col gap-2'>
               <Input placeholder="Mã đặt chỗ/Số vé điện tử" />
               <Input placeholder="Họ" />
-              <Button className="w-full bg-red">TÌM KIẾM</Button>  
+              <Button className="w-full bg-orange">TÌM KIẾM</Button>  
             </div>
           </TabsContent>
 
@@ -66,7 +66,7 @@ const FlightBookingTabs = () => {
             <div className='flex flex-col gap-2'>
               <Input placeholder="Mã đặt chỗ" />
               <Input placeholder="Họ" />
-              <Button className="w-full bg-red">LÀM THỦ TỤC</Button>
+              <Button className="w-full bg-orange">LÀM THỦ TỤC</Button>
             </div>
           </TabsContent>
         </Tabs>
