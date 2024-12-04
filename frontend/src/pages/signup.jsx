@@ -49,21 +49,21 @@ export default function SignupForm() {
     >
       <Card className="w-full max-w-md bg-white shadow-xl">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold text-center text-[#e8604c]">Create an Account</CardTitle>
+          <CardTitle className="text-3xl font-bold text-center text-[#e8604c]">Tạo Tài Khoản</CardTitle>
           <CardDescription className="text-center">
-            Enter your details to sign up for a new account
+            Nhập thông tin của bạn để đăng ký tài khoản mới
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">First Name</Label>
+                <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">Tên</Label>
                 <Input
                   id="firstName"
                   name="firstName"
                   type="text"
-                  placeholder="John"
+                  placeholder="Hùng"
                   required
                   className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-[#e8604c]"
                   value={formData.firstName}
@@ -71,12 +71,12 @@ export default function SignupForm() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last Name</Label>
+                <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">Họ</Label>
                 <Input
                   id="lastName"
                   name="lastName"
                   type="text"
-                  placeholder="Doe"
+                  placeholder="Nguyễn Văn"
                   required
                   className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-[#e8604c]"
                   value={formData.lastName}
@@ -98,7 +98,7 @@ export default function SignupForm() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+              <Label htmlFor="password" className="text-sm font-medium text-gray-700">Mật Khẩu</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -120,7 +120,7 @@ export default function SignupForm() {
             </div>
             
             <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirm Password</Label>
+                <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Xác Nhận Mật Khẩu</Label>
                 <div className="relative">
                     <Input
                     id="confirmPassword"
@@ -142,7 +142,7 @@ export default function SignupForm() {
             </div>
 
             <Button type="submit" className="w-full bg-[#e8604c] hover:bg-[#d55643] text-white">
-              Sign Up
+              Đăng Ký
             </Button>
           </form>
           <div className="relative my-4">
@@ -150,7 +150,7 @@ export default function SignupForm() {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-muted-foreground">or</span>
+                <span className="bg-white px-2 text-muted-foreground">hoặc</span>
               </div>
             </div>
           <div className="mt-4">
@@ -173,16 +173,16 @@ export default function SignupForm() {
                   fill="#EA4335"
                 />
               </svg>
-              Sign up with Google
+              Đăng ký với Google
             </Button>
           </div>
         </CardContent>
         <div className="px-6 py-4 bg-gray-50 rounded-b-lg">
           <p className="text-sm text-center text-gray-600 w-full">
-            Already have an account?{' '}
+            Đã có tài khoản?{' '}
             <Link href="/login">
                 <Button variant="link" className="p-0 text-[#e8604c] hover:text-[#d55643]">
-                Log in
+                Đăng Nhập
                 </Button>
             </Link>
           </p>

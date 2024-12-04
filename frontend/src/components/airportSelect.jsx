@@ -1,32 +1,33 @@
-import React, { useState } from "react";
+import React from "react";
 import airportsData from "../data/airports_data.json";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectGroup,
+  SelectLabel,
+} from "@/components/ui/select";
 
-export default function AirportSelect({ label, placeholder }) {
-  const [selectedAirport, setSelectedAirport] = useState("");
-
-  const handleSelectChange = (event) => {
-    setSelectedAirport(event.target.value);
-  };
-
+export default function AirportSelect({ placeholder, value, onChange }) {
   return (
-    <select
-      className="text-sm font-bold w-full"
-      value={selectedAirport}
-      onChange={handleSelectChange}
-    >
-      {/* Hiển thị placeholder nếu có */}
-      <option value="" disabled>
-        {placeholder || "Chọn điểm"}
-      </option>
-      {airportsData.map((region) => (
-        <optgroup key={region.region} label={region.region}>
-          {region.airports.map((airport) => (
-            <option key={airport.code} value={airport.code}>
-              {airport.city} ({airport.code})
-            </option>
-          ))}
-        </optgroup>
-      ))}
-    </select>
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="text-sm font-bold w-full border-none shadow-none outline-none">
+        <SelectValue placeholder={placeholder || "Chọn điểm"} />
+      </SelectTrigger>
+      <SelectContent>
+        {airportsData.map((region) => (
+          <SelectGroup key={region.region}>
+            <SelectLabel>{region.region}</SelectLabel>
+            {region.airports.map((airport) => (
+              <SelectItem key={airport.code} value={airport.code}>
+                {airport.city} ({airport.code})
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

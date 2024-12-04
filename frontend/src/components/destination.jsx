@@ -5,7 +5,7 @@ import "react-multi-carousel/lib/styles.css";
 import Image from 'next/image';
 import { CiHeart, CiCamera } from "react-icons/ci";
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import Link from "next/link";
 
 import flights from "@/data/featuredFlights.json";
@@ -221,7 +221,7 @@ export default function Destination() {
         </div>
       </div>
 
-      <div className="text-center my-10 px-6" data-aos="fade-down">
+      {/* <div className="text-center my-10 px-6" data-aos="fade-down">
         <p className="text-orange text-xl pb-2">Featured news</p>
         <h4 className="lg:text-[50px] text-[30px] font-bold">Highlighted Information</h4>
         <div className="pt-8">
@@ -244,7 +244,7 @@ export default function Destination() {
             <Tours image="/tour-5.jpg" name="Ha Noi to Bangkok" />
           </Carousel>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
