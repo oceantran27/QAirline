@@ -1,10 +1,10 @@
 // pages/index.js
 import React from 'react';
-import Hero from '../components/Hero';
-import Destination from '../components/Destination';
-import About from "../components/About";
-import Review from "../components/Review";
-import Benefit from "../components/Benefit";
+import Hero from '../components/hero';
+import Destination from '../components/destination';
+import About from "../components/about";
+import Review from "../components/review";
+import Benefit from "../components/benefit";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";

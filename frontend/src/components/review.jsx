@@ -1,7 +1,9 @@
+// components/Review.js
 import dynamic from "next/dynamic";
 import "react-multi-carousel/lib/styles.css";
 import { MdStar } from "react-icons/md";
 
+// Import `Carousel` với dynamic import để tắt SSR
 const Carousel = dynamic(() => import("react-multi-carousel"), { ssr: false });
 
 const responsive = {
@@ -42,28 +44,26 @@ const responsives = {
   },
 };
 
-const Card = ({ image, name, position, review, rating }) => (
+// Component Card
+const Card = ({ image, name, position }) => (
   <div className="flex flex-col items-center">
-    <img
-      src={image}
-      alt={name}
-      className="rounded-full w-45 h-45 object-cover aspect-square"
-    />
-
-    <div className="shadow-lg rounded-lg mt-10 bg-white p-8 text-center">
+    <img src={image} alt="" className="rounded-full" />
+    <div className="shadow-bg rounded-lg mt-10 bg-white p-8 text-center">
       <span className="flex justify-center">
-        {[...Array(rating)].map((_, index) => (
+        {[...Array(5)].map((_, index) => (
           <MdStar key={index} className="text-[#ffa801] text-xl" />
         ))}
       </span>
-      <p className="text-[#757783] text-lg leading-8 py-4">{review}</p>
+      <p className="text-[#757783] text-lg leading-8 py-4">
+        This is due to their best service, pricing and customer support.
+        It’s thoroughly refreshing to see such a personal touch. Duis aute irure
+        reprehenderit.
+      </p>
       <p className="text-textColor text-xl font-semibold">{name}</p>
-      <p className="text-orange py-2 uppercase">{position}</p>
+      <p className="text text-orange py-2 uppercase">{position}</p>
     </div>
   </div>
 );
-
-
 
 export default function Review() {
   return (
@@ -71,8 +71,8 @@ export default function Review() {
       <div data-aos="fade-up">
         <div className="bg-[url(/bg-plane-bird.png)] bg-contain bg-bottom bg-no-repeat relative z-10">
           <div className="max-w-[1200px] xl:px-0 px-6 mx-auto text-center pt-16">
-            <p className="text-orange text-xl pb-2">Đánh giá từ những người đã trải nghiệm</p>
-            <h4 className="lg:text-[50px] text-[30px] font-bold">Họ đã nói những gì về chúng tôi?</h4>
+            <p className="text-orange text-xl pb-2">Testimonials & reviews</p>
+            <h4 className="lg:text-[50px] text-[30px] font-bold">What They’re Saying</h4>
             <div className="pt-10">
               <Carousel
                 partialVisible={false}
@@ -86,44 +86,10 @@ export default function Review() {
                 keyBoardControl
                 itemClass="carouselItem"
               >
-                <Card
-                  image="/AvatarUser/le_thuy.jpg"
-                  name="Chị Lê Thủy"
-                  position="Khách hàng thân thiết"
-                  review="Chuyến bay của chị và gia đình đi chơi rất thuận lợi. May là chị đặt vé bên em. Bên em tư vấn chọn chuyến cho chị xong lại check in online cho chị nên cả nhà được ngồi gần nhau. "
-                  rating={5}
-                />
-                <Card
-                  image="/AvatarUser/chu_huyen.jpg"
-                  name="Bạn Chu Huyền "
-                  position="Khách hàng thân thiết"
-                  review="Alo, mình và gia đình vừa về. Cảm ơn bên bạn đặt vé cho mình nhé! Cả nhà đi vui lắm bạn ạ. May là bạn tư vấn cho mình giờ vì nhà mình có trẻ nhỏ. Chuyến bay chuẩn giờ, chỗ ngồi đẹp."
-                  rating={5}
-                />
-
-                <Card
-                  image="/AvatarUser/minh_hoa.jpg"
-                  name="Cô Minh Hòa"
-                  position="Khách hàng mới"
-                  review="Cô vừa về đến nhà. Chuyến bay tốt lắm cháu ạ! Chuẩn giờ, bay máy bay to. Con cô bảo đặt được vé giá tốt mà giờ bay cũng rất đẹp. Lần sau lại đặt vé cho cô nhé!"
-                  rating={5}
-                />
-                <Card
-                  image="/AvatarUser/giang.jpg"
-                  name="Chị Giang"
-                  position="Khách hàng mới"
-                  review="Lần đầu chị đặt vé bay đi nước ngoài bên em và cảm thấy vô cùng hài lòng! Chị rất cảm ơn bên em tư vấn cho chị chuyến bay, giờ bay đẹp, thời gian nối chuyến hợp lý, không bị mệt. "
-                  rating={5}
-                />
-
-                <Card
-                  image="/AvatarUser/john.jpg"
-                  name="Anh John"
-                  position="Khách hàng quôc tế"
-                  review="I have leg pain, so I often need to choose a comfortable seat. Your service is excellent! You booked me a ticket on a large, wide-body plane, and I’m very satisfied!"
-                  rating={5}
-                />
-                
+                <Card image="/testimonial-1.jpg" name="Shirley Smith" position="Founder & CEO" />
+                <Card image="/testimonial-2.jpg" name="David Anderson" position="Customer" />
+                <Card image="/testimonial-4.jpg" name="Shirley Smith" position="Founder & CEO" />
+                <Card image="/testimonial-3.jpg" name="Kevin Smith" position="Customer" />
               </Carousel>
             </div>
           </div>
