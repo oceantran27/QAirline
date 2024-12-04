@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="lg:w-1/3">
           <img src="/logo-white.png" alt="Logo" width={130} />
           <p className="my-5">
-            Welcome to our Trip and Tour Agency. Lorem simply text amet cing elit.
+            Chào mừng đến với QAirline. Chúng tôi cung cấp dịch vụ đặt vé máy bay trực tuyến hàng đầu thế giới.
           </p>
           <div className="border-t border-[#A9A8B6] pt-[15px]">
             <ul className="flex flex-col gap-4">
@@ -22,10 +22,10 @@ export default function Footer() {
                 <MdPhone className="text-orange" /> 92 666 888 0000
               </a>
               <a href="#" className="flex items-center gap-2 hover:text-orange">
-                <MdOutlineMailOutline className="text-orange" /> contact@example.com
+                <MdOutlineMailOutline className="text-orange" /> qairline-support@gmail.com
               </a>
               <a href="#" className="flex items-center gap-2 hover:text-orange">
-                <MdOutlineLocationOn className="text-orange" /> 66 Broklyn Street New York, USA
+                <MdOutlineLocationOn className="text-orange" /> Nhà E3, 144 Xuân Thủy, quận Cầu Giấy, Hà Nội , Việt Nam
               </a>
             </ul>
           </div>
@@ -33,7 +33,7 @@ export default function Footer() {
 
         {/* Phần thông tin công ty */}
         <div className="lg:w-1/5">
-          <h6 className="text-white text-xl font-bold my-5 lg:mt-0">Company</h6>
+          <h6 className="text-white text-xl font-bold my-5 lg:mt-0">Công ty</h6>
           <ul className="flex flex-col gap-4">
             <a href="#" className="hover:text-white">About us</a>
             <a href="#" className="hover:text-white">Community Blogs</a>
@@ -45,7 +45,7 @@ export default function Footer() {
 
         {/* Phần khám phá */}
         <div className="lg:w-1/5">
-          <h6 className="text-white text-xl font-bold my-5 lg:mt-0">Explore</h6>
+          <h6 className="text-white text-xl font-bold my-5 lg:mt-0">Khám phá</h6>
           <ul className="flex flex-col gap-4">
             <a href="#" className="hover:text-white">Account</a>
             <a href="#" className="hover:text-white">Privacy Policy</a>
@@ -57,17 +57,17 @@ export default function Footer() {
 
         {/* Phần đăng ký nhận tin */}
         <div className="flex flex-col lg:w-1/3">
-          <h6 className="text-white text-xl font-bold my-5 lg:mt-0">Newsletter</h6>
+          <h6 className="text-white text-xl font-bold my-5 lg:mt-0">Nhận tin tức</h6>
           <input
             type="email"
-            placeholder="Email Address"
+            placeholder="Hòm thư điện tử"
             className="bg-[#00000033] rounded-lg text-center hover:bg-[#0000004d] h-14 outline-none"
           />
           <button className="mt-2 mb-4 bg-orange rounded-lg text-center text-white h-14 outline-none hover:opacity-90">
-            SUBSCRIBE
+            ĐĂNG KÝ
           </button>
           <label className="text-[#A9A8B6]">
-            <input type="checkbox" className="mr-2" />I agree to all terms and policies
+            <input type="checkbox" className="mr-2" />Tôi đồng ý với tất cả các điều khoản và chính sách
           </label>
         </div>
       </div>

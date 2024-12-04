@@ -1,19 +1,29 @@
-import * as React from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { DayPicker } from "react-day-picker"
-
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import * as React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { DayPicker } from "react-day-picker";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  minDate,
+  maxDate,
+  disableBefore,
+  disableAfter,
   ...props
 }) {
   return (
-    (<DayPicker
+    <DayPicker
       showOutsideDays={showOutsideDays}
+      disabled={(date) => {
+        // Logic vô hiệu hóa
+        const today = new Date();
+        if (disableBefore && date < disableBefore) return true; // Disable ngày trước disableBefore
+        if (disableAfter && date > disableAfter) return true; // Disable ngày sau disableAfter
+        return false; // Ngày hợp lệ
+      }}
       className={cn("p-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
@@ -53,9 +63,11 @@ function Calendar({
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
       }}
-      {...props} />)
+      {...props}
+    />
   );
 }
-Calendar.displayName = "Calendar"
 
-export { Calendar }
+Calendar.displayName = "Calendar";
+
+export { Calendar };
