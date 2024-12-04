@@ -45,32 +45,13 @@ export const createMockAdmin = async (req, res) => {
 
 export const createAdmin = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
-      });
-    }
-
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, ADMIN_COLLECTION_NAME, verifiedId);
-    const adminDoc = await getDoc(docRef);
-
-    if (!adminDoc.exists() || adminDoc.data().role !== "admin") {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
-    }
-
-    const { email, password, firstName, lastName, permissions } = req.body;
+    const { email, password, firstName, lastName } = req.body;
     const user = await auth.createUser({
       email,
       password,
     });
 
-    const newAdmin = new Admin({ firstName, lastName, email, permissions });
+    const newAdmin = new Admin({ firstName, lastName, email });
     newAdmin.createdAt = new Date();
     newAdmin.updatedAt = new Date();
 
@@ -88,29 +69,10 @@ export const createAdmin = async (req, res) => {
 
 export const getCurrentAdmin = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
-      });
-    }
-
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, ADMIN_COLLECTION_NAME, verifiedId);
-    const adminDoc = await getDoc(docRef);
-
-    if (adminDoc.exists()) {
-      res.status(200).send({
-        message: "Admin fetched successfully",
-        data: new Admin({ ...adminDoc.data() }),
-      });
-    } else {
-      res.status(404).send({
-        message: "Admin not found",
-      });
-    }
+    res.status(200).send({
+      message: "Admin fetched successfully",
+      data: req.user,
+    });
   } catch (error) {
     res.status(400).send({
       message: error.message,
@@ -120,25 +82,6 @@ export const getCurrentAdmin = async (req, res) => {
 
 export const getAllCustomers = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
-      });
-    }
-
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, ADMIN_COLLECTION_NAME, verifiedId);
-    const adminDoc = await getDoc(docRef);
-
-    if (!adminDoc.exists() || adminDoc.data().role !== "admin") {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
-    }
-
     const snapshot = await getDocs(collection(db, CUSTOMER_COLLECTION_NAME));
     const customers = snapshot.docs.map(
       (doc) => new Customer({ id: doc.id, ...doc.data() })
@@ -156,25 +99,6 @@ export const getAllCustomers = async (req, res) => {
 
 export const getAllAdmins = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
-      });
-    }
-
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, ADMIN_COLLECTION_NAME, verifiedId);
-    const adminDoc = await getDoc(docRef);
-
-    if (!adminDoc.exists() || adminDoc.data().role !== "admin") {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
-    }
-
     const snapshot = await getDocs(collection(db, ADMIN_COLLECTION_NAME));
     const admins = snapshot.docs.map(
       (doc) => new Admin({ id: doc.id, ...doc.data() })
@@ -192,40 +116,20 @@ export const getAllAdmins = async (req, res) => {
 
 export const updateCurrentAdmin = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
+    const user = req.user;
+    const docRef = doc(db, ADMIN_COLLECTION_NAME, user.uid);
+    const updateData = {
+      ...user,
+      ...req.body,
+    };
 
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
+    if (updateData.email !== user.email) {
+      return res.status(400).send({
+        message: "Email cannot be changed",
       });
     }
 
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, ADMIN_COLLECTION_NAME, verifiedId);
-    const adminDoc = await getDoc(docRef);
-
-    if (!adminDoc.exists()) {
-      return res.status(404).send({
-        message: "Admin not found",
-      });
-    }
-
-    const adminData = adminDoc.data();
-    const verifiedEmail = adminData.email;
-
-    const adminEmail = req.body.email;
-
-    if (adminEmail !== verifiedEmail) {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
-    }
-
-    const data = req.body;
-    await updateDoc(docRef, data);
-
+    await updateDoc(docRef, updateData);
     res.status(200).send({
       message: "Admin updated successfully",
     });
@@ -238,36 +142,12 @@ export const updateCurrentAdmin = async (req, res) => {
 
 export const deleteCurrentAdmin = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
-
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
-      });
-    }
-
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, ADMIN_COLLECTION_NAME, verifiedId);
-    const adminDoc = await getDoc(docRef);
-
-    if (!adminDoc.exists()) {
-      return res.status(404).send({
-        message: "Admin not found",
-      });
-    }
-
-    const adminData = adminDoc.data();
-
-    if (adminData.role !== "admin") {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
-    }
+    console.log(req.user);
+    const user = req.user;
+    const docRef = doc(db, ADMIN_COLLECTION_NAME, user.uid);
 
     await deleteDoc(docRef);
-    await auth.deleteUser(verifiedId);
+    await auth.deleteUser(user.uid);
 
     res.status(200).send({
       message: "Admin deleted successfully",

@@ -41,29 +41,10 @@ export const createCustomer = async (req, res) => {
 
 export const getCurrentCustomer = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
-      });
-    }
-
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, verifiedId);
-    const customerDoc = await getDoc(docRef);
-
-    if (customerDoc.exists()) {
-      res.status(200).send({
-        message: "Customer fetched successfully",
-        data: new Customer({ ...customerDoc.data() }),
-      });
-    } else {
-      res.status(404).send({
-        message: "Customer not found",
-      });
-    }
+    res.status(200).send({
+      message: "Customer fetched successfully",
+      data: req.user,
+    });
   } catch (error) {
     res.status(400).send({
       message: error.message,
@@ -73,36 +54,16 @@ export const getCurrentCustomer = async (req, res) => {
 
 export const updateCurrentCustomer = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
-
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
-      });
-    }
-
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, verifiedId);
-    const customerDoc = await getDoc(docRef);
-
-    if (!customerDoc.exists()) {
-      return res.status(404).send({
-        message: "Customer not found",
-      });
-    }
-
-    const customerData = customerDoc.data();
-    const verifiedEmail = customerData.email;
+    const user = req.user;
+    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, user.uid);
     const updateData = {
-      ...customerData,
+      ...user,
       ...req.body,
     };
 
-    if (updateData.email !== verifiedEmail) {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
+    if (updateData.email !== user.email) {
+      return res.status(400).send({
+        message: "Email cannot be changed",
       });
     }
 
@@ -119,36 +80,11 @@ export const updateCurrentCustomer = async (req, res) => {
 
 export const deleteCurrentCustomer = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
-
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
-      });
-    }
-
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, verifiedId);
-    const customerDoc = await getDoc(docRef);
-
-    if (!customerDoc.exists()) {
-      return res.status(404).send({
-        message: "Customer not found",
-      });
-    }
-
-    const customerData = customerDoc.data();
-
-    if (customerData.role !== "customer") {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
-    }
+    const user = req.user;
+    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, user.uid);
 
     await deleteDoc(docRef);
-    await auth.deleteUser(verifiedId);
+    await auth.deleteUser(user.uid);
 
     res.status(200).send({
       message: "Customer deleted successfully",
