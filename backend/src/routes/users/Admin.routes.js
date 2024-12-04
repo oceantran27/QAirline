@@ -1,18 +1,20 @@
 import express from "express";
 import {
+  createMockAdmin,
   createAdmin,
-  getAdmins,
-  getAdminById,
-  updateAdmin,
-  deleteAdmin,
-} from "../../controllers/users/Admin.controller";
+  getCurrentAdmin,
+  updateCurrentAdmin,
+  deleteCurrentAdmin,
+  getAllAdmins,
+} from "../../controllers/users/admin.controller";
 
 const router = express.Router();
 
-router.get("/", getAdmins);
+router.get("/", getCurrentAdmin);
+router.get("/all", getAllAdmins);
 router.post("/new", createAdmin);
-router.get("/:id", getAdminById);
-router.put("/update/:id", updateAdmin);
-router.delete("/delete/:id", deleteAdmin);
+router.put("/update", updateCurrentAdmin);
+router.delete("/delete", deleteCurrentAdmin);
 
+router.post("/new_mock", createMockAdmin);
 export default router;
