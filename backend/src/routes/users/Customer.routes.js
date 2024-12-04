@@ -5,15 +5,18 @@ import {
   updateCurrentCustomer,
   deleteCurrentCustomer,
 } from "../../controllers/users/customer.controller";
-
 import { getAllCustomers } from "../../controllers/users/admin.controller";
+import {
+  authenticateToken,
+  checkAdminRole,
+} from "../../middleware/auth.middleware";
 
 const router = express.Router();
 
-router.get("/", getCurrentCustomer);
-router.get("/all", getAllCustomers);
+router.get("/", authenticateToken, getCurrentCustomer);
+router.get("/all", authenticateToken, checkAdminRole, getAllCustomers);
 router.post("/new", createCustomer);
-router.put("/update", updateCurrentCustomer);
-router.delete("/delete", deleteCurrentCustomer);
+router.put("/update", authenticateToken, updateCurrentCustomer);
+router.delete("/delete", authenticateToken, deleteCurrentCustomer);
 
 export default router;

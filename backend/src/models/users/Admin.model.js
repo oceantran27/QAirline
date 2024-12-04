@@ -1,7 +1,5 @@
 class Admin {
-  constructor({ firstName, lastName, email, permissions }) {
-    //private
-    this.permissions = permissions; //["MANAGE_USERS", "VIEW_BOOKINGS", "MANAGE_FLIGHTS"]
+  constructor({ firstName, lastName, email }) {
     //public
     this.firstName = firstName;
     this.lastName = lastName;
