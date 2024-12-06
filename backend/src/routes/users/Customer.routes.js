@@ -1,11 +1,11 @@
 import express from "express";
 import {
   createCustomer,
-  getCurrentCustomer,
-  updateCurrentCustomer,
-  deleteCurrentCustomer,
+  getCustomer,
+  updateCustomer,
+  deleteCustomer,
+  getAllCustomers,
 } from "../../controllers/users/customer.controller";
-import { getAllCustomers } from "../../controllers/users/admin.controller";
 import {
   authenticateToken,
   checkAdminRole,
@@ -13,10 +13,10 @@ import {
 
 const router = express.Router();
 
-router.get("/", authenticateToken, getCurrentCustomer);
+router.get("/", authenticateToken, getCustomer);
 router.get("/all", authenticateToken, checkAdminRole, getAllCustomers);
 router.post("/new", createCustomer);
-router.put("/update", authenticateToken, updateCurrentCustomer);
-router.delete("/delete", authenticateToken, deleteCurrentCustomer);
+router.put("/update", authenticateToken, updateCustomer);
+router.delete("/delete", authenticateToken, deleteCustomer);
 
 export default router;

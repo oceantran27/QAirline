@@ -1,34 +1,15 @@
-import firebase from "../../database/firebase";
-import Customer from "../../models/users/customer.model";
-import admin from "../../database/firebaseAdmin";
 import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
-
-const db = getFirestore(firebase);
-const auth = admin.auth();
-
-const CUSTOMER_COLLECTION_NAME = "customers";
+  dbCreateCustomer,
+  dbGetAllCustomers,
+  dbGetCustomerById,
+  dbUpdateCustomer,
+  dbDeleteCustomer,
+} from "../../services/users/customer.service";
 
 export const createCustomer = async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body;
-    const user = await auth.createUser({
-      email,
-      password,
-    });
-
-    const newCustomer = new Customer({ firstName, lastName, email });
-    newCustomer.createdAt = new Date();
-    newCustomer.updatedAt = new Date();
-
-    const customerRef = doc(db, CUSTOMER_COLLECTION_NAME, user.uid);
-    await setDoc(customerRef, { ...newCustomer });
+    await dbCreateCustomer({ email, password, firstName, lastName });
     res.status(201).send({
       message: "Customer created successfully",
     });
@@ -39,11 +20,12 @@ export const createCustomer = async (req, res) => {
   }
 };
 
-export const getCurrentCustomer = async (req, res) => {
+export const getAllCustomers = async (req, res) => {
   try {
+    const customers = await dbGetAllCustomers();
     res.status(200).send({
-      message: "Customer fetched successfully",
-      data: req.user,
+      message: "Customers fetched successfully",
+      data: customers,
     });
   } catch (error) {
     res.status(400).send({
@@ -52,22 +34,47 @@ export const getCurrentCustomer = async (req, res) => {
   }
 };
 
-export const updateCurrentCustomer = async (req, res) => {
+export const getCustomer = async (req, res) => {
   try {
+    const reqUid = req.query.id;
     const user = req.user;
-    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, user.uid);
-    const updateData = {
-      ...user,
-      ...req.body,
-    };
 
-    if (updateData.email !== user.email) {
-      return res.status(400).send({
-        message: "Email cannot be changed",
+    if (reqUid && user.role !== "admin" && user.uid !== reqUid) {
+      return res.status(403).send({
+        message: "You do not have permission to perform this action",
       });
     }
 
-    await updateDoc(docRef, updateData);
+    if (!reqUid) {
+      return res.status(200).send({
+        data: new Customer({ ...user }),
+      });
+    }
+
+    const customer = await dbGetCustomerById(reqUid);
+    res.status(200).send({
+      data: customer,
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error.message,
+    });
+  }
+};
+
+export const updateCustomer = async (req, res) => {
+  try {
+    const user = req.user;
+    if (user.role !== "admin" && user.uid !== req.query.id) {
+      return res.status(403).send({
+        message: "You do not have permission to perform this action",
+      });
+    }
+
+    let updateData = { ...req.body };
+
+    await dbUpdateCustomer(req.query.id, updateData);
+
     res.status(200).send({
       message: "Customer updated successfully",
     });
@@ -78,13 +85,16 @@ export const updateCurrentCustomer = async (req, res) => {
   }
 };
 
-export const deleteCurrentCustomer = async (req, res) => {
+export const deleteCustomer = async (req, res) => {
   try {
     const user = req.user;
-    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, user.uid);
+    if (user.role !== "admin" && user.uid !== req.query.id) {
+      return res.status(403).send({
+        message: "You do not have permission to perform this action",
+      });
+    }
 
-    await deleteDoc(docRef);
-    await auth.deleteUser(user.uid);
+    await dbDeleteCustomer(req.query.id);
 
     res.status(200).send({
       message: "Customer deleted successfully",

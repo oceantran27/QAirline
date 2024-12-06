@@ -2,9 +2,9 @@ import express from "express";
 import {
   createMockAdmin,
   createAdmin,
-  getCurrentAdmin,
-  updateCurrentAdmin,
-  deleteCurrentAdmin,
+  getAdmin,
+  updateAdmin,
+  deleteAdmin,
   getAllAdmins,
 } from "../../controllers/users/admin.controller";
 import {
@@ -14,11 +14,11 @@ import {
 
 const router = express.Router();
 
-router.get("/", authenticateToken, getCurrentAdmin);
+router.get("/", authenticateToken, checkAdminRole, getAdmin);
 router.get("/all", authenticateToken, checkAdminRole, getAllAdmins);
 router.post("/new", authenticateToken, checkAdminRole, createAdmin);
-router.put("/update", authenticateToken, updateCurrentAdmin);
-router.delete("/delete", authenticateToken, deleteCurrentAdmin);
+router.put("/update", authenticateToken, checkAdminRole, updateAdmin);
+router.delete("/delete", authenticateToken, checkAdminRole, deleteAdmin);
 
 router.post("/new_mock", createMockAdmin);
 export default router;
