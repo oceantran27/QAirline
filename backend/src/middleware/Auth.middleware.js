@@ -13,10 +13,9 @@ export const authenticateToken = async (req, res, next) => {
         message: "Authorization token is required",
       });
     }
-    const userCollectionName = req.url.includes("admin")
-      ? ADMIN_COLLECTION_NAME
-      : CUSTOMER_COLLECTION_NAME;
-    // const userCollectionName = ADMIN_COLLECTION_NAME;
+    const isAdmin = req.headers["admin"];
+    const userCollectionName =
+      isAdmin === "true" ? ADMIN_COLLECTION_NAME : CUSTOMER_COLLECTION_NAME;
 
     const decodedToken = await auth.verifyIdToken(token);
     const userId = decodedToken.uid;
@@ -42,6 +41,7 @@ export const authenticateToken = async (req, res, next) => {
 
 export const checkAdminRole = async (req, res, next) => {
   try {
+    console.log(">>> Check admin role <<<");
     const user = req.user;
     if (user.role !== "admin") {
       return res.status(403).send({
