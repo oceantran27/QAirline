@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 export function PassengerListStep({ passengers, onContinue, onBack }) {
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full max-w-4xl mx-auto mb-8">
       <CardContent className="p-6">
         <h2 className="text-2xl font-semibold mb-6">Danh Sách Hành Khách</h2>
         <div className="space-y-4">
@@ -28,7 +28,7 @@ export function PassengerListStep({ passengers, onContinue, onBack }) {
           <Button variant="outline" onClick={onBack}>
             Quay Lại
           </Button>
-          <Button onClick={onContinue}>Tiếp Tục</Button>
+          <Button variant="orange" onClick={onContinue}>Tiếp Tục</Button>
         </div>
       </CardContent>
     </Card>

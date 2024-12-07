@@ -9,9 +9,9 @@ export function StepIndicator({ currentStep, steps }) {
             <div
               className={`w-12 h-12 rounded-full border-2 flex items-center justify-center ${
                 index < currentStep
-                  ? "bg-primary border-primary text-white"
+                  ? "bg-orange border-orange text-white"
                   : index === currentStep
-                  ? "border-primary text-primary"
+                  ? "border-orange text-orange"
                   : "border-zinc-300 text-zinc-300"
               }`}
             >
@@ -22,7 +22,7 @@ export function StepIndicator({ currentStep, steps }) {
               )}
             </div>
             <div className="text-sm mt-2">
-              <div className={index <= currentStep ? "text-primary font-medium" : "text-zinc-400"}>
+              <div className={index <= currentStep ? "text-orange font-medium" : "text-zinc-400"}>
                 {step.title}
               </div>
               <div className="text-zinc-400 text-xs">
@@ -33,7 +33,7 @@ export function StepIndicator({ currentStep, steps }) {
           {index < steps.length - 1 && (
             <div
               className={`h-0.5 w-24 mx-4 ${
-                index < currentStep ? "bg-primary" : "bg-zinc-300"
+                index < currentStep ? "bg-orange" : "bg-zinc-300"
               }`}
             />
           )}
