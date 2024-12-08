@@ -4,6 +4,7 @@ import {
   MdOutlineMailOutline,
   MdOutlineLocationOn,
 } from "react-icons/md";
+import { Checkbox } from "@/components/ui/checkbox"
 
 export default function Footer() {
   return (

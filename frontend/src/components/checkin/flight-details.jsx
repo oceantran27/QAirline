@@ -82,7 +82,7 @@ export function FlightDetailsStep({ flightDetails, selectedOption, onContinue, o
               <Button variant="outline" onClick={onCancel}>
                 Hủy
               </Button>
-              <Button onClick={onContinue}>
+              <Button variant="orange" onClick={onContinue}>
                 Tiếp tục
               </Button>
             </div>

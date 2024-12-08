@@ -19,7 +19,7 @@ export function SeatSelectionStep({
           <Button variant="outline" onClick={onBack}>
             Quay Lại
           </Button>
-          <Button onClick={onContinue} disabled={!selectedSeat}>
+          <Button variant="orange" onClick={onContinue} >
             Tiếp Tục
           </Button>
         </div>

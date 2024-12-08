@@ -5,11 +5,13 @@ import { StepIndicator } from "@/components/checkin/step-indicator"
 import { FlightDetailsStep } from "@/components/checkin/flight-details"
 import { PassengerListStep } from "@/components/checkin/passenger-list"
 import { SeatSelectionStep } from "@/components/checkin/seat-selection"
+import { ConfirmationStep } from "@/components/checkin/confirmation-step"
 
 const steps = [
   { title: "Chi tiết chuyến bay", description: "Xem lại thông tin chuyến bay" },
   { title: "Hành khách", description: "Chọn hành khách" },
   { title: "Chọn ghế", description: "Chọn ghế của bạn" },
+  { title: "Xác nhận", description: "Xác nhận thông tin" }
 ]
 
 const mockFlightDetails = {
@@ -79,6 +81,14 @@ export default function CheckInPage() {
           selectedSeat={selectedSeat}
           onSeatSelect={setSelectedSeat}
           onContinue={handleContinue}
+          onBack={handleBack}
+        />
+      )}
+
+      {currentStep === 3 && (
+        <ConfirmationStep
+          bookingReference="SSCAES"
+          passenger={mockPassengers[0]}
           onBack={handleBack}
         />
       )}
