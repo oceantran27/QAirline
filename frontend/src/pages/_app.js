@@ -1,13 +1,17 @@
 import '../styles/index.css';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import AdminNavbar from "@/components/admin/navbar"
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { usePathname } from 'next/navigation'
 
 function MyApp({ Component, pageProps }) {
   const [showScrollTopButton, setShowScrollTopButton] = useState(false);
   const [lastClickY, setLastClickY] = useState(0);
   const router = useRouter();
+  const pathname = usePathname()
 
   const smoothScroll = (targetPosition, duration) => {
     const startPosition = window.scrollY;
@@ -74,9 +78,20 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
-      <Navbar />
-      <Component {...pageProps} />
-      <Footer />
+      {pathname.slice(0, 7) !== '/admin/' ? (
+        <>
+          <Navbar /> 
+          <Component {...pageProps} /> 
+          <Footer />
+        </>
+      ) : (
+        <div className="flex flex-row relative">
+          <div className="fixed top-0">
+            <AdminNavbar />
+          </div>
+          <Component {...pageProps} /> 
+        </div>
+      )}
 
       {showScrollTopButton && (
         <button

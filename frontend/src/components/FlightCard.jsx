@@ -115,7 +115,7 @@ export function FlightCard({ flights }) {
                         <div className="font-semibold">Phổ thông</div>
                         <div>{flight.economyPrice.toLocaleString()} VND</div>
                     </div>
-                    <span className="absolute -top-2 -right-2 bg-red text-white text-xs px-1.5 py-0.5 rounded-full">
+                    <span className="absolute -top-2 -right-2 bg-orange text-white text-xs px-1.5 py-0.5 rounded-full">
                         Còn {flight.seatsLeft} ghế
                     </span>
                     </Button>
