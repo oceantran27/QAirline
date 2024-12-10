@@ -43,8 +43,9 @@ export const createAdmin = async (req, res) => {
 
 export const getAdmin = async (req, res) => {
   try {
-    const reqId = req.query.id;
-    const admin = await dbGetAdminById(reqId);
+    // const reqId = req.user.uid;
+    // const admin = await dbGetAdminById(reqId);
+    const admin = req.user;
     res.status(200).send({
       message: "Admin fetched successfully",
       data: admin,
@@ -72,7 +73,7 @@ export const getAllAdmins = async (req, res) => {
 
 export const updateAdmin = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id } = req.user.uid;
     let updateData = { ...req.body };
     await dbUpdateAdmin(id, updateData);
     res.status(200).send({
@@ -87,7 +88,7 @@ export const updateAdmin = async (req, res) => {
 
 export const deleteAdmin = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id } = req.user.uid;
     await dbDeleteAdmin(id);
     res.status(200).send({
       message: "Admin deleted successfully",
