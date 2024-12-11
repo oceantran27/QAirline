@@ -5,9 +5,11 @@ import { Eye, EyeOff} from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function SignupForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -26,14 +28,39 @@ export default function SignupForm() {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match")
+      alert("Mật khẩu và xác nhận mật khẩu không khớp")
       return
     }
-    // Here you would typically handle the signup logic
-    console.log('Signup attempted:', formData)
+
+    try {
+      const response = await fetch('http://localhost:3030/api/customer/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        alert('Tạo tài khoản thành công!') 
+        router.push('/login')
+      } else {
+        const errorData = await response.json()
+        alert(`Lỗi: ${errorData.message || 'Không thể tạo tài khoản'}`)
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('Đã xảy ra lỗi khi kết nối đến máy chủ.')
+    }
   }
 
   const handleGoogleSignup = () => {
@@ -165,7 +192,7 @@ export default function SignupForm() {
                   fill="#34A853"
                 />
                 <path
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18c-0.75 1.48-1.18 3.15-1.18 4.93s0.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
                   fill="#FBBC05"
                 />
                 <path
@@ -191,4 +218,3 @@ export default function SignupForm() {
     </div>
   )
 }
-
