@@ -36,22 +36,17 @@ export const getAllCustomers = async (req, res) => {
 
 export const getCustomer = async (req, res) => {
   try {
-    const reqUid = req.query.id;
     const user = req.user;
+    var customer;
 
-    if (reqUid && user.role !== "admin" && user.uid !== reqUid) {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
+    if (user.role === "admin") {
+      customer = await dbGetCustomerById(req.query.id);
     }
 
-    if (!reqUid) {
-      return res.status(200).send({
-        data: new Customer({ ...user }),
-      });
+    if (user.role === "customer") {
+      customer = user;
     }
 
-    const customer = await dbGetCustomerById(reqUid);
     res.status(200).send({
       data: customer,
     });
@@ -65,15 +60,16 @@ export const getCustomer = async (req, res) => {
 export const updateCustomer = async (req, res) => {
   try {
     const user = req.user;
-    if (user.role !== "admin" && user.uid !== req.query.id) {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
-    }
 
     let updateData = { ...req.body };
 
-    await dbUpdateCustomer(req.query.id, updateData);
+    if (user.role === "admin") {
+      await dbUpdateCustomer(req.query.id, updateData);
+    }
+
+    if (user.role === "customer") {
+      await dbUpdateCustomer(user.uid, updateData);
+    }
 
     res.status(200).send({
       message: "Customer updated successfully",
@@ -88,13 +84,14 @@ export const updateCustomer = async (req, res) => {
 export const deleteCustomer = async (req, res) => {
   try {
     const user = req.user;
-    if (user.role !== "admin" && user.uid !== req.query.id) {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
+
+    if (user.role === "admin") {
+      await dbDeleteCustomer(req.query.id, updateData);
     }
 
-    await dbDeleteCustomer(req.query.id);
+    if (user.role === "customer") {
+      await dbDeleteCustomer(user.uid, updateData);
+    }
 
     res.status(200).send({
       message: "Customer deleted successfully",
