@@ -3,6 +3,7 @@ class Customer {
     firstName,
     lastName,
     email,
+    identificationNumber = null,
     passportNumber = null,
     loyaltyPoints = 0,
     bookingHistory = [], // Mảng chứa booking ID
@@ -24,6 +25,7 @@ class Customer {
     this.uid = uid;
     this.firstName = firstName;
     this.lastName = lastName;
+    this.identificationNumber = identificationNumber;
     this.email = email;
     this.phoneNumber = phoneNumber;
     this.dateOfBirth = dateOfBirth;
