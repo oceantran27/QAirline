@@ -1,34 +1,15 @@
-import firebase from "../../database/firebase";
-import Customer from "../../models/users/customer.model";
-import admin from "../../database/firebaseAdmin";
 import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
-
-const db = getFirestore(firebase);
-const auth = admin.auth();
-
-const CUSTOMER_COLLECTION_NAME = "customers";
+  dbCreateCustomer,
+  dbGetAllCustomers,
+  dbGetCustomerById,
+  dbUpdateCustomer,
+  dbDeleteCustomer,
+} from "../../services/users/customer.service";
 
 export const createCustomer = async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body;
-    const user = await auth.createUser({
-      email,
-      password,
-    });
-
-    const newCustomer = new Customer({ firstName, lastName, email });
-    newCustomer.createdAt = new Date();
-    newCustomer.updatedAt = new Date();
-
-    const customerRef = doc(db, CUSTOMER_COLLECTION_NAME, user.uid);
-    await setDoc(customerRef, { ...newCustomer });
+    await dbCreateCustomer({ email, password, firstName, lastName });
     res.status(201).send({
       message: "Customer created successfully",
     });
@@ -39,31 +20,13 @@ export const createCustomer = async (req, res) => {
   }
 };
 
-export const getCurrentCustomer = async (req, res) => {
+export const getAllCustomers = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
-      });
-    }
-
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, verifiedId);
-    const customerDoc = await getDoc(docRef);
-
-    if (customerDoc.exists()) {
-      res.status(200).send({
-        message: "Customer fetched successfully",
-        data: new Customer({ ...customerDoc.data() }),
-      });
-    } else {
-      res.status(404).send({
-        message: "Customer not found",
-      });
-    }
+    const customers = await dbGetAllCustomers();
+    res.status(200).send({
+      message: "Customers fetched successfully",
+      data: customers,
+    });
   } catch (error) {
     res.status(400).send({
       message: error.message,
@@ -71,42 +34,43 @@ export const getCurrentCustomer = async (req, res) => {
   }
 };
 
-export const updateCurrentCustomer = async (req, res) => {
+export const getCustomer = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
+    const user = req.user;
+    var customer;
 
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
-      });
+    if (user.role === "admin") {
+      customer = await dbGetCustomerById(req.query.id);
     }
 
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, verifiedId);
-    const customerDoc = await getDoc(docRef);
-
-    if (!customerDoc.exists()) {
-      return res.status(404).send({
-        message: "Customer not found",
-      });
+    if (user.role === "customer") {
+      customer = user;
     }
 
-    const customerData = customerDoc.data();
-    const verifiedEmail = customerData.email;
-    const updateData = {
-      ...customerData,
-      ...req.body,
-    };
+    res.status(200).send({
+      data: customer,
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error.message,
+    });
+  }
+};
 
-    if (updateData.email !== verifiedEmail) {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
+export const updateCustomer = async (req, res) => {
+  try {
+    const user = req.user;
+
+    let updateData = { ...req.body };
+
+    if (user.role === "admin") {
+      await dbUpdateCustomer(req.query.id, updateData);
     }
 
-    await updateDoc(docRef, updateData);
+    if (user.role === "customer") {
+      await dbUpdateCustomer(user.uid, updateData);
+    }
+
     res.status(200).send({
       message: "Customer updated successfully",
     });
@@ -117,38 +81,17 @@ export const updateCurrentCustomer = async (req, res) => {
   }
 };
 
-export const deleteCurrentCustomer = async (req, res) => {
+export const deleteCustomer = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split("Bearer ")[1];
+    const user = req.user;
 
-    if (!token) {
-      return res.status(403).send({
-        message: "Authorization token is required",
-      });
+    if (user.role === "admin") {
+      await dbDeleteCustomer(req.query.id, updateData);
     }
 
-    const decodedToken = await auth.verifyIdToken(token);
-    const verifiedId = decodedToken.uid;
-
-    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, verifiedId);
-    const customerDoc = await getDoc(docRef);
-
-    if (!customerDoc.exists()) {
-      return res.status(404).send({
-        message: "Customer not found",
-      });
+    if (user.role === "customer") {
+      await dbDeleteCustomer(user.uid, updateData);
     }
-
-    const customerData = customerDoc.data();
-
-    if (customerData.role !== "customer") {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
-    }
-
-    await deleteDoc(docRef);
-    await auth.deleteUser(verifiedId);
 
     res.status(200).send({
       message: "Customer deleted successfully",

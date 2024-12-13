@@ -2,19 +2,23 @@ import express from "express";
 import {
   createMockAdmin,
   createAdmin,
-  getCurrentAdmin,
-  updateCurrentAdmin,
-  deleteCurrentAdmin,
+  getAdmin,
+  updateAdmin,
+  deleteAdmin,
   getAllAdmins,
 } from "../../controllers/users/admin.controller";
+import {
+  authenticateToken,
+  checkAdminRole,
+} from "../../middleware/auth.middleware";
 
 const router = express.Router();
 
-router.get("/", getCurrentAdmin);
-router.get("/all", getAllAdmins);
-router.post("/new", createAdmin);
-router.put("/update", updateCurrentAdmin);
-router.delete("/delete", deleteCurrentAdmin);
+router.get("/", authenticateToken, checkAdminRole, getAdmin);
+router.get("/all", authenticateToken, checkAdminRole, getAllAdmins);
+router.post("/new", authenticateToken, checkAdminRole, createAdmin);
+router.put("/update", authenticateToken, checkAdminRole, updateAdmin);
+router.delete("/delete", authenticateToken, checkAdminRole, deleteAdmin);
 
 router.post("/new_mock", createMockAdmin);
 export default router;
