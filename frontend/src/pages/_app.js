@@ -1,96 +1,28 @@
 import '../styles/index.css';
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import AdminNavbar from "@/components/admin/navbar"
-
-import { useEffect, useState } from "react";
+import MainLayout from "../layouts/MainLayout";
+import AdminLayout from "../layouts/AdminLayout";
+import { AuthProvider } from '../context/AuthContext';
 import { useRouter } from "next/router";
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation';
+import { useAppLogic } from '../hooks/useAppLogic';
 
 function MyApp({ Component, pageProps }) {
-  const [showScrollTopButton, setShowScrollTopButton] = useState(false);
-  const [lastClickY, setLastClickY] = useState(0);
   const router = useRouter();
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const { showScrollTopButton, handleScrollToTop } = useAppLogic(router);
 
-  const smoothScroll = (targetPosition, duration) => {
-    const startPosition = window.scrollY;
-    const distance = targetPosition - startPosition;
-    let startTime = null;
-
-    const animation = (currentTime) => {
-      if (!startTime) startTime = currentTime;
-      const timeElapsed = currentTime - startTime;
-      const progress = Math.min(timeElapsed / duration, 1);
-
-      const ease = (t) => t * (2 - t);
-
-      const scrollY = startPosition + distance * ease(progress);
-      window.scrollTo(0, scrollY);
-
-      if (progress < 1) {
-        requestAnimationFrame(animation);
-      }
-    };
-
-    requestAnimationFrame(animation);
-  };
-
-  const handleScrollToClick = (event) => {
-    if (event.target.tagName === "A" || event.target.tagName === "BUTTON") return;
-
-    const mouseY = event.clientY;
-    const threshold = 200; 
-
-    if (Math.abs(mouseY - lastClickY) < threshold) return;
-
-    setLastClickY(mouseY);
-
-    const targetPosition = window.scrollY + mouseY - window.innerHeight / 2;
-    smoothScroll(targetPosition, 800);
-  };
-
-  const handleScrollToTop = (event) => {
-    event.stopPropagation();
-    smoothScroll(0, 800);
-  };
-
-  useEffect(() => {
-    const handleRouteChange = () => {
-      window.scrollTo(0, 0);
-    };
-
-    router.events.on("routeChangeComplete", handleRouteChange);
-
-    document.addEventListener("click", handleScrollToClick);
-
-    const handleScroll = () => {
-      setShowScrollTopButton(window.scrollY > 300);
-    };
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
-      document.removeEventListener("click", handleScrollToClick);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [lastClickY, router.events]);
+  const isAdminRoute = pathname.slice(0, 7) === '/admin/';
 
   return (
-    <>
-      {pathname.slice(0, 7) !== '/admin/' ? (
-        <>
-          <Navbar /> 
-          <Component {...pageProps} /> 
-          <Footer />
-        </>
+    <AuthProvider>
+      {isAdminRoute ? (
+        <AdminLayout>
+          <Component {...pageProps} />
+        </AdminLayout>
       ) : (
-        <div className="flex flex-row relative">
-          <div className="fixed top-0">
-            <AdminNavbar />
-          </div>
-          <Component {...pageProps} /> 
-        </div>
+        <MainLayout>
+          <Component {...pageProps} />
+        </MainLayout>
       )}
 
       {showScrollTopButton && (
@@ -112,7 +44,7 @@ function MyApp({ Component, pageProps }) {
           ↑
         </button>
       )}
-    </>
+    </AuthProvider>
   );
 }
 

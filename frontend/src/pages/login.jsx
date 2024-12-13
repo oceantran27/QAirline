@@ -1,87 +1,52 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useLogin } from "@/hooks/useLoginForm";
+
+const ErrorMessage = ({ message }) => (
+  <p className="text-red-600 text-center">{message}</p>
+);
 
 export default function LoginForm() {
   const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false)
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }))
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setErrorMessage(null)
-    try {
-      // Gửi request đăng nhập tới backend
-      const response = await fetch('http://localhost:3030/api/login/', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        })
-      })
-
-      const data = await response.json()
-      
-      if (response.ok) {
-        const { token } = data
-        // Lưu token vào localStorage
-        localStorage.setItem('token', token)
-
-        router.push('/my-account')
-        
-        console.log('Đăng nhập thành công. Token:', token)
-      } else {
-        // Đăng nhập thất bại
-        setErrorMessage(data.message || 'Đã xảy ra lỗi, vui lòng thử lại.')
-      }
-    } catch (error) {
-      console.error('Lỗi khi đăng nhập:', error)
-      setErrorMessage('Không thể kết nối đến server. Vui lòng thử lại sau.')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { formData, loading, errorMessage, handleInputChange, handleSubmit } =
+    useLogin(() => router.push("/my-account"));
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-cover bg-center"
-      style={{
-        backgroundImage: "url('/clouds-background.jpg')",
-      }}
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      style={{ backgroundImage: "url('/clouds-background.jpg')" }}
     >
       <Card className="w-full max-w-md bg-white shadow-xl">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold text-center text-[#e8604c]">Chào Mừng Trở Lại</CardTitle>
+          <CardTitle className="text-3xl font-bold text-center text-[#e8604c]">
+            Chào Mừng Trở Lại
+          </CardTitle>
           <CardDescription className="text-center">
             Nhập thông tin đăng nhập để truy cập tài khoản của bạn
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {errorMessage && (
-              <p className="text-red-600 text-center">{errorMessage}</p>
-            )}
+            {errorMessage && <ErrorMessage message={errorMessage} />}
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                Email
+              </Label>
               <Input
                 id="email"
                 name="email"
@@ -94,7 +59,9 @@ export default function LoginForm() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-gray-700">Mật khẩu</Label>
+              <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                Mật khẩu
+              </Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -114,12 +81,12 @@ export default function LoginForm() {
                 </button>
               </div>
             </div>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-[#e8604c] hover:bg-[#d55643] text-white"
               disabled={loading}
             >
-              {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+              {loading ? "Đang đăng nhập..." : "Đăng nhập"}
             </Button>
           </form>
           <div className="relative my-4">
@@ -130,13 +97,12 @@ export default function LoginForm() {
               <span className="bg-white px-2 text-muted-foreground">hoặc</span>
             </div>
           </div>
-          <Button 
-            variant="outline" 
-            type="button" 
+          <Button
+            variant="outline"
+            type="button"
             className="w-full"
             onClick={() => {
-              // Thêm logic đăng nhập với Google tại đây
-              console.log('Google sign-in clicked')
+              console.log("Google sign-in clicked");
             }}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -165,7 +131,7 @@ export default function LoginForm() {
             Quên mật khẩu?
           </Button>
           <p className="text-sm text-center text-gray-600">
-            Bạn chưa có tài khoản?{' '}
+            Bạn chưa có tài khoản?{" "}
             <Link href="/signup">
               <Button variant="link" className="p-0 text-[#e8604c] hover:text-[#d55643]">
                 Đăng ký
@@ -175,5 +141,5 @@ export default function LoginForm() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

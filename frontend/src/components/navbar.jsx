@@ -1,15 +1,27 @@
-import { useState } from "react";
+'use client';
+
 import { HiMenuAlt3 } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
 import { CiSearch } from "react-icons/ci";
 import { BsPersonCircle } from "react-icons/bs";
+import { FiSettings, FiLogOut } from "react-icons/fi";
 import Link from "next/link";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
 
 export default function Navbar() {
+  const { isAuthenticated, logout } = useAuth();
   const [dropdown, setDropdown] = useState(false);
 
   const showDropdown = () => {
     setDropdown(!dropdown);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setDropdown(false); // Close the dropdown after logout
   };
 
   return (
@@ -47,16 +59,42 @@ export default function Navbar() {
             </li>
           </ul>
 
-          {/* Nút tìm kiếm và đăng nhập */}
+          {/* Nút tìm kiếm và đăng nhập/dropdown */}
           <div className="flex items-center gap-4 max-lg:hidden mr-8">
             <button className="rounded-full bg-[#faf5ee] text-gray w-10 h-10 flex items-center justify-center hover:bg-orange hover:text-white">
               <CiSearch size={20} />
             </button>
-            <Link href="/login">
-              <button className="rounded-full bg-[#faf5ee] text-gray w-10 h-10 flex items-center justify-center hover:bg-orange hover:text-white">
-                <BsPersonCircle size={20} />
-              </button>
-            </Link>
+            {isAuthenticated ? (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" className="rounded-full bg-[#faf5ee] text-gray w-10 h-10 flex items-center justify-center hover:bg-orange hover:text-white p-0">
+                    <BsPersonCircle size={20} />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-56">
+                  <div className="grid gap-4">
+                    <Link href="/my-account" className="flex items-center gap-2 text-sm">
+                      <BsPersonCircle size={16} />
+                      Thông tin tài khoản
+                    </Link>
+                    <Link href="/settings" className="flex items-center gap-2 text-sm">
+                      <FiSettings size={16} />
+                      Cài đặt
+                    </Link>
+                    <button onClick={logout} className="flex items-center gap-2 text-sm text-red-600">
+                      <FiLogOut size={16} />
+                      Đăng xuất
+                    </button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            ) : (
+              <Link href="/login">
+                <button className="rounded-full bg-[#faf5ee] text-gray w-10 h-10 flex items-center justify-center hover:bg-orange hover:text-white">
+                  <BsPersonCircle size={20} />
+                </button>
+              </Link>
+            )}
           </div>
 
           {/* Icon menu cho di động */}
@@ -86,7 +124,6 @@ export default function Navbar() {
                     Chuyến bay
                   </Link>
                 </li>
-                
                 <li>
                   <Link
                     href="/news"
@@ -95,7 +132,6 @@ export default function Navbar() {
                     Tin tức
                   </Link>
                 </li>
-                
                 <li>
                   <Link
                     href="/contact"
@@ -104,22 +140,36 @@ export default function Navbar() {
                     Liên hệ
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href="/login"
-                    className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200 text-orange"
-                  >
-                    Đăng nhập
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/signup"
-                    className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200 text-orange"
-                  >
-                    Đăng ký
-                  </Link>
-                </li>
+                {isAuthenticated ? (
+                  <>
+                    <li>
+                      <Link
+                        href="/my-account"
+                        className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200 text-orange"
+                      >
+                        Thông tin tài khoản
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200 text-red-600"
+                      >
+                        <FiLogOut className="mr-2" />
+                        Đăng xuất
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <li>
+                    <Link
+                      href="/login"
+                      className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200 text-orange"
+                    >
+                      Đăng nhập
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
           </div>
@@ -128,3 +178,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

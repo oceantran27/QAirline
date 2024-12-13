@@ -1,24 +1,81 @@
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { fetchCustomerInfo, updateCustomerInfo } from "@/services/customerService";
 
 export default function AccountInfo() {
-  const [personalInfo, setPersonalInfo] = useState({
-    cardNumber: "9055295987",
-    fullName: "Nguyễn Văn A",
-    email: "nguyenvana@example.com",
-    address: "123 Đường ABC, Quận 1, TP.HCM",
-    phoneNumber: "0123456789",
-    gender: "Nam",
-    birthDate: "1990-01-01",
-  });
-
+  const [personalInfo, setPersonalInfo] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleUpdate = (e) => {
+  // Lấy thông tin cá nhân từ API
+  useEffect(() => {
+    const loadCustomerInfo = async () => {
+      try {
+        const data = await fetchCustomerInfo();
+        setPersonalInfo(data);
+      } catch (error) {
+        setErrorMessage("Không thể tải thông tin cá nhân.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCustomerInfo();
+  }, []);
+
+  // Cập nhật thông tin cá nhân
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    setIsEditing(false);
-    alert("Thông tin đã được cập nhật!");
+    try {
+      await updateCustomerInfo(personalInfo);
+      setIsEditing(false);
+      alert("Thông tin đã được cập nhật thành công!");
+    } catch (error) {
+      setErrorMessage("Cập nhật thông tin thất bại. Vui lòng thử lại.");
+    }
+  };
+
+  if (loading) return <p>Đang tải...</p>;
+  if (errorMessage) return <p className="text-red-600">{errorMessage}</p>;
+  if (!personalInfo) return <p>Không tìm thấy thông tin cá nhân.</p>;
+
+  // Chuẩn bị dữ liệu hiển thị
+  const memberCardNumber = personalInfo.uid || "";
+  const fullName = `${personalInfo.firstName || ""} ${personalInfo.lastName || ""}`.trim();
+
+  let genderLabel = "";
+  switch (personalInfo.gender) {
+    case "male":
+      genderLabel = "Nam";
+      break;
+    case "female":
+      genderLabel = "Nữ";
+      break;
+    default:
+      genderLabel = "Khác";
+      break;
+  }
+
+  let birthDate = "";
+  if (personalInfo.dateOfBirth) {
+    const date = new Date(personalInfo.dateOfBirth);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    birthDate = `${day} tháng ${month} năm ${year}`;
+  }
+
+  // Khi hiển thị không chỉnh sửa
+  const displayData = {
+    cardNumber: memberCardNumber,
+    fullName: fullName,
+    email: personalInfo.email || "",
+    address: personalInfo.address || "",
+    phoneNumber: personalInfo.phoneNumber || "",
+    gender: genderLabel,
+    birthDate: birthDate,
   };
 
   return (
@@ -40,7 +97,6 @@ export default function AccountInfo() {
         </div>
 
         <div className="w-full lg:w-2/3">
-          {/* Personal Info */}
           {isEditing ? (
             <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={handleUpdate}>
               <div className="space-y-1">
@@ -48,7 +104,7 @@ export default function AccountInfo() {
                 <input
                   type="text"
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  value={personalInfo.cardNumber}
+                  value={personalInfo.uid || ""}
                   disabled
                 />
               </div>
@@ -57,10 +113,13 @@ export default function AccountInfo() {
                 <input
                   type="text"
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  value={personalInfo.fullName}
-                  onChange={(e) =>
-                    setPersonalInfo({ ...personalInfo, fullName: e.target.value })
-                  }
+                  value={fullName}
+                  onChange={(e) => {
+                    const parts = e.target.value.trim().split(" ");
+                    const lastName = parts.pop();
+                    const firstName = parts.join(" ");
+                    setPersonalInfo({ ...personalInfo, firstName, lastName });
+                  }}
                 />
               </div>
               <div className="space-y-1">
@@ -68,7 +127,7 @@ export default function AccountInfo() {
                 <input
                   type="email"
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  value={personalInfo.email}
+                  value={personalInfo.email || ""}
                   onChange={(e) =>
                     setPersonalInfo({ ...personalInfo, email: e.target.value })
                   }
@@ -79,7 +138,7 @@ export default function AccountInfo() {
                 <input
                   type="text"
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  value={personalInfo.address}
+                  value={personalInfo.address || ""}
                   onChange={(e) =>
                     setPersonalInfo({ ...personalInfo, address: e.target.value })
                   }
@@ -90,7 +149,7 @@ export default function AccountInfo() {
                 <input
                   type="text"
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  value={personalInfo.phoneNumber}
+                  value={personalInfo.phoneNumber || ""}
                   onChange={(e) =>
                     setPersonalInfo({ ...personalInfo, phoneNumber: e.target.value })
                   }
@@ -100,14 +159,24 @@ export default function AccountInfo() {
                 <label className="text-sm text-gray-600">Giới tính</label>
                 <select
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  value={personalInfo.gender}
+                  value={
+                    personalInfo.gender === "male" ||
+                    personalInfo.gender === "female" ||
+                    personalInfo.gender === "other"
+                      ? personalInfo.gender
+                      : personalInfo.gender === "Nam"
+                      ? "male"
+                      : personalInfo.gender === "Nữ"
+                      ? "female"
+                      : "other"
+                  }
                   onChange={(e) =>
                     setPersonalInfo({ ...personalInfo, gender: e.target.value })
                   }
                 >
-                  <option value="Nam">Nam</option>
-                  <option value="Nữ">Nữ</option>
-                  <option value="Khác">Khác</option>
+                  <option value="male">Nam</option>
+                  <option value="female">Nữ</option>
+                  <option value="other">Khác</option>
                 </select>
               </div>
               <div className="space-y-1">
@@ -115,9 +184,13 @@ export default function AccountInfo() {
                 <input
                   type="date"
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  value={personalInfo.birthDate}
+                  value={
+                    personalInfo.dateOfBirth
+                      ? personalInfo.dateOfBirth.split("T")[0]
+                      : ""
+                  }
                   onChange={(e) =>
-                    setPersonalInfo({ ...personalInfo, birthDate: e.target.value })
+                    setPersonalInfo({ ...personalInfo, dateOfBirth: e.target.value + "T00:00:00.000Z" })
                   }
                 />
               </div>
@@ -134,31 +207,31 @@ export default function AccountInfo() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
               <div className="space-y-1">
                 <div className="text-sm text-gray-600">Số thẻ hội viên</div>
-                <div className="font-semibold">{personalInfo.cardNumber}</div>
+                <div className="font-semibold">{displayData.cardNumber}</div>
               </div>
               <div className="space-y-1">
                 <div className="text-sm text-gray-600">Họ và tên</div>
-                <div className="font-semibold">{personalInfo.fullName}</div>
+                <div className="font-semibold">{displayData.fullName}</div>
               </div>
               <div className="space-y-1">
                 <div className="text-sm text-gray-600">Email</div>
-                <div className="font-semibold break-words">{personalInfo.email}</div>
+                <div className="font-semibold">{displayData.email}</div>
               </div>
               <div className="space-y-1">
                 <div className="text-sm text-gray-600">Địa chỉ</div>
-                <div className="font-semibold">{personalInfo.address}</div>
+                <div className="font-semibold">{displayData.address}</div>
               </div>
               <div className="space-y-1">
                 <div className="text-sm text-gray-600">Số điện thoại</div>
-                <div className="font-semibold">{personalInfo.phoneNumber}</div>
+                <div className="font-semibold">{displayData.phoneNumber}</div>
               </div>
               <div className="space-y-1">
                 <div className="text-sm text-gray-600">Giới tính</div>
-                <div className="font-semibold">{personalInfo.gender}</div>
+                <div className="font-semibold">{displayData.gender}</div>
               </div>
               <div className="space-y-1">
                 <div className="text-sm text-gray-600">Ngày sinh</div>
-                <div className="font-semibold">{personalInfo.birthDate}</div>
+                <div className="font-semibold">{displayData.birthDate}</div>
               </div>
               <div className="md:col-span-2 pt-2">
                 <button
@@ -175,4 +248,3 @@ export default function AccountInfo() {
     </div>
   );
 }
-
