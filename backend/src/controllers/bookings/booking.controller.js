@@ -1,26 +1,18 @@
-import firebase from "../../database/firebase";
-import Booking from "../../models/bookings/booking.model";
 import {
   dbGetAllBookings,
-  dbGetBookingById,
+  dbGetBooking,
   dbCreateBooking,
   dbUpdateBooking,
   dbDeleteBooking,
 } from "../../services/bookings/booking.service";
+import { dbCreateTickets } from "../../services/bookings/ticket.service";
 import {
-  getFirestore,
-  collection,
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
-import { dbUpdateCustomer } from "../users/customer.controller";
+  dbGetCustomerById,
+  dbUpdateCustomer,
+} from "../../services/users/customer.service";
 
-const db = getFirestore(firebase);
-const BOOKING_COLLECTION_NAME = "bookings";
+import Booking from "../../models/bookings/booking.model";
+import Ticket from "../../models/bookings/ticket.model";
 
 export const getAllBookings = async (req, res) => {
   try {
@@ -35,19 +27,19 @@ export const getAllBookings = async (req, res) => {
   }
 };
 
-export const getBookingById = async (req, res) => {
+export const getBooking = async (req, res) => {
   try {
     const user = req.user;
-    if (user.role !== "admin" && user.uid !== bookingData.customerId) {
+    const bookingData = await dbGetBooking(req.query.id);
+
+    if (user.role !== "admin" && user.uid !== bookingData.bookerId) {
       return res.status(403).send({
         message: "You do not have permission to perform this action",
       });
     }
 
-    const bookingData = await dbGetBookingById(req.query.id);
-    const booking = new Booking({ ...bookingData });
     return res.status(200).send({
-      data: booking,
+      data: bookingData,
     });
   } catch (error) {
     res.status(400).send({
@@ -58,42 +50,55 @@ export const getBookingById = async (req, res) => {
 
 export const createBooking = async (req, res) => {
   try {
-    const booking = new Booking(req.body);
+    const { ticketDataList, ...bookingData } = req.body;
+    const booking = new Booking(bookingData);
     booking.createdAt = new Date();
     booking.updatedAt = new Date();
 
     const user = req.user;
-    if (user.role !== "admin" && user.uid !== booking.customerId) {
+    if (user.role !== "admin" && user.uid !== booking.bookerId) {
       return res.status(403).send({
         message: "You do not have permission to perform this action",
       });
     }
 
-    // Kiểm tra booking đã tồn tại chưa
-    const existingBooking = await dbGetBookingById(booking.bookingId);
-    if (existingBooking) {
-      return res.status(400).send({
-        message: "Booking already exists",
-      });
-    }
-
-    const customerRef = await dbgetCustomer(booking.customerId);
+    const customerRef = await dbGetCustomerById(booking.bookerId);
     if (!customerRef) {
       return res.status(404).send({
         message: "Customer not found",
       });
     }
 
+    let tickets = [];
+    for (let ticketData of ticketDataList) {
+      booking.totalPrice += ticketData.price;
+
+      const ticket = new Ticket(
+        null,
+        booking.bookingId,
+        booking.flightId,
+        ticketData.price,
+        ticketData.seatCode,
+        ticketData.flightClass,
+        ticketData.ownerData
+      );
+
+      tickets.push(ticket);
+      booking.ticketList.push(ticket.ticketId);
+    }
+
+    await dbCreateTickets(tickets);
+
+    const createdBooking = await dbCreateBooking(booking);
+
     const updatedBookingHistory = [
       ...customerRef.bookingHistory,
-      booking.bookingId,
+      createdBooking.bookingId,
     ];
 
-    await dbUpdateCustomer(booking.customerId, {
+    await dbUpdateCustomer(booking.bookerId, {
       bookingHistory: updatedBookingHistory,
     });
-
-    await dbCreateBooking(booking);
     res.status(201).send({
       message: "Booking created successfully",
     });
@@ -107,26 +112,26 @@ export const createBooking = async (req, res) => {
 export const updateBooking = async (req, res) => {
   try {
     const updateData = req.body;
-    const docRef = doc(db, BOOKING_COLLECTION_NAME, updateData.bookingId);
-    const docSnap = await getDoc(docRef);
-    const bookingData = docSnap.data();
-    if (docSnap.exists()) {
-      const user = req.user;
-      if (user.role !== "admin" && user.uid !== bookingData.customerId) {
-        return res.status(403).send({
-          message: "You do not have permission to perform this action",
-        });
-      }
+    const bookingId = req.query.id;
 
-      await updateDoc(docRef, { ...updateData, updatedAt: new Date() });
-      return res.status(200).send({
-        message: "Booking updated successfully",
-      });
-    } else {
+    const bookingData = await dbGetBooking(bookingId);
+    if (!bookingData) {
       return res.status(404).send({
         message: "Booking not found",
       });
     }
+
+    const user = req.user;
+    if (user.role !== "admin" && user.uid !== bookingData.bookerId) {
+      return res.status(403).send({
+        message: "You do not have permission to perform this action",
+      });
+    }
+
+    await dbUpdateBooking(bookingId, { ...updateData, updatedAt: new Date() });
+    return res.status(200).send({
+      message: "Booking updated successfully",
+    });
   } catch (error) {
     res.status(400).send({
       message: error.message,
@@ -136,25 +141,26 @@ export const updateBooking = async (req, res) => {
 
 export const deleteBooking = async (req, res) => {
   try {
-    const docRef = doc(db, BOOKING_COLLECTION_NAME, req.query.id);
-    const docSnap = await getDoc(docRef);
-    const bookingData = docSnap.data();
-    if (docSnap.exists()) {
-      const user = req.user;
-      if (user.role !== "admin" && user.uid !== bookingData.customerId) {
-        return res.status(403).send({
-          message: "You do not have permission to perform this action",
-        });
-      }
-      await deleteDoc(docRef);
-      res.status(200).send({
-        message: "Booking deleted successfully",
-      });
-    } else {
+    const bookingId = req.query.id;
+
+    const bookingData = await dbGetBooking(bookingId);
+    if (!bookingData) {
       return res.status(404).send({
         message: "Booking not found",
       });
     }
+
+    const user = req.user;
+    if (user.role !== "admin" && user.uid !== bookingData.bookerId) {
+      return res.status(403).send({
+        message: "You do not have permission to perform this action",
+      });
+    }
+
+    await dbDeleteBooking(bookingId);
+    res.status(200).send({
+      message: "Booking deleted successfully",
+    });
   } catch (error) {
     res.status(400).send({
       message: error.message,

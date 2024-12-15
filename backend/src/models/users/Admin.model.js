@@ -1,10 +1,14 @@
 class Admin {
+  generateAdminId() {
+    const timestamp = Date.now();
+    return `AD#${timestamp}`;
+  }
   constructor({
     uid = null,
     firstName,
     lastName,
     email,
-    phoneNumber = null,
+    phoneNumber = null || this.generateAdminId(),
     dateOfBirth = new Date("1990-01-01"),
     gender = "male",
     address = null,
