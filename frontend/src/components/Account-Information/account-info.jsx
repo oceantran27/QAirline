@@ -75,7 +75,9 @@ export default function AccountInfo() {
       ...personalInfo,
       firstName: firstNameUpdate,
       lastName: lastNameUpdate,
+      // Giữ nguyên email, uid không đổi
       email: email,
+      uid: uid,
       address: address,
       phoneNumber: phoneNumber,
       passportNumber: passportNumber,
@@ -107,7 +109,7 @@ export default function AccountInfo() {
           {isEditing ? (
             <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={handleSubmit}>
               <div className="space-y-1">
-                <label className="text-sm text-gray-600">Số thẻ hội viên</label>
+                <label className="text-sm text-gray-600">Mã thẻ hội viên</label>
                 <input
                   type="text"
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -122,8 +124,6 @@ export default function AccountInfo() {
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
                   value={fullName}
                   onChange={(e) => {
-                    // Cập nhật tạm thời fullname vào personalInfo
-                    // Thật ra ta chỉ cần cập nhật vào state mà không cần tách ngay bây giờ
                     const value = e.target.value.trim();
                     const nameParts = value.split(" ");
                     const last = nameParts.pop() || "";
@@ -138,9 +138,7 @@ export default function AccountInfo() {
                   type="email"
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
                   value={email}
-                  onChange={(e) =>
-                    setPersonalInfo({ ...personalInfo, email: e.target.value })
-                  }
+                  disabled // Không cho chỉnh sửa email
                 />
               </div>
               <div className="space-y-1">
@@ -222,7 +220,7 @@ export default function AccountInfo() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
               <div className="space-y-1">
-                <div className="text-sm text-gray-600">Số thẻ hội viên</div>
+                <div className="text-sm text-gray-600">Mã thẻ hội viên</div>
                 <div className="font-semibold">{uid}</div>
               </div>
               <div className="space-y-1">
