@@ -6,8 +6,8 @@ export function FlightHeader() {
     <>
       <div className="relative h-[300px] w-full">
         <Image
-          src="/bangkok.jpg?height=300&width=1200"
-          alt="Mountain landscape with traveler"
+          src="/tours_background.jpg"
+          alt=""
           fill
           className="object-cover"
           priority
