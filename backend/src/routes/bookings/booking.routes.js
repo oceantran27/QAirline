@@ -2,7 +2,7 @@ import express from "express";
 import {
   createBooking,
   getAllBookings,
-  getBookingById,
+  getBooking,
   updateBooking,
   deleteBooking,
 } from "../../controllers/bookings/booking.controller";
@@ -14,7 +14,7 @@ import {
 const router = express.Router();
 
 router.get("/all", authenticateToken, checkAdminRole, getAllBookings);
-router.get("/", authenticateToken, getBookingById);
+router.get("/", authenticateToken, getBooking);
 router.post("/new", authenticateToken, createBooking);
 router.put("/update", authenticateToken, updateBooking);
 router.delete("/delete", authenticateToken, deleteBooking);

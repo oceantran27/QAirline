@@ -1,19 +1,21 @@
 class Booking {
+  generateTicketId() {
+    const timestamp = Date.now();
+    return `BK${timestamp}`;
+  }
   constructor({
-    bookingId,
-    customerId,
+    bookingId = null,
+    bookerId,
     flightId,
-    bookingDate,
-    ticketCount,
-    totalPrice,
-    status,
-    paymentStatus,
+    ticketList = [], //ticketId
+    totalPrice = 0,
+    status = "Confirm",
+    paymentStatus = "Paid",
   }) {
-    this.bookingId = bookingId;
-    this.customerId = customerId;
+    this.bookingId = bookingId || this.generateTicketId();
+    this.bookerId = bookerId;
     this.flightId = flightId;
-    this.bookingDate = new Date(bookingDate);
-    this.ticketCount = ticketCount;
+    this.ticketList = ticketList;
     this.totalPrice = totalPrice;
     this.status = status;
     this.paymentStatus = paymentStatus;
@@ -34,6 +36,20 @@ class Booking {
       this.status = "Cancelled";
       this.paymentStatus = "Refunded";
     }
+  }
+
+  toObject() {
+    return {
+      bookingId: this.bookingId,
+      bookerId: this.bookerId,
+      flightId: this.flightId,
+      ticketList: this.ticketList,
+      totalPrice: this.totalPrice,
+      status: this.status,
+      paymentStatus: this.paymentStatus,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
   }
 }
 

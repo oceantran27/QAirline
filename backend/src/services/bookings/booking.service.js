@@ -12,9 +12,7 @@ import firebase from "../../database/firebase";
 
 const db = getFirestore(firebase);
 const BOOKING_COLLECTION_NAME = "bookings";
-const CUSTOMER_COLLECTION_NAME = "customers";
 
-// Lấy tất cả bookings
 export const dbGetAllBookings = async () => {
   try {
     const snapshot = await getDocs(collection(db, BOOKING_COLLECTION_NAME));
@@ -28,8 +26,7 @@ export const dbGetAllBookings = async () => {
   }
 };
 
-// Lấy booking theo ID
-export const dbGetBookingById = async (bookingId) => {
+export const dbGetBooking = async (bookingId) => {
   try {
     console.log(bookingId);
     const docRef = doc(db, BOOKING_COLLECTION_NAME, bookingId);
@@ -44,17 +41,19 @@ export const dbGetBookingById = async (bookingId) => {
   }
 };
 
-// Tạo booking mới
 export const dbCreateBooking = async (booking) => {
   try {
-    const docRef = doc(db, BOOKING_COLLECTION_NAME, booking.bookingId);
-    await setDoc(docRef, booking);
+    const docRef = doc(
+      collection(db, BOOKING_COLLECTION_NAME),
+      booking.bookingId
+    );
+    await setDoc(docRef, booking.toObject());
+    return booking;
   } catch (error) {
     throw new Error(`Error creating booking: ${error.message}`);
   }
 };
 
-// Cập nhật booking
 export const dbUpdateBooking = async (bookingId, updateData) => {
   try {
     const docRef = doc(db, BOOKING_COLLECTION_NAME, bookingId);
@@ -64,22 +63,11 @@ export const dbUpdateBooking = async (bookingId, updateData) => {
   }
 };
 
-// Xóa booking
 export const dbDeleteBooking = async (bookingId) => {
   try {
     const docRef = doc(db, BOOKING_COLLECTION_NAME, bookingId);
     await deleteDoc(docRef);
   } catch (error) {
     throw new Error(`Error deleting booking: ${error.message}`);
-  }
-};
-
-// Cập nhật thông tin khách hàng
-export const dbUpdateCustomer = async (uid, updateData) => {
-  try {
-    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, uid);
-    await updateDoc(docRef, updateData);
-  } catch (error) {
-    throw new Error(`Error updating customer: ${error.message}`);
   }
 };
