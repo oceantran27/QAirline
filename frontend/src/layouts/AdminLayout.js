@@ -6,7 +6,7 @@ const AdminLayout = ({ children }) => {
       <div className="fixed top-0">
         <AdminNavbar />
       </div>
-      <div className="flex-grow">{children}</div>
+      {children}
     </div>
   );
 };

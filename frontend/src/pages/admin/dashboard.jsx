@@ -3,6 +3,8 @@
 import { Plane, Users, RefreshCw } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 const flightStatusData = [
   { name: 'Chưa Cất Cánh', value: 3 },
@@ -20,6 +22,15 @@ const aircraftData = [
 const COLORS = ['#3b82f6', '#ef4444', '#84cc16', '#06b6d4']
 
 export default function Dashboard() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      router.push('/admin')
+    }
+  }, [router])
+
   return (
     <div className="container mx-auto pt-10 pl-64 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
