@@ -92,3 +92,19 @@ export const dbCreateTickets = async (tickets) => {
     throw new Error(`Error creating tickets: ${error.message}`);
   }
 };
+
+export const dbCancelTickets = async (tickets) => {
+  try {
+    const batch = writeBatch(db);
+
+    tickets.forEach((ticketId) => {
+      const docRef = doc(db, TICKET_COLLECTION_NAME, ticketId);
+      batch.update(docRef, { status: "Cancelled", updatedAt: new Date() });
+    });
+
+    await batch.commit();
+    console.log("Tickets cancelled successfully");
+  } catch (error) {
+    throw new Error(`Error cancelling tickets: ${error.message}`);
+  }
+};
