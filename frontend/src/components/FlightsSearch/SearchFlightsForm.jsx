@@ -118,7 +118,7 @@ function SearchFlightsForm() {
                 <PopoverTrigger asChild>
                   <button className="text-sm font-bold w-full justify-start text-left pl-0 border-none">
                     {departureDate
-                      ? format(departureDate, "PPP")
+                      ? format(departureDate, "dd/MM/yyyy")
                       : "Chọn ngày đi"}
                   </button>
                 </PopoverTrigger>
@@ -145,7 +145,7 @@ function SearchFlightsForm() {
                   <PopoverTrigger asChild>
                     <button className="text-sm font-bold w-full justify-start text-left pl-0 border-none">
                       {returnDate
-                        ? format(returnDate, "PPP")
+                        ? format(returnDate, "dd/MM/yyyy")
                         : "Chọn ngày về"}
                     </button>
                   </PopoverTrigger>
