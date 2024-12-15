@@ -172,7 +172,7 @@ export function FlightCard({ flights }) {
                             </div>
                             </div>
                         </div>
-                        <Button className="bg-orange w-full mt-4" onClick={() => handleSelectFlight(flight.id, option.id)}>Chọn</Button>
+                        <Button variant="orange" className="w-full mt-4" onClick={() => handleSelectFlight(flight.id, option.id)}>Chọn</Button>
                         </div>
                     ))}
                     </div>

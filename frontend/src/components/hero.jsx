@@ -8,11 +8,9 @@ import {
 } from "react-icons/md";
 import dynamic from "next/dynamic";
 import "react-multi-carousel/lib/styles.css";
-import SearchForm from "./SearchFlightsForm";
-import FlightBookingTabs from '@/components/FlightBookingTabs';
+import FlightBookingTabs from '@/components/FlightsSearch/FlightBookingTabs';
 
 
-// Import `Carousel` với dynamic import để tắt SSR
 const Carousel = dynamic(() => import("react-multi-carousel"), { ssr: false });
 
 const responsive = {

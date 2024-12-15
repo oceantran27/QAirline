@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem("token");
-      setIsAuthenticated(!!token); // true nếu token tồn tại
+      setIsAuthenticated(!!token);
     };
 
     checkAuth();
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
-    router.push("/login"); // Điều hướng về trang đăng nhập
+    router.push("/login"); 
   };
 
   return (

@@ -4,13 +4,7 @@ import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { format } from 'date-fns';
-import { CalendarIcon, Plane, TicketIcon, UserCircle } from 'lucide-react';
+import { Plane, TicketIcon, UserCircle } from 'lucide-react';
 import SearchForm from "./SearchFlightsForm";
 
 const FlightBookingTabs = () => {
@@ -56,7 +50,7 @@ const FlightBookingTabs = () => {
           <TabsContent value="manage" className="mt-2">
             <div className='flex flex-col gap-2'>
               <Input placeholder="Mã đặt chỗ/Số vé điện tử" />
-              <Input placeholder="Họ" />
+              <Input placeholder="Hòm thư điện tử" />
               <Button className="w-full bg-orange">TÌM KIẾM</Button>  
             </div>
           </TabsContent>
@@ -65,7 +59,7 @@ const FlightBookingTabs = () => {
           <TabsContent value="checkin" className="mt-2">
             <div className='flex flex-col gap-2'>
               <Input placeholder="Mã đặt chỗ" />
-              <Input placeholder="Họ" />
+              <Input placeholder="Hòm thư điện tử" />
               <Button className="w-full bg-orange">LÀM THỦ TỤC</Button>
             </div>
           </TabsContent>

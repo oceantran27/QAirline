@@ -20,6 +20,8 @@ import { format } from "date-fns";
 
 function SearchFlightsForm() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [adultCount, setAdultCount] = useState(1); // Số lượng người lớn
+  const [childCount, setChildCount] = useState(0); // Số lượng trẻ em
 
   const handleExpand = () => {
     setIsExpanded(true);
@@ -38,8 +40,6 @@ function SearchFlightsForm() {
     setDepartureDate,
     returnDate,
     setReturnDate,
-    passengerCount,
-    setPassengerCount,
     tripType,
     setTripType,
     swapAirports,
@@ -47,7 +47,6 @@ function SearchFlightsForm() {
     isValid,
   } = useFlightSearch();
 
-  // Định nghĩa số cột dựa trên tripType
   const gridColumns =
     tripType === "roundTrip"
       ? "lg:grid-cols-[1fr,auto,1fr,1fr,1fr,0.7fr]"
@@ -179,7 +178,6 @@ function SearchFlightsForm() {
         {/* Nội dung mở rộng */}
         {isExpanded && (
           <div className="mt-2 flex flex-col md:flex-row items-start gap-4">
-            {/* Lựa chọn loại chuyến đi */}
             <RadioGroup
               value={tripType}
               onValueChange={setTripType}
@@ -225,36 +223,34 @@ function SearchFlightsForm() {
                 </label>
               </div>
             </RadioGroup>
-
-            {/* Số lượng hành khách */}
+            {/* Số lượng người lớn */}
             <div className="flex items-center w-full md:max-w-xs md:ml-10 mt-4 md:mt-0">
               <label className="block text-gray whitespace-nowrap mr-3">
-                Số hành khách
+                Số người lớn
               </label>
               <Input
                 type="number"
                 min="1"
-                value={passengerCount}
-                onChange={(e) => setPassengerCount(e.target.value)}
+                value={adultCount}
+                onChange={(e) => setAdultCount(e.target.value)}
                 className="mt-1 w-full"
-                placeholder="Nhập số hành khách"
+                placeholder="Nhập số người lớn"
               />
             </div>
 
-            {/* Chọn hạng chuyến bay */}
+            {/* Số lượng trẻ em */}
             <div className="flex items-center w-full md:max-w-xs gap-4 mt-4 md:mt-0">
-              <p className="block text-gray whitespace-nowrap text-sm">
-                Chọn hạng
-              </p>
-              <select
-                className="border w-full border-gray-300 rounded-lg p-2"
-                name="flightClass"
-                id="flightClass"
-              >
-                <option value="economy">Phổ thông</option>
-                <option value="business">Thương gia</option>
-                <option value="firstClass">Hạng nhất</option>
-              </select>
+              <label className="block text-gray whitespace-nowrap mr-3">
+                Số trẻ em
+              </label>
+              <Input
+                type="number"
+                min="0"
+                value={childCount}
+                onChange={(e) => setChildCount(e.target.value)}
+                className="mt-1 w-full"
+                placeholder="Nhập số trẻ em"
+              />
             </div>
           </div>
         )}
