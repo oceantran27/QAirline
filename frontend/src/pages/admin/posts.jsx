@@ -44,7 +44,7 @@ export default function NewsPostingPage() {
 
   return (
     <div className="container mx-auto pt-10 pl-64">
-      <h1 className="text-2xl font-bold mb-4">Thông Tin & Bài Đăng</h1>
+      <h1 className="text-2xl font-semibold mb-4">Thông Tin & Bài Đăng</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <form onSubmit={handleSubmit} className="space-y-4">

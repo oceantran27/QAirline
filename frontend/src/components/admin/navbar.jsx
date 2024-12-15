@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { LayoutDashboard, Plane, CalendarDays, ClipboardList, Users, UserPen, FileText, LogOut } from 'lucide-react'
+import { useRouter } from 'next/router'
+import { LayoutDashboard, Plane, CalendarDays, User, Users, UserPen, FileText } from 'lucide-react'
 
 const navItems = [
   { 
@@ -23,18 +24,19 @@ const navItems = [
     icon: FileText 
   },
   { 
-    name: 'Quản lý quyền', 
+    name: 'Quản lý admin', 
     href: '/admin/members', 
     icon: UserPen 
   },
   { 
-    name: 'Đăng xuất', 
-    href: '#', 
-    icon: LogOut 
+    name: 'Hồ sơ cá nhân', 
+    href: '/admin/profile', 
+    icon: User
   },
 ]
 
 export default function Navbar() {
+  const router = useRouter()
   return (
     <div className="h-screen w-64 bg-zinc-900 text-zinc-400">
       <div className="p-6 border-b border-zinc-800">
@@ -50,7 +52,10 @@ export default function Navbar() {
           <Link
             key={item.name}
             href={item.href}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors hover:bg-orange/10 hover:text-orange text-white`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${router.pathname === item.href 
+              ? 'bg-orange/10 text-orange' 
+              : 'text-white hover:bg-orange/10 hover:text-orange'
+            }`}
           >
             <item.icon className="w-5 h-5" />
             <span>{item.name}</span>

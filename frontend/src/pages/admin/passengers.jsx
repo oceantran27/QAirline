@@ -38,7 +38,6 @@ export default function PassengerList() {
           <div className="text-sm text-muted-foreground space-x-4">
             <span>Economy Class : 0/25</span>
             <span>Business Class : 0/0</span>
-            <span>First Class : 2/25</span>
           </div>
           <div className="text-base">
             ( ATQ to KOC )
