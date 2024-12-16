@@ -11,10 +11,12 @@ import {
 import firebase from "../../database/firebase";
 import Customer from "../../models/users/customer.model";
 import admin from "../../database/firebaseAdmin";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const db = getFirestore(firebase);
-const auth = admin.auth();
+const adminAuth = admin.auth();
 const CUSTOMER_COLLECTION_NAME = "customers";
+const firebaseAuth = getAuth(firebase);
 
 export const dbGetAllCustomers = async () => {
   try {
@@ -51,7 +53,7 @@ export const dbCreateCustomer = async ({
   try {
     const newCustomer = new Customer({ firstName, lastName, email });
 
-    const user = await auth.createUser({
+    const user = await adminAuth.createUser({
       email,
       password,
     });
@@ -67,6 +69,11 @@ export const dbCreateCustomer = async ({
     throw new Error(`Error creating customer: ${error.message}`);
   }
 };
+
+// export const dbCreateCustomerWithoutAuth = async ({
+//   email,
+
+// })
 
 export const dbUpdateCustomer = async (uid, updateData) => {
   try {
@@ -97,9 +104,25 @@ export const dbDeleteCustomer = async (uid) => {
       throw new Error("Customer not found");
     }
 
-    await auth.deleteUser(uid);
+    await adminAuth.deleteUser(uid);
     await deleteDoc(docRef);
   } catch (error) {
     throw new Error(`Error deleting customer: ${error.message}`);
+  }
+};
+
+export const dbChangePassword = async (
+  uid,
+  email,
+  oldPassword,
+  newPassword
+) => {
+  try {
+    await signInWithEmailAndPassword(firebaseAuth, email, oldPassword);
+    await adminAuth.updateUser(uid, {
+      password: newPassword,
+    });
+  } catch (error) {
+    throw new Error(`Error changing password: ${error.message}`);
   }
 };

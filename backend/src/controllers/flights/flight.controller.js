@@ -25,7 +25,7 @@ export const getAllFlights = async (req, res) => {
 
 export const getFlightById = async (req, res) => {
   try {
-    const flightId = req.params.flightId;
+    const flightId = req.query.id;
     const flightData = await dbGetFlightById(flightId);
     res.status(200).send({
       message: "Flight fetched successfully",
