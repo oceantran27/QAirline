@@ -18,8 +18,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import useFlightSearch from "@/hooks/useFlightSearch";
 import { format } from "date-fns";
 
-function SearchFlightsForm() {
+function SearchFlightsForm({ onSearch }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [adultCount, setAdultCount] = useState(1); // Số lượng người lớn
+  const [childCount, setChildCount] = useState(0); // Số lượng trẻ em
 
   const handleExpand = () => {
     setIsExpanded(true);
@@ -30,24 +32,29 @@ function SearchFlightsForm() {
   };
 
   const {
-    fromAirport,
-    setFromAirport,
-    toAirport,
-    setToAirport,
-    departureDate,
-    setDepartureDate,
-    returnDate,
-    setReturnDate,
-    passengerCount,
-    setPassengerCount,
-    tripType,
-    setTripType,
+    fromAirport, setFromAirport,
+    toAirport, setToAirport,
+    departureDate, setDepartureDate,
+    returnDate, setReturnDate,
+    tripType, setTripType,
     swapAirports,
-    errors,
     isValid,
   } = useFlightSearch();
+  
+  const passengerCount = adultCount + childCount;
+  
+  const handleSearch = () => {
+    if (!isValid) return; // Ngăn chặn khi form không hợp lệ
+    onSearch({
+      fromAirport,
+      toAirport,
+      departureDate: departureDate?.toISOString(),
+      returnDate: tripType === 'roundTrip' ? returnDate?.toISOString() : null,
+      tripType,
+      passengerCount,
+    });
+  };
 
-  // Định nghĩa số cột dựa trên tripType
   const gridColumns =
     tripType === "roundTrip"
       ? "lg:grid-cols-[1fr,auto,1fr,1fr,1fr,0.7fr]"
@@ -119,7 +126,7 @@ function SearchFlightsForm() {
                 <PopoverTrigger asChild>
                   <button className="text-sm font-bold w-full justify-start text-left pl-0 border-none">
                     {departureDate
-                      ? format(departureDate, "PPP")
+                      ? format(departureDate, "dd/MM/yyyy")
                       : "Chọn ngày đi"}
                   </button>
                 </PopoverTrigger>
@@ -146,7 +153,7 @@ function SearchFlightsForm() {
                   <PopoverTrigger asChild>
                     <button className="text-sm font-bold w-full justify-start text-left pl-0 border-none">
                       {returnDate
-                        ? format(returnDate, "PPP")
+                        ? format(returnDate, "dd/MM/yyyy")
                         : "Chọn ngày về"}
                     </button>
                   </PopoverTrigger>
@@ -166,6 +173,7 @@ function SearchFlightsForm() {
 
           {/* Nút tìm kiếm */}
           <button
+            onClick={handleSearch}
             aria-label="Tìm chuyến bay"
             className={`bg-orange text-white flex items-center justify-center h-full gap-0 py-6 outline-none border-none rounded-r-lg font-semibold text-sm transition duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-500/50 ${
               !isValid ? "opacity-50 cursor-not-allowed" : ""
@@ -179,7 +187,6 @@ function SearchFlightsForm() {
         {/* Nội dung mở rộng */}
         {isExpanded && (
           <div className="mt-2 flex flex-col md:flex-row items-start gap-4">
-            {/* Lựa chọn loại chuyến đi */}
             <RadioGroup
               value={tripType}
               onValueChange={setTripType}
@@ -225,36 +232,34 @@ function SearchFlightsForm() {
                 </label>
               </div>
             </RadioGroup>
-
-            {/* Số lượng hành khách */}
+            {/* Số lượng người lớn */}
             <div className="flex items-center w-full md:max-w-xs md:ml-10 mt-4 md:mt-0">
               <label className="block text-gray whitespace-nowrap mr-3">
-                Số hành khách
+                Số người lớn
               </label>
               <Input
                 type="number"
                 min="1"
-                value={passengerCount}
-                onChange={(e) => setPassengerCount(e.target.value)}
+                value={adultCount}
+                onChange={(e) => setAdultCount(Math.max(1, +e.target.value))}
                 className="mt-1 w-full"
-                placeholder="Nhập số hành khách"
+                placeholder="Nhập số người lớn"
               />
             </div>
 
-            {/* Chọn hạng chuyến bay */}
+            {/* Số lượng trẻ em */}
             <div className="flex items-center w-full md:max-w-xs gap-4 mt-4 md:mt-0">
-              <p className="block text-gray whitespace-nowrap text-sm">
-                Chọn hạng
-              </p>
-              <select
-                className="border w-full border-gray-300 rounded-lg p-2"
-                name="flightClass"
-                id="flightClass"
-              >
-                <option value="economy">Phổ thông</option>
-                <option value="business">Thương gia</option>
-                <option value="firstClass">Hạng nhất</option>
-              </select>
+              <label className="block text-gray whitespace-nowrap mr-3">
+                Số trẻ em
+              </label>
+              <Input
+                type="number"
+                min="0"
+                value={childCount}
+                onChange={(e) => setChildCount(Math.max(0, +e.target.value))}
+                className="mt-1 w-full"
+                placeholder="Nhập số trẻ em"
+              />
             </div>
           </div>
         )}

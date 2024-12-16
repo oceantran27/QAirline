@@ -43,7 +43,7 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link href="/tours" className="leading-normal no-underline text-lg hover:text-orange">
+              <Link href="/flights" className="leading-normal no-underline text-lg hover:text-orange">
                 Chuyến bay
               </Link>
             </li>

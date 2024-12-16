@@ -1,7 +1,7 @@
-import Image from "next/image"
-import { User } from 'lucide-react'
+import Image from "next/image";
+import { User } from "lucide-react";
 
-export function FlightHeader() {
+export function FlightHeader({ departureCode, arrivalCode, departureCity, arrivalCity, departureDate, returnDate, passengers }) {
   return (
     <>
       <div className="relative h-[300px] w-full">
@@ -25,29 +25,29 @@ export function FlightHeader() {
           <div className="flex items-center justify-between flex-wrap gap-4 max-w-5xl m-auto">
             <div className="flex items-center gap-12">
               <div className="flex items-center gap-2">
-                <span className="font-semibold">HAN</span>
+                <span className="font-semibold">{departureCode}</span>
                 <span className="text-gray-400">⋯⋯⋯⋯⋯⋯⋯⋯➜</span>
-                <span className="font-semibold">SGN</span>
+                <span className="font-semibold">{arrivalCode}</span>
               </div>
               <div className="text-sm text-gray-600">
-                <div>Hà Nội</div>
-                <div>TP. Hồ Chí Minh</div>
+                <div>{departureCity}</div>
+                <div>{arrivalCity}</div>
               </div>
             </div>
             <div className="flex items-center gap-12">
               <div>
                 <div className="text-sm text-gray-600">Chuyến đi</div>
-                <div className="font-semibold">Th 5, 14 thg 11</div>
+                <div className="font-semibold">{departureDate}</div>
               </div>
               <div>
                 <div className="text-sm text-gray-600">Chuyến về</div>
-                <div className="font-semibold">Th 7, 16 thg 11</div>
+                <div className="font-semibold">{returnDate}</div>
               </div>
               <div>
                 <div className="text-sm text-gray-600">Hành khách</div>
                 <div className="flex items-center gap-1">
                   <User className="h-4 w-4" />
-                  <span className="font-semibold">1</span>
+                  <span className="font-semibold">{passengers}</span>
                 </div>
               </div>
             </div>
@@ -55,5 +55,5 @@ export function FlightHeader() {
         </div>
       </div>
     </>
-  )
+  );
 }

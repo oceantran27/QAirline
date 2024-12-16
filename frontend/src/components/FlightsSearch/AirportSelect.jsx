@@ -1,5 +1,5 @@
 import React from "react";
-import airportsData from "../data/airports_data.json";
+import airportsData from "@/data/airports_data.json";
 import {
   Select,
   SelectTrigger,

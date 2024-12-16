@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { useAccountInfo } from "@/hooks/useAccountInfo";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AccountInfo() {
   const {
@@ -13,7 +14,72 @@ export default function AccountInfo() {
     handleUpdate,
   } = useAccountInfo();
 
-  if (loading) return <p>Đang tải...</p>;
+  if (loading) {
+    return (
+      <div className="p-4 sm:p-6">
+        <h2 className="text-xl font-medium mb-4 sm:mb-6">Thông tin cá nhân</h2>
+        <div className="flex flex-col lg:flex-row lg:space-x-8 space-y-6 lg:space-y-0">
+          <div className="w-full lg:w-1/3">
+            <Card className="p-0 bg-gradient-to-r from-sky-100 to-sky-200 shadow-lg rounded-lg relative h-48 sm:h-64">
+              <Skeleton className="w-full h-full rounded-lg" />
+            </Card>
+          </div>
+
+          <div className="w-full lg:w-2/3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Mã thẻ hội viên */}
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-1/2" />
+                <Skeleton className="h-6 w-full" />
+              </div>
+              {/* Họ và tên */}
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-1/2" />
+                <Skeleton className="h-6 w-full" />
+              </div>
+              {/* Email */}
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-1/2" />
+                <Skeleton className="h-6 w-full" />
+              </div>
+              {/* Địa chỉ */}
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-1/2" />
+                <Skeleton className="h-6 w-full" />
+              </div>
+              {/* Số điện thoại */}
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-1/2" />
+                <Skeleton className="h-6 w-full" />
+              </div>
+              {/* Giới tính */}
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-1/2" />
+                <Skeleton className="h-6 w-full" />
+              </div>
+              {/* Ngày sinh */}
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-1/2" />
+                <Skeleton className="h-6 w-full" />
+              </div>
+              {/* Số hộ chiếu */}
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-1/2" />
+                <Skeleton className="h-6 w-full" />
+              </div>
+
+              {/* Nút chỉnh sửa */}
+              <div className="md:col-span-2 pt-2 flex space-x-4">
+                <Skeleton className="h-10 w-32 rounded-lg" />
+                <Skeleton className="h-10 w-20 rounded-lg" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (errorMessage) return <p className="text-red-600">{errorMessage}</p>;
   if (!personalInfo) return <p>Không tìm thấy thông tin cá nhân.</p>;
 
@@ -63,7 +129,7 @@ export default function AccountInfo() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Tách fullName thành firstName, lastName
+    // Tách fullName thành firstName và lastName
     const parts = fullName.split(" ");
     const lastNameUpdate = parts.pop() || "";
     const firstNameUpdate = parts.join(" ");
@@ -75,7 +141,6 @@ export default function AccountInfo() {
       ...personalInfo,
       firstName: firstNameUpdate,
       lastName: lastNameUpdate,
-      // Giữ nguyên email, uid không đổi
       email: email,
       uid: uid,
       address: address,
@@ -107,7 +172,10 @@ export default function AccountInfo() {
 
         <div className="w-full lg:w-2/3">
           {isEditing ? (
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={handleSubmit}>
+            <form
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              onSubmit={handleSubmit}
+            >
               <div className="space-y-1">
                 <label className="text-sm text-gray-600">Mã thẻ hội viên</label>
                 <input
@@ -128,7 +196,11 @@ export default function AccountInfo() {
                     const nameParts = value.split(" ");
                     const last = nameParts.pop() || "";
                     const first = nameParts.join(" ");
-                    setPersonalInfo({ ...personalInfo, firstName: first, lastName: last });
+                    setPersonalInfo({
+                      ...personalInfo,
+                      firstName: first,
+                      lastName: last,
+                    });
                   }}
                 />
               </div>
@@ -159,7 +231,10 @@ export default function AccountInfo() {
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
                   value={phoneNumber}
                   onChange={(e) =>
-                    setPersonalInfo({ ...personalInfo, phoneNumber: e.target.value })
+                    setPersonalInfo({
+                      ...personalInfo,
+                      phoneNumber: e.target.value,
+                    })
                   }
                 />
               </div>
@@ -169,7 +244,10 @@ export default function AccountInfo() {
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
                   value={personalInfo.gender || "other"}
                   onChange={(e) =>
-                    setPersonalInfo({ ...personalInfo, gender: e.target.value })
+                    setPersonalInfo({
+                      ...personalInfo,
+                      gender: e.target.value,
+                    })
                   }
                 >
                   <option value="male">Nam</option>
@@ -197,7 +275,10 @@ export default function AccountInfo() {
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
                   value={passportNumber}
                   onChange={(e) =>
-                    setPersonalInfo({ ...personalInfo, passportNumber: e.target.value })
+                    setPersonalInfo({
+                      ...personalInfo,
+                      passportNumber: e.target.value,
+                    })
                   }
                 />
               </div>

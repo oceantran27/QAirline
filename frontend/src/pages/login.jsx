@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,22 +9,35 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import { useLogin } from "@/hooks/useLoginForm";
-
-const ErrorMessage = ({ message }) => (
-  <p className="text-red-600 text-center">{message}</p>
-);
+import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function LoginForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const { toast } = useToast();
 
-  const { formData, loading, errorMessage, handleInputChange, handleSubmit } =
-    useLogin(() => router.push("/my-account"));
+  const { formData, loading, errorMessage, handleInputChange, handleSubmit } = useLogin(
+    () => {
+      router.push("/my-account");
+      toast({
+        title: "Đăng nhập thành công",
+        description: "Chào mừng bạn trở lại!",
+      });
+    },
+    (error) => {
+      toast({
+        variant: "destructive",
+        title: "Đăng nhập thất bại",
+        description: error,
+      });
+    }
+  );
 
   return (
     <div
@@ -42,7 +55,6 @@ export default function LoginForm() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {errorMessage && <ErrorMessage message={errorMessage} />}
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium text-gray-700">
                 Email
@@ -81,6 +93,11 @@ export default function LoginForm() {
                 </button>
               </div>
             </div>
+            {errorMessage && (
+              <div className="text-red-500 text-sm text-center my-2">
+                {errorMessage}
+              </div>
+            )}
             <Button
               type="submit"
               className="w-full bg-[#e8604c] hover:bg-[#d55643] text-white"
@@ -140,6 +157,7 @@ export default function LoginForm() {
           </p>
         </CardFooter>
       </Card>
+      <Toaster />
     </div>
   );
 }

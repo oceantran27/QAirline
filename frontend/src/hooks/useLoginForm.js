@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import errorMessages from "@/lib/errorMessages";
 
-export const useLogin = (onSuccess) => {
+export const useLogin = (onSuccess, onError) => {
   const { login } = useAuth(); // Lấy hàm login từ AuthContext
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -31,11 +32,18 @@ export const useLogin = (onSuccess) => {
         login(token); // Gọi hàm login từ AuthContext
         if (onSuccess) onSuccess(); // Chuyển hướng sau khi đăng nhập thành công
       } else {
-        setErrorMessage(data.message || "Đã xảy ra lỗi, vui lòng thử lại.");
+        const errorKey = data.error || "SERVER_ERROR";
+        const errorDetail = errorMessages[errorKey] || "Đã xảy ra lỗi.";
+        setErrorMessage(errorDetail);
+        if (onError) onError(errorDetail); // Gọi hàm onError nếu có
       }
     } catch (error) {
       console.error("Lỗi khi đăng nhập:", error);
-      setErrorMessage("Không thể kết nối đến server. Vui lòng thử lại sau.");
+      const fallbackError = error.message.includes("Failed to fetch")
+        ? "Không thể kết nối đến server. Kiểm tra mạng hoặc thử lại sau."
+        : "Đã xảy ra lỗi không xác định.";
+      setErrorMessage(fallbackError);
+      if (onError) onError(fallbackError);
     } finally {
       setLoading(false);
     }

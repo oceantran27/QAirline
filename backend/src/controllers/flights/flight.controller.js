@@ -89,6 +89,7 @@ export const searchFlight = async (req, res) => {
   try {
     const { departureCity, arrivalCity, flightDate } = req.query;
     const flights = generateMockFlights(departureCity, arrivalCity, flightDate);
+    console.log(flights);
     await dbCreateFlights(flights);
     res.status(200).send({
       message: "Flights fetched successfully",
