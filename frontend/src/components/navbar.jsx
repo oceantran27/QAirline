@@ -89,11 +89,18 @@ export default function Navbar() {
                 </PopoverContent>
               </Popover>
             ) : (
-              <Link href="/login">
-                <button className="rounded-full bg-[#faf5ee] text-gray w-10 h-10 flex items-center justify-center hover:bg-orange hover:text-white">
-                  <BsPersonCircle size={20} />
-                </button>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link href="/login">
+                  <Button variant="ghost" className="hover:bg-orange hover:text-white">
+                    Đăng nhập
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button variant="ghost" className="hover:bg-orange hover:text-white">
+                    &nbsp;Đăng ký&nbsp;
+                  </Button>
+                </Link>
+              </div>
             )}
           </div>
 
@@ -161,14 +168,24 @@ export default function Navbar() {
                     </li>
                   </>
                 ) : (
-                  <li>
-                    <Link
-                      href="/login"
-                      className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200 text-orange"
-                    >
-                      Đăng nhập
-                    </Link>
-                  </li>
+                  <>
+                    <li>
+                      <Link
+                        href="/login"
+                        className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200 text-orange"
+                      >
+                        Đăng nhập
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/signup"
+                        className="px-6 h-10 flex items-center leading-normal no-underline font-bold text-lg border-b border-gray-200"
+                      >
+                        Đăng ký
+                      </Link>
+                    </li>
+                  </>
                 )}
               </ul>
             </div>
