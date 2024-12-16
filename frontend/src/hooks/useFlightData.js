@@ -43,6 +43,8 @@ export const useFlightData = (departureCity, arrivalCity, flightDate) => {
             arrivalAirport: flight.arrivalAirport,
             departureDate: new Date(flight.departureTime).toLocaleDateString(),
             aircraft: flight.aircraftType,
+            economyOptions: generateTicketOptions(flight.basePrice, "economy"),
+            businessOptions: generateTicketOptions(flight.basePrice * 1.5, "business"),
           }));
           setFlights(transformedFlights);
         } else {
@@ -78,6 +80,34 @@ export const useFlightData = (departureCity, arrivalCity, flightDate) => {
 
     setFilteredFlights(applyFilters());
   }, [flights, filters]);
+
+
+  const generateTicketOptions = (basePrice, type) => {
+    const changeFee = type === "economy" ? 860000 : 360000;
+    const refundFee = type === "economy" ? 860000 : 360000;
+    const checkedBaggage = type === "economy" ? "1 x 23 kg" : "2 x 32 kg";
+    const carryOn = "Không quá 12kg";
+    return [
+      {
+        id: `${type}1`,
+        name: type === "economy" ? "Phổ Thông Tiêu Chuẩn" : "Thương Gia Tiêu Chuẩn",
+        price: basePrice,
+        changeFee,
+        refundFee,
+        checkedBaggage,
+        carryOn,
+      },
+      {
+        id: `${type}2`,
+        name: type === "economy" ? "Phổ Thông Linh Hoạt" : "Thương Gia Linh Hoạt",
+        price: basePrice + 500000,
+        changeFee: changeFee / 2,
+        refundFee: refundFee / 2,
+        checkedBaggage,
+        carryOn,
+      },
+    ];
+  };
 
   const calculateDuration = (departureTime, arrivalTime) => {
     const diff = new Date(arrivalTime) - new Date(departureTime);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,8 +9,23 @@ import { Plane, TicketIcon, UserCircle } from 'lucide-react';
 import SearchForm from "./SearchFlightsForm";
 
 const FlightBookingTabs = () => {
+  const router = useRouter();
   const [date, setDate] = useState();
   const [returnDate, setReturnDate] = useState();
+
+  const handleSearch = (data) => {
+    router.push({
+      pathname: '/flights',
+      query: {
+        fromAirport: data.fromAirport,
+        toAirport: data.toAirport,
+        departureDate: data.departureDate,
+        returnDate: data.returnDate || null,
+        tripType: data.tripType,
+        passengerCount: data.passengerCount,
+      },
+    });
+  };
 
   return (
     <div className="w-full flex items-center justify-center">
@@ -43,7 +59,7 @@ const FlightBookingTabs = () => {
 
           {/* Mua Vé Tab */}
           <TabsContent value="buy" className="mt-2">
-            <SearchForm />
+            <SearchForm onSearch={handleSearch}/>
           </TabsContent>
 
           {/* Quản Lý Đặt Chỗ Tab */}

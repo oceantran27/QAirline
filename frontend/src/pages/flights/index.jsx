@@ -7,52 +7,66 @@ import { SkeletonFlightCard } from "@/components/tours-component/SkeletonFlightC
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useFlightData } from "@/hooks/useFlightData";
+import { useRouter } from "next/router";
+import airportsData from "@/data/airports_data.json";
+import { format } from "date-fns";
+import { vi } from "date-fns/locale";
 
+const getCityByCode = (code) => {
+  for (const region of airportsData) {
+    const airport = region.airports.find((airport) => airport.code === code);
+    if (airport) return airport.city;
+  }
+  return "";
+};
+const formatDateToVietnamese = (dateString) => {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  return format(date, "dd/MM/yyyy", { locale: vi });
+};
 export default function FlightBooking() {
-  const departureCity = "HAN";
-  const arrivalCity = "SGN";
-  const flightDate = "2024-12-14";
-
+  const router = useRouter();
   const {
-    flights,
-    filteredFlights,
-    loading,
-    error,
-    filters,
-    setFilters,
-  } = useFlightData(departureCity, arrivalCity, flightDate);
+    fromAirport,
+    toAirport,
+    departureDate,
+    returnDate,
+    tripType,
+    passengerCount,
+  } = router.query;
 
-  const flightDetails = {
-    departureCode: departureCity,
-    arrivalCode: arrivalCity,
-    departureCity: "Hà Nội",
-    arrivalCity: "TP. Hồ Chí Minh",
-    departureDate: new Date(flightDate).toLocaleDateString("vi-VN", {
-      weekday: "short",
-      day: "2-digit",
-      month: "2-digit",
-    }),
-    returnDate: "N/A",
-    passengers: "1",
-  };
+  const departureCity = getCityByCode(fromAirport);
+  const arrivalCity = getCityByCode(toAirport);
+  const formattedDepartureDate = formatDateToVietnamese(departureDate);
+  const formattedReturnDate = returnDate ? formatDateToVietnamese(returnDate) : "N/A";
+
+
+  // Sử dụng hook để lấy dữ liệu chuyến bay
+  const { flights, loading, error, filters, setFilters } = useFlightData(
+    fromAirport,
+    toAirport,
+    departureDate
+  );
+
+  
 
   if (error) return <div>Có lỗi xảy ra: {error}</div>;
 
   return (
     <div>
       <FlightHeader
-        departureCode={flightDetails.departureCode}
-        arrivalCode={flightDetails.arrivalCode}
-        departureCity={flightDetails.departureCity}
-        arrivalCity={flightDetails.arrivalCity}
-        departureDate={flightDetails.departureDate}
-        returnDate={flightDetails.returnDate}
-        passengers={flightDetails.passengers}
+        departureCode={fromAirport}
+        arrivalCode={toAirport}
+        departureCity={departureCity}
+        arrivalCity={arrivalCity}
+        departureDate={formattedDepartureDate}
+        returnDate={formattedReturnDate}
+        passengers={`${passengerCount} hành khách`}
       />
       <div className="flex flex-col md:flex-row gap-4 p-4 bg-gray-100 min-h-screen max-w-6xl m-auto">
         <FlightSideFilter filters={filters} setFilters={setFilters} />
         <div className="flex-1 space-y-4">
-          {loading ? (
+          {loading && flights.length > 0 ? (
             <>
               <SkeletonFlightCard />
               <SkeletonFlightCard />

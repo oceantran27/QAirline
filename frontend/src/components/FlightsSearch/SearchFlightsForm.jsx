@@ -18,7 +18,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import useFlightSearch from "@/hooks/useFlightSearch";
 import { format } from "date-fns";
 
-function SearchFlightsForm() {
+function SearchFlightsForm({ onSearch }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [adultCount, setAdultCount] = useState(1); // Số lượng người lớn
   const [childCount, setChildCount] = useState(0); // Số lượng trẻ em
@@ -32,20 +32,28 @@ function SearchFlightsForm() {
   };
 
   const {
-    fromAirport,
-    setFromAirport,
-    toAirport,
-    setToAirport,
-    departureDate,
-    setDepartureDate,
-    returnDate,
-    setReturnDate,
-    tripType,
-    setTripType,
+    fromAirport, setFromAirport,
+    toAirport, setToAirport,
+    departureDate, setDepartureDate,
+    returnDate, setReturnDate,
+    tripType, setTripType,
     swapAirports,
-    errors,
     isValid,
   } = useFlightSearch();
+  
+  const passengerCount = adultCount + childCount;
+  
+  const handleSearch = () => {
+    if (!isValid) return; // Ngăn chặn khi form không hợp lệ
+    onSearch({
+      fromAirport,
+      toAirport,
+      departureDate: departureDate?.toISOString(),
+      returnDate: tripType === 'roundTrip' ? returnDate?.toISOString() : null,
+      tripType,
+      passengerCount,
+    });
+  };
 
   const gridColumns =
     tripType === "roundTrip"
@@ -165,6 +173,7 @@ function SearchFlightsForm() {
 
           {/* Nút tìm kiếm */}
           <button
+            onClick={handleSearch}
             aria-label="Tìm chuyến bay"
             className={`bg-orange text-white flex items-center justify-center h-full gap-0 py-6 outline-none border-none rounded-r-lg font-semibold text-sm transition duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-500/50 ${
               !isValid ? "opacity-50 cursor-not-allowed" : ""
@@ -232,7 +241,7 @@ function SearchFlightsForm() {
                 type="number"
                 min="1"
                 value={adultCount}
-                onChange={(e) => setAdultCount(e.target.value)}
+                onChange={(e) => setAdultCount(Math.max(1, +e.target.value))}
                 className="mt-1 w-full"
                 placeholder="Nhập số người lớn"
               />
@@ -247,7 +256,7 @@ function SearchFlightsForm() {
                 type="number"
                 min="0"
                 value={childCount}
-                onChange={(e) => setChildCount(e.target.value)}
+                onChange={(e) => setChildCount(Math.max(0, +e.target.value))}
                 className="mt-1 w-full"
                 placeholder="Nhập số trẻ em"
               />
