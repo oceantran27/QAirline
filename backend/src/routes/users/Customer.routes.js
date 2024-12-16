@@ -5,6 +5,7 @@ import {
   updateCustomer,
   deleteCustomer,
   getAllCustomers,
+  changePassword,
 } from "../../controllers/users/customer.controller";
 import {
   authenticateToken,
@@ -18,5 +19,6 @@ router.get("/all", authenticateToken, checkAdminRole, getAllCustomers);
 router.post("/new", createCustomer);
 router.put("/update", authenticateToken, updateCustomer);
 router.delete("/delete", authenticateToken, deleteCustomer);
+router.put("/change-password", authenticateToken, changePassword);
 
 export default router;

@@ -62,8 +62,8 @@ export default function ScheduledFlights() {
     setFlights(flights.filter(flight => flight.id !== id))
   }
 
-  const getStatusBadge = (status) => {
-    switch(status) {
+  const getStatusBadge = (flight) => {
+    switch(flight.status) {
       case 'running':
         return <Badge className="bg-yellow-400 hover:bg-yellow-400 text-black">Đang Bay</Badge>
       case 'arrived':
@@ -140,7 +140,7 @@ export default function ScheduledFlights() {
                 <TableCell className="text-center">{`${flight.cbc} VND x ${flight.nob}`}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    {getStatusBadge(flight.status)}
+                    {getStatusBadge(flight)}
                     <Button 
                       size="sm"
                       className="bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1 h-7"

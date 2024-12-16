@@ -5,7 +5,10 @@ import {
   dbUpdateBooking,
   dbDeleteBooking,
 } from "../../services/bookings/booking.service";
-import { dbCreateTickets } from "../../services/bookings/ticket.service";
+import {
+  dbCancelTickets,
+  dbCreateTickets,
+} from "../../services/bookings/ticket.service";
 import {
   dbGetCustomerById,
   dbUpdateCustomer,
@@ -13,6 +16,7 @@ import {
 
 import Booking from "../../models/bookings/booking.model";
 import Ticket from "../../models/bookings/ticket.model";
+import { dbRemoveFlightTickets } from "../../services/flights/flight.service";
 
 export const getAllBookings = async (req, res) => {
   try {
@@ -160,6 +164,43 @@ export const deleteBooking = async (req, res) => {
     await dbDeleteBooking(bookingId);
     res.status(200).send({
       message: "Booking deleted successfully",
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error.message,
+    });
+  }
+};
+
+export const cancelBooking = async (req, res) => {
+  try {
+    const bookingId = req.query.id;
+
+    const bookingData = await dbGetBooking(bookingId);
+    if (!bookingData) {
+      return res.status(404).send({
+        message: "Booking not found",
+      });
+    }
+    bookingData.status = "Cancelled";
+
+    const user = req.user;
+    if (user.role !== "admin" && user.uid !== bookingData.bookerId) {
+      return res.status(403).send({
+        message: "You do not have permission to perform this action",
+      });
+    }
+
+    await dbCancelTickets(bookingData.ticketList);
+
+    await dbRemoveFlightTickets(bookingData.flightId, bookingData.ticketList);
+
+    await dbUpdateBooking(bookingId, {
+      ...bookingData,
+      updatedAt: new Date(),
+    });
+    return res.status(200).send({
+      message: "Booking updated successfully",
     });
   } catch (error) {
     res.status(400).send({

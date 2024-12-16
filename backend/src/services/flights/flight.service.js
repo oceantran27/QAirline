@@ -10,6 +10,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import firebase from "../../database/firebase";
+import { dbGetTicket } from "../bookings/ticket.service";
 
 const db = getFirestore(firebase);
 const FLIGHT_COLLECTION_NAME = "flights";
@@ -111,5 +112,36 @@ export const dbCreateFlights = async (flights) => {
     console.log("Flights created successfully");
   } catch (error) {
     throw new Error(`Error creating flights: ${error.message}`);
+  }
+};
+
+export const dbRemoveFlightTickets = async (flightId, cancelTickets) => {
+  try {
+    const docRef = doc(db, FLIGHT_COLLECTION_NAME, flightId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      throw new Error("Flight not found");
+    }
+
+    const flight = docSnap.data();
+    let cancelSeats = [];
+    for (ticketId of cancelTickets) {
+      const ticket = await dbGetTicket(ticketId);
+      if (ticket) {
+        cancelSeats.push(ticket.seatCode);
+      }
+    }
+
+    flight.ticketList = flight.ticketList.filter(
+      (ticketId) => !cancelTickets.includes(ticketId)
+    );
+    flight.bookedSeats = flight.bookedSeats.filter(
+      (seat) => !cancelSeats.includes(seat)
+    );
+    flight.updatedAt = new Date();
+    await updateDoc(docRef, flight);
+  } catch (error) {
+    throw new Error(`Error canceling flights: ${error.message}`);
   }
 };

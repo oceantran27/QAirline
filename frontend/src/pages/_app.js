@@ -3,19 +3,19 @@ import MainLayout from "../layouts/MainLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import { AuthProvider } from '../context/AuthContext';
 import { useRouter } from "next/router";
-import { usePathname } from 'next/navigation';
 import { useAppLogic } from '../hooks/useAppLogic';
 import { Toaster } from "@/components/ui/toaster";
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  const pathname = usePathname();
   const { showScrollTopButton, handleScrollToTop } = useAppLogic(router);
 
-  const isAdminRoute = pathname.slice(0, 7) === '/admin/';
+  const isValidAdminPage = router.pathname.startsWith('/admin');
+  const isAdminLoginPage = router.pathname === '/admin';
 
   return (
     <AuthProvider>
-      {isAdminRoute ? (
+      {isValidAdminPage ? 
+      ( isAdminLoginPage ? <Component {...pageProps} /> :
         <AdminLayout>
           <Component {...pageProps} />
         </AdminLayout>

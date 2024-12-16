@@ -28,7 +28,10 @@ export const getTicket = async (req, res) => {
     const user = req.user;
     const ticketData = await dbGetTicket(req.query.id);
 
-    if (user.role !== "admin" && user.uid !== ticketData.bookerId) {
+    if (
+      user.role !== "admin" &&
+      !user.bookingHistory.includes(ticketData.bookingId)
+    ) {
       return res.status(403).send({
         message: "You do not have permission to perform this action",
       });
@@ -50,8 +53,10 @@ export const createTicket = async (req, res) => {
     ticket.createdAt = new Date();
     ticket.updatedAt = new Date();
 
-    const user = req.user;
-    if (user.role !== "admin" && user.uid !== ticket.bookerId) {
+    if (
+      user.role !== "admin" &&
+      !user.bookingHistory.includes(ticketData.bookingId)
+    ) {
       return res.status(403).send({
         message: "You do not have permission to perform this action",
       });
@@ -97,8 +102,10 @@ export const updateTicket = async (req, res) => {
       });
     }
 
-    const user = req.user;
-    if (user.role !== "admin" && user.uid !== ticketData.bookerId) {
+    if (
+      user.role !== "admin" &&
+      !user.bookingHistory.includes(ticketData.bookingId)
+    ) {
       return res.status(403).send({
         message: "You do not have permission to perform this action",
       });
@@ -127,7 +134,10 @@ export const deleteTicket = async (req, res) => {
     }
 
     const user = req.user;
-    if (user.role !== "admin" && user.uid !== ticketData.bookerId) {
+    if (
+      user.role !== "admin" &&
+      !user.bookingHistory.includes(ticketData.bookingId)
+    ) {
       return res.status(403).send({
         message: "You do not have permission to perform this action",
       });
@@ -136,6 +146,39 @@ export const deleteTicket = async (req, res) => {
     await dbDeleteTicket(ticketId);
     res.status(200).send({
       message: "Ticket deleted successfully",
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error.message,
+    });
+  }
+};
+
+export const cancelTicket = async (req, res) => {
+  try {
+    const ticketId = req.query.id;
+
+    const ticketData = await dbGetTicket(ticketId);
+    if (!ticketData) {
+      return res.status(404).send({
+        message: "Ticket not found",
+      });
+    }
+    ticketData.status = "Cancelled";
+
+    const user = req.user;
+    if (
+      user.role !== "admin" &&
+      !user.bookingHistory.includes(ticketData.bookingId)
+    ) {
+      return res.status(403).send({
+        message: "You do not have permission to perform this action",
+      });
+    }
+
+    await dbUpdateTicket(ticketId, { ...ticketData, updatedAt: new Date() });
+    return res.status(200).send({
+      message: "Ticket cancelled successfully",
     });
   } catch (error) {
     res.status(400).send({

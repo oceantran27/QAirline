@@ -5,6 +5,7 @@ import {
   getBooking,
   updateBooking,
   deleteBooking,
+  cancelBooking,
 } from "../../controllers/bookings/booking.controller";
 import {
   authenticateToken,
@@ -16,7 +17,8 @@ const router = express.Router();
 router.get("/all", authenticateToken, checkAdminRole, getAllBookings);
 router.get("/", authenticateToken, getBooking);
 router.post("/new", authenticateToken, createBooking);
-router.put("/update", authenticateToken, updateBooking);
-router.delete("/delete", authenticateToken, deleteBooking);
+router.put("/cancel", authenticateToken, cancelBooking);
+// router.put("/update", authenticateToken, updateBooking);
+// router.delete("/delete", authenticateToken, deleteBooking);
 
 export default router;
