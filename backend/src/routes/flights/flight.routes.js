@@ -15,9 +15,10 @@ import {
 const router = express.Router();
 
 router.get("/search", searchFlight);
-// router.get("/all", getAllFlights);
-// router.post("/new", authenticateToken, checkAdminRole, createFlight);
-// router.put("/update", authenticateToken, checkAdminRole, updateFlight);
-// router.delete("/delete", authenticateToken, checkAdminRole, deleteFlight);
+router.get("/all", getAllFlights);
+router.get("/", getFlightById);
+router.post("/new", authenticateToken, checkAdminRole, createFlight);
+router.put("/update", authenticateToken, checkAdminRole, updateFlight);
+router.delete("/delete", authenticateToken, checkAdminRole, deleteFlight);
 
 export default router;

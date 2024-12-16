@@ -4,6 +4,7 @@ import {
   dbGetCustomerById,
   dbUpdateCustomer,
   dbDeleteCustomer,
+  dbChangePassword,
 } from "../../services/users/customer.service";
 
 export const createCustomer = async (req, res) => {
@@ -86,15 +87,45 @@ export const deleteCustomer = async (req, res) => {
     const user = req.user;
 
     if (user.role === "admin") {
-      await dbDeleteCustomer(req.query.id, updateData);
+      await dbDeleteCustomer(req.query.id);
     }
 
     if (user.role === "customer") {
-      await dbDeleteCustomer(user.uid, updateData);
+      await dbDeleteCustomer(user.uid);
     }
 
     res.status(200).send({
       message: "Customer deleted successfully",
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error.message,
+    });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const user = req.user;
+    if (user.role === "admin") {
+      await dbChangePassword(
+        req.query.id,
+        req.body.email,
+        req.body.oldPassword,
+        req.body.newPassword
+      );
+    }
+
+    if (user.role === "customer") {
+      await dbChangePassword(
+        user.uid,
+        user.email,
+        req.body.oldPassword,
+        req.body.newPassword
+      );
+    }
+    res.status(200).send({
+      message: "Password changed successfully",
     });
   } catch (error) {
     res.status(400).send({
