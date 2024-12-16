@@ -5,7 +5,7 @@ import { AuthProvider } from '../context/AuthContext';
 import { useRouter } from "next/router";
 import { usePathname } from 'next/navigation';
 import { useAppLogic } from '../hooks/useAppLogic';
-
+import { Toaster } from "@/components/ui/toaster";
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -24,6 +24,7 @@ function MyApp({ Component, pageProps }) {
           <Component {...pageProps} />
         </MainLayout>
       )}
+      <Toaster />
 
       {showScrollTopButton && (
         <button
