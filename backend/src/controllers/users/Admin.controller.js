@@ -6,6 +6,7 @@ import {
   dbUpdateAdmin,
   dbDeleteAdmin,
 } from "../../services/users/admin.service";
+import { dbChangePassword } from "../../services/users/customer.service";
 
 export const createMockAdmin = async (req, res) => {
   try {
@@ -43,8 +44,6 @@ export const createAdmin = async (req, res) => {
 
 export const getAdmin = async (req, res) => {
   try {
-    // const reqId = req.user.uid;
-    // const admin = await dbGetAdminById(reqId);
     const admin = req.user;
     res.status(200).send({
       message: "Admin fetched successfully",
@@ -73,7 +72,8 @@ export const getAllAdmins = async (req, res) => {
 
 export const updateAdmin = async (req, res) => {
   try {
-    const { id } = req.user.uid;
+    const id = req.user.uid;
+    console.log(id);
     let updateData = { ...req.body };
     await dbUpdateAdmin(id, updateData);
     res.status(200).send({
@@ -88,10 +88,29 @@ export const updateAdmin = async (req, res) => {
 
 export const deleteAdmin = async (req, res) => {
   try {
-    const { id } = req.user.uid;
+    const id = req.user.uid;
     await dbDeleteAdmin(id);
     res.status(200).send({
       message: "Admin deleted successfully",
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error.message,
+    });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const user = req.user;
+    await dbChangePassword(
+      user.uid,
+      user.email,
+      req.body.oldPassword,
+      req.body.newPassword
+    );
+    res.status(200).send({
+      message: "Password changed successfully",
     });
   } catch (error) {
     res.status(400).send({
