@@ -1,12 +1,9 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Plane, Clock, CreditCard } from "lucide-react";
+import { Calendar, Clock, Plane, CreditCard, Users } from "lucide-react";
 
 export default function ConfirmationPage() {
   const router = useRouter();
@@ -14,28 +11,14 @@ export default function ConfirmationPage() {
 
   const [flightData, setFlightData] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [passengersCount, setPassengersCount] = useState(null); // State to store passengersCount
-
-  // Lấy flightId, optionId và passengerCount từ URL
+  // Lấy dữ liệu chuyến bay từ API
   useEffect(() => {
-    if (!flightId || !optionId) {
-      setError("Thiếu thông tin chuyến bay hoặc hạng vé.");
-      setLoading(false);
-      return;
-    }
+    if (!flightId || !optionId) return;
 
-    const passengerCountFromURL = passengerCount ? parseInt(passengerCount) : 0;  // Convert về số
-    setPassengersCount(passengerCountFromURL);  // Set state với số hành khách
-
-    console.log("Flight ID:", flightId);
-    console.log("Option ID:", optionId);
-    console.log("Passenger Count:", passengersCount);  // Kiểm tra giá trị
-
-    // Fetch dữ liệu chuyến bay từ API sau khi lấy flightId và optionId
     const fetchFlightData = async () => {
       setLoading(true);
       try {
@@ -44,26 +27,30 @@ export default function ConfirmationPage() {
           throw new Error("Không thể lấy dữ liệu chuyến bay.");
         }
         const result = await response.json();
-        const economyOptions = generateTicketOptions(result.data.basePrice, "economy");
-        const businessOptions = generateTicketOptions(result.data.basePrice * 1.5, "business");
+        const data = result.data;
 
+        // Tạo các tùy chọn vé cho chuyến bay
+        const economyOptions = generateTicketOptions(data.basePrice, "economy");
+        const businessOptions = generateTicketOptions(data.basePrice * 1.5, "business");
         const allOptions = [...economyOptions, ...businessOptions];
+
         const option = allOptions.find((opt) => opt.id === optionId);
+
         if (!option) {
           throw new Error("Không tìm thấy thông tin hạng vé.");
         }
 
-        setFlightData({ ...result.data, economyOptions, businessOptions });
+        setFlightData(data);
         setSelectedOption(option);
       } catch (err) {
-        setError("Không thể tải dữ liệu chuyến bay.");
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchFlightData();
-  }, [flightId, optionId, passengerCount]);  // Điều chỉnh để phụ thuộc vào passengerCount
+  }, [flightId, optionId]);
 
   // Hàm tạo thông tin hạng vé
   const generateTicketOptions = (basePrice, type) => {
@@ -93,7 +80,7 @@ export default function ConfirmationPage() {
     ];
   };
 
-  // Chuyển đổi thời gian từ seconds sang định dạng thời gian
+  // Định dạng thời gian chuyến bay
   const formatTime = (seconds) => {
     return new Date(seconds * 1000).toLocaleTimeString("vi-VN", {
       hour: "2-digit",
@@ -101,89 +88,117 @@ export default function ConfirmationPage() {
     });
   };
 
-  // Chuyển đổi giá sang VND
-  const formatCurrency = (value) =>
-    value.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
-
+  // Kiểm tra trạng thái tải dữ liệu
   if (loading) {
-    return (
-      <div className="p-6">
-        <Skeleton className="h-12 w-3/4 mb-4" />
-        <Skeleton className="h-8 w-1/2 mb-4" />
-        <Skeleton className="h-40 w-full mb-4" />
-      </div>
-    );
+    return <div>Đang tải...</div>;
   }
 
+  // Xử lý khi có lỗi
   if (error || !flightData || !selectedOption) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <p className="text-red-600 text-lg mb-4">{error || "Không tìm thấy thông tin chuyến bay."}</p>
-        <Button
-          onClick={() => router.push("/")}
-          className="bg-orange-500 hover:bg-black text-white"
-        >
-          Quay về trang chủ
-        </Button>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-xl text-gray-600">{error || "Không tìm thấy thông tin chuyến bay."}</p>
       </div>
     );
   }
 
+  // Hàm xác nhận thanh toán
+  const handleConfirmPayment = () => {
+    setIsPaymentConfirmed(true);
+  };
+
+  // Hàm quay lại trang chủ
+  const handleReturnHome = () => {
+    router.push("/");
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <Card className="shadow-lg">
-        <CardContent>
-          <h2 className="text-2xl font-bold mb-6 text-orange-500 text-center">
-            Thông Tin Chuyến Bay
-          </h2>
+    <div className="min-h-screen bg-gray-50">
+      <div className="relative h-[200px] w-full bg-orange">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4 text-center">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Lựa chọn của quý khách</h1>
+          <p className="text-lg md:text-xl">{flightData.departureAirport.split(',')[0]} đến {flightData.arrivalAirport.split(',')[0]}</p>
+        </div>
+      </div>
 
-          {/* Chi tiết chuyến bay */}
-          <div className="space-y-4">
-            <FlightDetail label="Số hiệu chuyến bay" value={flightData.flightNumber} />
-            <FlightDetail label="Loại máy bay" value={flightData.aircraftType} />
-            <FlightDetail
-              label="Giờ khởi hành"
-              value={formatTime(flightData.departureTime.seconds)}
-              icon={<Clock className="text-orange-500 w-5 h-5" />}
-            />
-            <FlightDetail
-              label="Giờ đến"
-              value={formatTime(flightData.arrivalTime.seconds)}
-              icon={<Clock className="text-orange-500 w-5 h-5" />}
-            />
-            <FlightDetail label="Sân bay khởi hành" value={flightData.departureAirport} />
-            <FlightDetail label="Sân bay đến" value={flightData.arrivalAirport} />
-            <FlightDetail
-              label="Hạng vé"
-              value={selectedOption.name}
-              icon={<CreditCard className="text-orange-500 w-5 h-5" />}
-            />
-            <FlightDetail
-              label="Giá vé"
-              value={formatCurrency(selectedOption.price)}
-              icon={<CreditCard className="text-orange-500 w-5 h-5" />}
-            />
-            <FlightDetail
-              label="Số lượng hành khách"
-              value={passengersCount ? passengersCount : "Không xác định"}
-              icon={<Plane className="text-orange-500 w-5 h-5" />}
-            />
-          </div>
+      <div className="max-w-4xl mx-auto p-4 sm:p-6 m-4 relative z-10">
+        <Card className="shadow-lg border-orange">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2 sm:mb-0">Chi tiết chuyến bay</h2>
+              <span className="text-sm text-gray-500">{flightData.flightNumber}</span>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+              <div className="flex items-center space-x-4 mb-4 sm:mb-0">
+                <div className="flex flex-col items-center">
+                  <span className="text-2xl sm:text-3xl font-bold text-gray-800">{formatTime(flightData.departureTime.seconds)}</span>
+                  <span className="text-base sm:text-lg font-medium text-gray-600">Điểm khởi hành</span>
+                </div>
+                <div className="flex-1 relative px-8">
+                  <Plane className="text-orange absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform rotate-45" />
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="text-2xl sm:text-3xl font-bold text-gray-800">{formatTime(flightData.arrivalTime.seconds)}</span>
+                  <span className="text-base sm:text-lg font-medium text-gray-600">Điểm đến</span>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-medium text-gray-500">{selectedOption.name}</div>
+                <div className="text-xl sm:text-2xl font-bold text-orange">{selectedOption.price.toLocaleString()} VND</div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8">
+              <div className="flex items-center space-x-3">
+                <Calendar className="text-orange flex-shrink-0" />
+                <div>
+                  <div className="text-sm text-gray-500">Ngày khởi hành</div>
+                  <div className="font-medium">{new Date(flightData.departureTime.seconds * 1000).toLocaleDateString()}</div>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Clock className="text-orange flex-shrink-0" />
+                <div>
+                  <div className="text-sm text-gray-500">Thời gian bay</div>
+                  <div className="font-medium">2 giờ 30 phút</div> {/* Bạn có thể tính toán duration từ dữ liệu hoặc API */}
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Users className="text-orange flex-shrink-0" />
+                <div>
+                  <div className="text-sm text-gray-500">Hành khách</div>
+                  <div className="font-medium">{passengerCount} Người lớn</div> {/* Hiển thị số lượng hành khách */}
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <CreditCard className="text-orange flex-shrink-0" />
+                <div>
+                  <div className="text-sm text-gray-500">Phương thức thanh toán</div>
+                  <div className="font-medium">Thẻ tín dụng</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="border-t border-gray-200 pt-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
+                <div className="mb-2 sm:mb-0">
+                  <div className="text-lg font-semibold text-gray-800">Tổng cộng</div>
+                  <div className="text-sm text-gray-500">Đã bao gồm thuế và phí</div>
+                </div>
+                <div className="text-2xl sm:text-3xl font-bold text-orange">
+                  {(selectedOption.price * passengerCount).toLocaleString()} VND
+                </div>
 
-          {/* Nút thanh toán */}
-          <div className="mt-6 flex justify-center">
-            <Button
-             variant="orange"
-              onClick={() => setIsPaymentConfirmed(true)}
-              className="hover:bg-black text-white"
-            >
-              Xác nhận và thanh toán
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+              </div>
+              <Button className="w-full sm:w-auto bg-orange hover:bg-black text-white" onClick={handleConfirmPayment}>
+                Xác nhận và thanh toán
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-      {/* Dialog Thanh toán thành công */}
       <Dialog open={isPaymentConfirmed} onOpenChange={setIsPaymentConfirmed}>
         <DialogContent>
           <DialogHeader>
@@ -192,24 +207,11 @@ export default function ConfirmationPage() {
               Cảm ơn quý khách đã đặt vé. Chúc quý khách có chuyến bay vui vẻ!
             </DialogDescription>
           </DialogHeader>
-          <Button onClick={() => router.push("/")} className="mt-4 bg-orange hover:bg-black">
+          <Button onClick={handleReturnHome} className="mt-4 bg-orange hover:bg-black">
             Quay về trang chủ
           </Button>
         </DialogContent>
       </Dialog>
-    </div>
-  );
-}
-
-// Component hiển thị chi tiết chuyến bay
-function FlightDetail({ label, value, icon }) {
-  return (
-    <div className="flex items-center space-x-3">
-      {icon}
-      <div>
-        <p className="text-sm text-gray-500">{label}</p>
-        <p className="text-lg font-semibold">{value}</p>
-      </div>
     </div>
   );
 }
