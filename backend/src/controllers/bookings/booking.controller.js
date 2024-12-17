@@ -54,7 +54,8 @@ export const getBooking = async (req, res) => {
 
 export const createBooking = async (req, res) => {
   try {
-    const { ticketDataList, ...bookingData } = req.body;
+    const { departureTicketDataList, returnTicketDataList, ...bookingData } =
+      req.body;
     const booking = new Booking(bookingData);
     booking.createdAt = new Date();
     booking.updatedAt = new Date();
@@ -74,13 +75,14 @@ export const createBooking = async (req, res) => {
     }
 
     let tickets = [];
-    for (let ticketData of ticketDataList) {
+
+    for (let ticketData of departureTicketDataList) {
       booking.totalPrice += ticketData.price;
 
       const ticket = new Ticket(
         null,
         booking.bookingId,
-        booking.flightId,
+        booking.departureFlightId,
         ticketData.price,
         ticketData.seatCode,
         ticketData.flightClass,
@@ -88,7 +90,26 @@ export const createBooking = async (req, res) => {
       );
 
       tickets.push(ticket);
-      booking.ticketList.push(ticket.ticketId);
+      booking.departureIdTickets.push(ticket.ticketId);
+    }
+
+    if (booking.tripType === "roundTrip") {
+      for (let ticketData of returnTicketDataList) {
+        booking.totalPrice += ticketData.price;
+
+        const ticket = new Ticket(
+          null,
+          booking.bookingId,
+          booking.returnFlightId,
+          ticketData.price,
+          ticketData.seatCode,
+          ticketData.flightClass,
+          ticketData.ownerData
+        );
+
+        tickets.push(ticket);
+        booking.returnIdTickets.push(ticket.ticketId);
+      }
     }
 
     await dbCreateTickets(tickets);

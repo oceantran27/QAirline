@@ -5,17 +5,27 @@ class Booking {
   }
   constructor({
     bookingId = null,
+    tripType = "oneWay", // "roundTrip" or "oneWay"
     bookerId,
-    flightId,
-    ticketList = [], //ticketId
+    departureCity,
+    arrivalCity,
+    departureFlightId,
+    returnFlightId = null,
+    departureIdTickets = [],
+    returnIdTickets = [],
     totalPrice = 0,
     status = "Confirm",
     paymentStatus = "Paid",
   }) {
     this.bookingId = bookingId || this.generateTicketId();
     this.bookerId = bookerId;
-    this.flightId = flightId;
-    this.ticketList = ticketList;
+    this.tripType = tripType;
+    this.departureCity = departureCity;
+    this.arrivalCity = arrivalCity;
+    this.departureFlightId = departureFlightId;
+    this.returnFlightId = returnFlightId;
+    this.departureIdTickets = departureIdTickets;
+    this.returnIdTickets = returnIdTickets;
     this.totalPrice = totalPrice;
     this.status = status;
     this.paymentStatus = paymentStatus;
@@ -42,8 +52,13 @@ class Booking {
     return {
       bookingId: this.bookingId,
       bookerId: this.bookerId,
-      flightId: this.flightId,
-      ticketList: this.ticketList,
+      tripType: this.tripType,
+      departureCity: this.departureCity,
+      arrivalCity: this.arrivalCity,
+      departureFlightId: this.departureFlightId,
+      returnFlightId: this.returnFlightId,
+      departureIdTickets: this.departureIdTickets,
+      returnIdTickets: this.returnIdTickets,
       totalPrice: this.totalPrice,
       status: this.status,
       paymentStatus: this.paymentStatus,
