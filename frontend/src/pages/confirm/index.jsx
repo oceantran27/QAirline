@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Calendar, Clock, Plane, CreditCard, Users } from "lucide-react";
+import { Calendar, Clock, Plane, CreditCard, Users } from 'lucide-react';
+import { PassengerInfoDialog } from "./PassengerInfoDialog";
 
 export default function ConfirmationPage() {
   const router = useRouter();
@@ -12,8 +13,10 @@ export default function ConfirmationPage() {
   const [flightData, setFlightData] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false);
+  const [isPassengerInfoFilled, setIsPassengerInfoFilled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isPassengerInfoOpen, setIsPassengerInfoOpen] = useState(false);
 
   // Lấy dữ liệu chuyến bay từ API
   useEffect(() => {
@@ -88,6 +91,12 @@ export default function ConfirmationPage() {
     });
   };
 
+
+
+  const handlePassengerInfoFilled = () => {
+    setIsPassengerInfoFilled(true); // Cập nhật trạng thái khi thông tin hợp lệ
+  };
+
   // Kiểm tra trạng thái tải dữ liệu
   if (loading) {
     return <div>Đang tải...</div>;
@@ -110,6 +119,10 @@ export default function ConfirmationPage() {
   // Hàm quay lại trang chủ
   const handleReturnHome = () => {
     router.push("/");
+  };
+
+  const handleOpenPassengerInfo = () => {
+    setIsPassengerInfoOpen(true);
   };
 
   return (
@@ -187,13 +200,21 @@ export default function ConfirmationPage() {
                   <div className="text-sm text-gray-500">Đã bao gồm thuế và phí</div>
                 </div>
                 <div className="text-2xl sm:text-3xl font-bold text-orange">
-                  {(selectedOption.price * passengerCount).toLocaleString()} VND
+                  {(selectedOption.price * parseInt(passengerCount, 10)).toLocaleString()} VND
                 </div>
 
               </div>
-              <Button className="w-full sm:w-auto bg-orange hover:bg-black text-white" onClick={handleConfirmPayment}>
-                Xác nhận và thanh toán
+              <Button variant="outline" className="w-full sm:w-auto mb-4 mr-3" onClick={handleOpenPassengerInfo}>
+                Nhập thông tin hành khách
               </Button>
+              <Button
+              variant="orange"
+              className={`w-full sm:w-auto text-white ${!isPassengerInfoFilled && "opacity-50 cursor-not-allowed"}`}
+              onClick={handleConfirmPayment}
+              disabled={!isPassengerInfoFilled} // Disable nút nếu thông tin chưa đầy đủ
+            >
+              Xác nhận và thanh toán
+            </Button>
             </div>
           </CardContent>
         </Card>
@@ -212,6 +233,13 @@ export default function ConfirmationPage() {
           </Button>
         </DialogContent>
       </Dialog>
+      <PassengerInfoDialog
+        isOpen={isPassengerInfoOpen}
+        onClose={() => setIsPassengerInfoOpen(false)}
+        passengerCount={parseInt(passengerCount) || 1}
+        onInfoFilled={handlePassengerInfoFilled} // Callback khi thông tin đầy đủ
+      />
     </div>
   );
 }
+
