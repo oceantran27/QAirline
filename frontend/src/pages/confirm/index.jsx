@@ -1,24 +1,69 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plane, Clock, CreditCard } from "lucide-react";
 
 export default function ConfirmationPage() {
-  const searchParams = useSearchParams(); // Lấy tham số từ URL
   const router = useRouter();
+  const { flightId, optionId, passengerCount } = router.query;
 
-  const [flightId, setFlightId] = useState(null);
-  const [optionId, setOptionId] = useState(null);
   const [flightData, setFlightData] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false);
   const [error, setError] = useState(null);
+
+  const [passengersCount, setPassengersCount] = useState(null); // State to store passengersCount
+
+  // Lấy flightId, optionId và passengerCount từ URL
+  useEffect(() => {
+    if (!flightId || !optionId) {
+      setError("Thiếu thông tin chuyến bay hoặc hạng vé.");
+      setLoading(false);
+      return;
+    }
+
+    const passengerCountFromURL = passengerCount ? parseInt(passengerCount) : 0;  // Convert về số
+    setPassengersCount(passengerCountFromURL);  // Set state với số hành khách
+
+    console.log("Flight ID:", flightId);
+    console.log("Option ID:", optionId);
+    console.log("Passenger Count:", passengersCount);  // Kiểm tra giá trị
+
+    // Fetch dữ liệu chuyến bay từ API sau khi lấy flightId và optionId
+    const fetchFlightData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:3030/api/flight/?id=${flightId}`);
+        if (!response.ok) {
+          throw new Error("Không thể lấy dữ liệu chuyến bay.");
+        }
+        const result = await response.json();
+        const economyOptions = generateTicketOptions(result.data.basePrice, "economy");
+        const businessOptions = generateTicketOptions(result.data.basePrice * 1.5, "business");
+
+        const allOptions = [...economyOptions, ...businessOptions];
+        const option = allOptions.find((opt) => opt.id === optionId);
+        if (!option) {
+          throw new Error("Không tìm thấy thông tin hạng vé.");
+        }
+
+        setFlightData({ ...result.data, economyOptions, businessOptions });
+        setSelectedOption(option);
+      } catch (err) {
+        setError("Không thể tải dữ liệu chuyến bay.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFlightData();
+  }, [flightId, optionId, passengerCount]);  // Điều chỉnh để phụ thuộc vào passengerCount
 
   // Hàm tạo thông tin hạng vé
   const generateTicketOptions = (basePrice, type) => {
@@ -47,72 +92,6 @@ export default function ConfirmationPage() {
       },
     ];
   };
-
-  // Lấy flightId và optionId từ URL
-  useEffect(() => {
-    const flightIdFromParams = searchParams.get("flightId");
-    const optionIdFromParams = searchParams.get("optionId");
-    console.log("Flight ID:", flightIdFromParams);
-    console.log("Option ID:", optionIdFromParams);
-
-    if (!flightIdFromParams) {
-      console.error("Missing required parameter: flightId.");
-      setError("Thiếu thông tin chuyến bay.");
-      setLoading(false);
-      return;
-    }
-
-    if (!optionIdFromParams) {
-      console.error("Missing required parameter: optionId.");
-      setError("Thiếu thông tin hạng vé.");
-      setLoading(false);
-      return;
-    }
-
-    setFlightId(flightIdFromParams);
-    setOptionId(optionIdFromParams);
-  }, [searchParams]);
-
-  // Fetch dữ liệu chuyến bay từ API
-  useEffect(() => {
-    if (!flightId) return; // Nếu không có flightId, dừng fetch
-
-    const fetchFlightData = async () => {
-      setLoading(true);
-      try {
-        console.log("Fetching flight data for ID:", flightId);
-        const response = await fetch(`http://localhost:3030/api/flight/?id=${flightId}`);
-        if (!response.ok) {
-          throw new Error("Không thể lấy dữ liệu chuyến bay.");
-        }
-        const result = await response.json();
-        console.log("Fetched flight data:", result);
-
-        // Tạo thông tin hạng vé từ giá cơ bản
-        const economyOptions = generateTicketOptions(result.data.basePrice, "economy");
-        const businessOptions = generateTicketOptions(result.data.basePrice * 1.5, "business");
-
-        // Kết hợp các tùy chọn vé
-        const allOptions = [...economyOptions, ...businessOptions];
-
-        // Tìm hạng vé dựa trên optionId
-        const option = allOptions.find((opt) => opt.id === optionId);
-        if (!option) {
-          throw new Error("Không tìm thấy thông tin hạng vé.");
-        }
-
-        setFlightData({ ...result.data, economyOptions, businessOptions });
-        setSelectedOption(option);
-      } catch (err) {
-        console.error("Error fetching flight:", err.message);
-        setError("Không thể tải thông tin chuyến bay. Vui lòng thử lại.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFlightData();
-  }, [flightId, optionId]);
 
   // Chuyển đổi thời gian từ seconds sang định dạng thời gian
   const formatTime = (seconds) => {
@@ -184,6 +163,11 @@ export default function ConfirmationPage() {
               value={formatCurrency(selectedOption.price)}
               icon={<CreditCard className="text-orange-500 w-5 h-5" />}
             />
+            <FlightDetail
+              label="Số lượng hành khách"
+              value={passengersCount ? passengersCount : "Không xác định"}
+              icon={<Plane className="text-orange-500 w-5 h-5" />}
+            />
           </div>
 
           {/* Nút thanh toán */}
@@ -203,20 +187,14 @@ export default function ConfirmationPage() {
       <Dialog open={isPaymentConfirmed} onOpenChange={setIsPaymentConfirmed}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-green-600 text-center">
-              Thanh toán thành công!
-            </DialogTitle>
-            <p className="text-center mt-2">Cảm ơn bạn đã đặt vé. Chúc bạn có chuyến bay vui vẻ!</p>
-            <div className="flex justify-center mt-4">
-              <Button
-                variant="orange"
-                onClick={() => router.push("/")}
-                className=" hover:bg-black text-white"
-              >
-                Quay về trang chủ
-              </Button>
-            </div>
+            <DialogTitle>Thanh toán thành công</DialogTitle>
+            <DialogDescription>
+              Cảm ơn quý khách đã đặt vé. Chúc quý khách có chuyến bay vui vẻ!
+            </DialogDescription>
           </DialogHeader>
+          <Button onClick={() => router.push("/")} className="mt-4 bg-orange hover:bg-black">
+            Quay về trang chủ
+          </Button>
         </DialogContent>
       </Dialog>
     </div>

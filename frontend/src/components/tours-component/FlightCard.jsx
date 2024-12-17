@@ -6,11 +6,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
-export function FlightCard({ flights }) {
+export function FlightCard({ flights, passengerCount }) {
     const router = useRouter()
     const [expandedFlight, setExpandedFlight] = useState(null)
     const [expandedClass, setExpandedClass] = useState(null)
-  
     const handleExpand = (flightIndex, classType) => {
       if (expandedFlight === flightIndex && expandedClass === classType) {
         setExpandedFlight(null)
@@ -21,9 +20,10 @@ export function FlightCard({ flights }) {
       }
     }
 
-    const handleSelectFlight = (flightId, optionId) => {
-        router.push(`/confirm?flightId=${flightId}&optionId=${optionId}`)
-    }
+    const handleSelectFlight = (flightId, optionId, passengerCount) => {
+        router.push(`/confirm?flightId=${flightId}&optionId=${optionId}&passengerCount=${passengerCount}`);
+    };
+    
 
   return (
     <div className="flex-1 space-y-4">
@@ -172,7 +172,7 @@ export function FlightCard({ flights }) {
                             </div>
                             </div>
                         </div>
-                        <Button variant="orange" className="w-full mt-4" onClick={() => handleSelectFlight(flight.id, option.id)}>Chọn</Button>
+                        <Button variant="orange" className="w-full mt-4" onClick={() => handleSelectFlight(flight.id, option.id, passengerCount)}>Chọn</Button>
                         </div>
                     ))}
                     </div>
@@ -222,7 +222,7 @@ export function FlightCard({ flights }) {
                             </div>
                             </div>
                         </div>
-                        <Button className="bg-orange w-full mt-4" onClick={() => handleSelectFlight(flight.id, option.id)}>Chọn</Button>
+                        <Button className="bg-orange w-full mt-4" onClick={() => handleSelectFlight(flight.id, option.id, passengerCount)}>Chọn</Button>
                         </div>
                     ))}
                     </div>

@@ -66,14 +66,14 @@ export default function FlightBooking() {
       <div className="flex flex-col md:flex-row gap-4 p-4 bg-gray-100 min-h-screen max-w-6xl m-auto">
         <FlightSideFilter filters={filters} setFilters={setFilters} />
         <div className="flex-1 space-y-4">
-          {loading && flights.length > 0 ? (
+          {loading ? (
             <>
               <SkeletonFlightCard />
               <SkeletonFlightCard />
               <SkeletonFlightCard />
             </>
           ) : (
-            <FlightCard flights={flights} />
+            <FlightCard flights={flights} passengerCount={passengerCount} />
           )}
           <div className="text-center text-sm text-gray-500">
             {loading ? (
