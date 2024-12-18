@@ -89,6 +89,21 @@ export default function ConfirmationPage() {
     });
   };
 
+  const calculateFlightDuration = (departureTime, arrivalTime) => {
+    const durationInMinutes = (arrivalTime - departureTime) / 60; // Chuyển đổi giây thành phút
+    const hours = Math.floor(durationInMinutes / 60);
+    const minutes = Math.floor(durationInMinutes % 60);
+    return `${hours} giờ ${minutes} phút`;
+  };
+  
+  // Kiểm tra và tính toán thời gian bay
+  const flightDuration = flightData
+    ? calculateFlightDuration(
+        flightData?.departureTime?.seconds || 0,
+        flightData?.arrivalTime?.seconds || 0
+      )
+    : "Đang tải...";
+  
   const handlePassengerInfoFilled = () => {
     setIsPassengerInfoFilled(true);
   };
@@ -262,14 +277,14 @@ export default function ConfirmationPage() {
                 <Clock className="text-orange flex-shrink-0" />
                 <div>
                   <div className="text-sm text-gray-500">Thời gian bay</div>
-                  <div className="font-medium">2 giờ 30 phút</div>
+                  <div className="font-medium">{flightDuration}</div>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <Users className="text-orange flex-shrink-0" />
                 <div>
                   <div className="text-sm text-gray-500">Hành khách</div>
-                  <div className="font-medium">{passengerCount} Người lớn</div>
+                  <div className="font-medium">{passengerCount} Người lớn/ Trẻ em</div>
                 </div>
               </div>
               <div className="flex items-center space-x-3">

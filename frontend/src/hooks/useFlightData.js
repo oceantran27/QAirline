@@ -37,7 +37,7 @@ export const useFlightData = (departureCity, arrivalCity, flightDate) => {
             airline: "VietNam Airline",
             economyPrice: flight.basePrice,
             businessPrice: flight.basePrice * 1.5,
-            seatsLeft: 10,
+            seatsLeft: Math.floor(Math.random() * (100 - 10 + 1)) + 10,
             flightNumber: flight.flightNumber,
             departureAirport: flight.departureAirport,
             arrivalAirport: flight.arrivalAirport,
