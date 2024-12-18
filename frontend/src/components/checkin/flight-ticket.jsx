@@ -3,17 +3,8 @@ import { Plane, Calendar, Clock, MapPin, User, Barcode, Star, DoorOpen } from 'l
 
 export default function ModernFlightTicket({ onClose }) {
   return (
-    <div className="bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-xl rounded-xl overflow-hidden w-full max-w-md mx-auto">
+    <div className="bg-gradient-to-br from-red-400 to-red-600 text-white shadow-xl rounded-xl overflow-hidden w-full max-w-md mx-auto">
       <div className="relative p-6">
-        <button 
-          onClick={onClose} 
-          className="absolute top-4 right-4 text-white hover:text-gray-200 transition-colors"
-          aria-label="Close"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
         
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Vietnam Airlines</h2>
@@ -89,16 +80,16 @@ export default function ModernFlightTicket({ onClose }) {
         </div>
       </div>
       
-      <div className="bg-white text-gray-800 p-6 flex justify-between items-center">
+      <div className="bg-white text-zinc-800 p-6 flex justify-between items-center">
         <div>
-          <p className="text-xs uppercase tracking-wide text-gray-500">Gate</p>
+          <p className="text-xs uppercase tracking-wide text-zinc-500">Gate</p>
           <p className="text-2xl font-bold mt-1">A12</p>
         </div>
         <div>
-          <p className="text-xs uppercase tracking-wide text-gray-500">Seat</p>
+          <p className="text-xs uppercase tracking-wide text-zinc-500">Seat</p>
           <p className="text-2xl font-bold mt-1">15B</p>
         </div>
-        <Barcode className="w-24 h-24 text-gray-800" />
+        <Barcode className="w-24 h-24 text-zinc-800" />
       </div>
     </div>
   )
