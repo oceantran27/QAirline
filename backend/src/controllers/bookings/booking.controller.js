@@ -125,6 +125,7 @@ export const createBooking = async (req, res) => {
       bookingHistory: updatedBookingHistory,
     });
     res.status(201).send({
+      bookingId: createdBooking.bookingId,
       message: "Booking created successfully",
     });
   } catch (error) {

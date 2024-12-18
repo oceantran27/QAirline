@@ -7,7 +7,10 @@ import {
   dbCreateFlights,
 } from "../../services/flights/flight.service";
 import Flight from "../../models/flights/flight.model";
-import { generateMockFlights } from "../../services/flights/flightGenerate.service";
+import {
+  generateFlightSuggestions,
+  generateMockFlights,
+} from "../../services/flights/flightGenerate.service";
 
 export const getAllFlights = async (req, res) => {
   try {
@@ -89,7 +92,22 @@ export const searchFlight = async (req, res) => {
   try {
     const { departureCity, arrivalCity, flightDate } = req.query;
     const flights = generateMockFlights(departureCity, arrivalCity, flightDate);
-    console.log(flights);
+    await dbCreateFlights(flights);
+    res.status(200).send({
+      message: "Flights fetched successfully",
+      data: flights,
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error.message,
+    });
+  }
+};
+
+export const getFlightSuggestions = async (req, res) => {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const flights = generateFlightSuggestions(today);
     await dbCreateFlights(flights);
     res.status(200).send({
       message: "Flights fetched successfully",
