@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { motion } from 'framer-motion'
 import { Button } from "@/components/ui/button";
+import { CheckCircle } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Calendar, Clock, Plane, CreditCard, Users } from 'lucide-react';
 import { PassengerInfoDialog } from "./PassengerInfoDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { useAccountInfo } from "@/hooks/useAccountInfo";
+
+import { format, parse } from "date-fns";
+
 
 export default function ConfirmationPage() {
   const router = useRouter();
@@ -18,6 +23,8 @@ export default function ConfirmationPage() {
     returnOptionId,
     passengerCount,
   } = router.query;
+  
+  const tripType = returnFlightId && returnOptionId ? "roundTrip" : "oneway";
 
   const [departureFlightData, setDepartureFlightData] = useState(null);
   const [returnFlightData, setReturnFlightData] = useState(null);
@@ -28,7 +35,9 @@ export default function ConfirmationPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isPassengerInfoOpen, setIsPassengerInfoOpen] = useState(false);
-  
+  const [bookingId, setBookingId] = useState(null);
+
+
   const fetchFlightData = async (flightId, optionId, setFlightData, setOption) => {
     try {
       const response = await fetch(`http://localhost:3030/api/flight/?id=${flightId}`);
@@ -73,11 +82,14 @@ export default function ConfirmationPage() {
         );
       }
       setLoading(false);
+      
     };
 
     fetchData();
   }, [departureFlightId, departureOptionId, returnFlightId, returnOptionId]);
+
   const totalAmount = (departureOption?.price + (returnOption?.price || 0)) * parseInt(passengerCount || 1, 10);
+  
   const generateTicketOptions = (basePrice, type) => {
     const changeFee = type === "economy" ? 860000 : 360000;
     const refundFee = type === "economy" ? 860000 : 360000;
@@ -148,7 +160,97 @@ export default function ConfirmationPage() {
     setIsPassengerInfoOpen(true);
   };
 
+
+  // Lấy thông tin người dùng từ hook useAccountInfo
+  const { personalInfo, loading: accountLoading } = useAccountInfo();
+  const bookerId = personalInfo?.uid; // ID của người dùng đăng nhập
+
+  if (!bookerId) {
+    console.error("Không tìm thấy bookerId. Vui lòng đăng nhập.");
+    return;
+  }
+
+  // Hàm lưu thông tin hành khách
+  const handleSavePassengerInfo = async (passengerData) => {
+    const departureTicketDataList = passengerData.map((info) => ({
+      price: departureOption.price,
+      flightClass: departureOption.name.includes("Thương Gia") ? "business" : "economy",
+      ownerData: {
+        identityCardNumber: info.idNumber,
+        firstName: info.firstName,
+        lastName: info.lastName,
+        phoneNumber: info.phoneNumber,
+        dateOfBirth: format(parse(info.birthDate, "dd/MM/yyyy", new Date()), "yyyy-MM-dd"),
+        gender: info.gender,
+        address: info.address,
+      },
+    }));
   
+    const returnTicketDataList = passengerData.map((info) => ({
+      price: returnOption?.price || 0,
+      flightClass: returnOption?.name.includes("Thương Gia") ? "business" : "economy",
+      ownerData: {
+        identityCardNumber: info.idNumber,
+        firstName: info.firstName,
+        lastName: info.lastName,
+        phoneNumber: info.phoneNumber,
+        dateOfBirth: format(parse(info.birthDate, "dd/MM/yyyy", new Date()), "yyyy-MM-dd"),
+        gender: info.gender,
+        address: info.address,
+      },
+    }));
+    
+    // Dữ liệu booking
+    const bookingData = {
+      bookerId,
+      departureCity: "HAN",
+      arrivalCity: "SGN",
+      departureFlightId: departureFlightData?.flightId,
+      tripType,
+      departureTicketDataList,
+      returnTicketDataList: tripType === "roundTrip" ? returnTicketDataList : undefined,
+    };
+  
+
+    // Gửi dữ liệu booking lên server
+    try {
+      const response = await fetch(
+        tripType === "roundTrip"
+          ? "http://localhost:3030/api/booking/new"
+          : "http://localhost:3030/api/booking/new",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Token lấy từ localStorage hoặc state
+          },
+          body: JSON.stringify(bookingData),
+        }
+      );
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Lỗi khi tạo booking.");
+      }
+      const result = await response.json(); // Lấy dữ liệu JSON trả về từ API
+      const bookingId = result.bookingId;
+      setBookingId(result.bookingId);
+      
+      toast({
+        title: "Đặt vé thành công",
+        description: `Mã đặt vé của bạn là: ${bookingId}`,
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Lỗi đặt vé",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+  
+
   // Hiển thị skeleton khi loading
   if (loading) {
     return (
@@ -354,25 +456,50 @@ export default function ConfirmationPage() {
       </div>
 
       <Dialog open={isPaymentConfirmed} onOpenChange={setIsPaymentConfirmed}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Thanh toán thành công</DialogTitle>
-            <DialogDescription>
-              Cảm ơn quý khách đã đặt vé. Chúc quý khách có chuyến bay vui vẻ!
-            </DialogDescription>
-          </DialogHeader>
-          <Button onClick={handleReturnHome} className="mt-4 bg-orange hover:bg-black">
-            Quay về trang chủ
-          </Button>
-        </DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            className="flex justify-center mb-4"
+          >
+            <CheckCircle className="w-16 h-16 text-green-500" />
+          </motion.div>
+          <DialogTitle className="text-2xl font-bold text-center">Thanh toán thành công</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col items-center space-y-4 text-center">
+          <DialogDescription className="text-lg">
+            Mã đặt vé của bạn là:
+          </DialogDescription>
+          <div className="px-4 py-2 text-xl font-mono font-bold bg-gray-100 rounded-md">
+            {bookingId}
+          </div>
+          <DialogDescription className="text-base">
+            Cảm ơn quý khách đã đặt vé. Chúc quý khách có chuyến bay vui vẻ!
+          </DialogDescription>
+        </div>
+        <Button 
+          onClick={handleReturnHome}
+          variant="orange"
+          className="w-full mt-6 text-white transition-colors duration-200"
+        >
+          Quay về trang chủ
+        </Button>
+      </DialogContent>
       </Dialog>
 
       <PassengerInfoDialog
         isOpen={isPassengerInfoOpen}
         onClose={() => setIsPassengerInfoOpen(false)}
         passengerCount={parseInt(passengerCount) || 1}
-        onInfoFilled={handlePassengerInfoFilled}
+        onInfoFilled={(info) => {
+          handlePassengerInfoFilled();
+          handleSavePassengerInfo(info);
+          setIsPassengerInfoOpen(false);
+        }}
       />
+
     </div>
   );
 }
