@@ -255,13 +255,98 @@ export default function ConfirmationPage() {
 
 const bookerId = personalInfo?.uid; // ID của người dùng đăng nhập
 if (!bookerId) {
-    toast({
-        title: "Lỗi",
-        description: "Xin vui lòng đăng nhập.",
-        variant: "destructive",
-        duration: 10000,
-    });
-    return;
+  // Hiển thị toast thông báo lỗi
+  toast({
+      title: "Lỗi",
+      description: "Xin vui lòng đăng nhập.",
+      variant: "destructive",
+      duration: 10000,
+  });
+
+  // Hiển thị trạng thái loading skeleton khi không có bookerId
+  return (
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <div className="h-[200px] w-full bg-orange relative mb-4">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4 text-center">
+          <Skeleton className="h-8 w-1/2 mb-2" />
+          <Skeleton className="h-6 w-2/3" />
+        </div>
+      </div>
+      
+      <div className="max-w-4xl mx-auto">
+        <Card className="shadow-lg border-orange">
+          <CardContent className="p-4 sm:p-6">
+            {/* Tiêu đề và flightNumber */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+              <Skeleton className="h-6 w-1/3 mb-2 sm:mb-0" />
+              <Skeleton className="h-4 w-20" />
+            </div>
+            {/* Thời gian đi - đến và giá */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+              <div className="flex items-center space-x-4 mb-4 sm:mb-0">
+                <Skeleton className="h-8 w-16" />
+                <div className="flex-1 relative px-8">
+                  <Skeleton className="h-6 w-6 mx-auto" />
+                </div>
+                <Skeleton className="h-8 w-16" />
+              </div>
+              <div className="text-right">
+                <Skeleton className="h-4 w-32 mb-1" />
+                <Skeleton className="h-6 w-24" />
+              </div>
+            </div>
+            
+            {/* Chi tiết chuyến bay */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8">
+              <div className="flex items-center space-x-3">
+                <Skeleton className="h-5 w-5 rounded-full" />
+                <div>
+                  <Skeleton className="h-4 w-24 mb-1" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Skeleton className="h-5 w-5 rounded-full" />
+                <div>
+                  <Skeleton className="h-4 w-24 mb-1" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Skeleton className="h-5 w-5 rounded-full" />
+                <div>
+                  <Skeleton className="h-4 w-24 mb-1" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Skeleton className="h-5 w-5 rounded-full" />
+                <div>
+                  <Skeleton className="h-4 w-24 mb-1" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              </div>
+            </div>
+
+            {/* Tổng cộng và nút */}
+            <div className="border-t border-gray-200 pt-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
+                <div className="mb-2 sm:mb-0">
+                  <Skeleton className="h-4 w-20 mb-1" />
+                  <Skeleton className="h-3 w-32" />
+                </div>
+                <Skeleton className="h-6 w-32" />
+              </div>
+              <div className="flex space-x-4">
+                <Skeleton className="h-10 w-48 rounded" />
+                <Skeleton className="h-10 w-48 rounded" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
 }
 
   // Hàm lưu thông tin hành khách
