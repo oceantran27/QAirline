@@ -6,6 +6,8 @@ import {
   updateTicket,
   deleteTicket,
   cancelTicket,
+  createTickets,
+  updateSeatCodeTickets,
 } from "../../controllers/bookings/ticket.controller";
 import {
   authenticateToken,
@@ -16,7 +18,8 @@ const router = express.Router();
 
 router.get("/all", authenticateToken, checkAdminRole, getAllTickets);
 router.get("/", authenticateToken, getTicket);
-router.post("/new", authenticateToken, createTicket);
+router.put("/update-seats", authenticateToken, updateSeatCodeTickets);
+// router.post("/new", authenticateToken, createTickets);
 // router.put("/update", authenticateToken, updateTicket);
 // router.delete("/delete", authenticateToken, deleteTicket);
 router.put("/cancel", authenticateToken, cancelTicket);

@@ -1,7 +1,8 @@
 class Ticket {
   generateTicketId() {
     const timestamp = Date.now();
-    return `TK${timestamp}`;
+    const randomNumber = Math.floor(Math.random() * (99 - 10 + 1)) + 10;
+    return `TK${timestamp}${randomNumber}`;
   }
 
   constructor(
@@ -9,7 +10,7 @@ class Ticket {
     bookingId,
     flightId,
     price,
-    seatCode,
+    seatCode = null,
     flightClass,
     ownerData,
     status = "Active"

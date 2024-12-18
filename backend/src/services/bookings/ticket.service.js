@@ -87,7 +87,6 @@ export const dbCreateTickets = async (tickets) => {
     });
 
     await batch.commit();
-    console.log("Tickets created successfully");
   } catch (error) {
     throw new Error(`Error creating tickets: ${error.message}`);
   }
@@ -106,5 +105,20 @@ export const dbCancelTickets = async (tickets) => {
     console.log("Tickets cancelled successfully");
   } catch (error) {
     throw new Error(`Error cancelling tickets: ${error.message}`);
+  }
+};
+
+export const dbUpdateSeatCodesForTickets = async (ticketsWithSeatCodes) => {
+  try {
+    const batch = writeBatch(db);
+
+    ticketsWithSeatCodes.forEach(({ ticketId, seatCode }) => {
+      const docRef = doc(db, TICKET_COLLECTION_NAME, ticketId);
+      batch.update(docRef, { seatCode, updatedAt: new Date() });
+    });
+
+    await batch.commit();
+  } catch (error) {
+    throw new Error(`Error updating seat codes for tickets: ${error.message}`);
   }
 };
