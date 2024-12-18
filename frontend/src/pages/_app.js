@@ -4,7 +4,7 @@ import AdminLayout from "../layouts/AdminLayout";
 import { AuthProvider } from '../context/AuthContext';
 import { useRouter } from "next/router";
 import { useAppLogic } from '../hooks/useAppLogic';
-
+import { Toaster } from "@/components/ui/toaster";
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
   const { showScrollTopButton, handleScrollToTop } = useAppLogic(router);
@@ -24,6 +24,7 @@ function MyApp({ Component, pageProps }) {
           <Component {...pageProps} />
         </MainLayout>
       )}
+      <Toaster />
 
       {showScrollTopButton && (
         <button

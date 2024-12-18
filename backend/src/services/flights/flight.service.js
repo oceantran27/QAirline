@@ -34,6 +34,7 @@ export const dbGetFlightById = async (flightId) => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
+      console.log(docSnap.data());
       return docSnap.data();
     }
     throw new Error("Flight not found");
