@@ -1,9 +1,12 @@
+import Ticket from "../../models/bookings/ticket.model";
 import {
   dbGetAllTickets,
   dbGetTicket,
   dbCreateTicket,
   dbUpdateTicket,
   dbDeleteTicket,
+  dbCreateTickets,
+  dbUpdateSeatCodesForTickets,
 } from "../../services/bookings/ticket.service";
 import {
   dbGetCustomerById,
@@ -179,6 +182,47 @@ export const cancelTicket = async (req, res) => {
     await dbUpdateTicket(ticketId, { ...ticketData, updatedAt: new Date() });
     return res.status(200).send({
       message: "Ticket cancelled successfully",
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error.message,
+    });
+  }
+};
+
+export const createTickets = async (req, res) => {
+  try {
+    const ticketDataList = req.body;
+    let tickets = [];
+    for (let ticketData of ticketDataList) {
+      let ticket = new Ticket(
+        null,
+        ticketData.bookingId,
+        ticketData.flightId,
+        ticketData.price,
+        null,
+        ticketData.flightClass,
+        ticketData.ownerData
+      );
+      tickets.push(ticket);
+    }
+    await dbCreateTickets(tickets);
+    res.status(201).send({
+      message: "Tickets created successfully",
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error.message,
+    });
+  }
+};
+
+export const updateSeatCodeTickets = async (req, res) => {
+  try {
+    const ticketDataList = req.body;
+    await dbUpdateSeatCodesForTickets(ticketDataList);
+    res.status(200).send({
+      message: "Tickets updated successfully",
     });
   } catch (error) {
     res.status(400).send({
