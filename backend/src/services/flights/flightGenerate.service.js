@@ -100,4 +100,24 @@ const generateMockFlights = (departureCity, arrivalCity, flightDate) => {
   return flights;
 };
 
-export { generateMockFlight, generateMockFlights };
+const generateFlightSuggestions = (flightDate) => {
+  const airportCodes = Object.keys(airports);
+  const suggestions = [];
+
+  const numSuggestions = getRandomInRange(5, 15);
+  for (let i = 0; i < numSuggestions; i++) {
+    const departureCity =
+      airportCodes[getRandomInRange(0, airportCodes.length - 1)];
+    let arrivalCity;
+    do {
+      arrivalCity = airportCodes[getRandomInRange(0, airportCodes.length - 1)];
+    } while (arrivalCity === departureCity);
+
+    const flights = generateMockFlights(departureCity, arrivalCity, flightDate);
+    suggestions.push(...flights);
+  }
+
+  return suggestions;
+};
+
+export { generateMockFlight, generateMockFlights, generateFlightSuggestions };
