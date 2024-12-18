@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { useFlightData } from "@/hooks/useFlightData";
 import airportsData from "@/data/airports_data.json";
 
-// Helper functions
 const getCityByCode = (code) => {
   for (const region of airportsData) {
     const airport = region.airports.find((airport) => airport.code === code);
@@ -41,33 +40,34 @@ export default function FlightBooking() {
     passengerCount,
   } = router.query;
 
-  const departureCity = getCityByCode(fromAirport);
-  const arrivalCity = getCityByCode(toAirport);
-  const formattedDepartureDate = formatDateToVietnamese(departureDate);
-  const formattedReturnDate = returnDate ? formatDateToVietnamese(returnDate) : "N/A";
+  const isUrlDataMissing = !fromAirport || !toAirport || !departureDate;
 
   const {
     flights,
     returnFlights,
     fetchReturnFlights,
+    filteredFlights,
     loading,
     error,
     filters,
     setFilters,
   } = useFlightData(fromAirport, toAirport, departureDate);
 
+  const departureCity = fromAirport ? getCityByCode(fromAirport) : "Không xác định";
+  const arrivalCity = toAirport ? getCityByCode(toAirport) : "Không xác định";
+  const formattedDepartureDate = formatDateToVietnamese(departureDate);
+  const formattedReturnDate = returnDate ? formatDateToVietnamese(returnDate) : "N/A";
+
   const [isSelectingReturn, setIsSelectingReturn] = useState(false);
   const [selectedDepartureFlight, setSelectedDepartureFlight] = useState(null);
 
-  // Handle selecting departure flight
   const handleSelectDepartureFlight = (flight) => {
     setSelectedDepartureFlight(flight);
 
     if (tripType === "roundTrip") {
       setIsSelectingReturn(true);
-      fetchReturnFlights(toAirport, fromAirport, returnDate); // Fetch return flights
+      fetchReturnFlights(toAirport, fromAirport, returnDate);
     } else {
-      // Redirect to confirm page for one-way trip
       router.push({
         pathname: "/confirm",
         query: {
@@ -79,7 +79,6 @@ export default function FlightBooking() {
     }
   };
 
-  // Handle selecting return flight
   const handleSelectReturnFlight = (flight) => {
     router.push({
       pathname: "/confirm",
@@ -97,22 +96,19 @@ export default function FlightBooking() {
 
   return (
     <div>
-      {/* Flight header */}
       <FlightHeader
-        departureCode={fromAirport}
-        arrivalCode={toAirport}
+        departureCode={fromAirport || "N/A"}
+        arrivalCode={toAirport || "N/A"}
         departureCity={departureCity}
         arrivalCity={arrivalCity}
         departureDate={formattedDepartureDate}
         returnDate={formattedReturnDate}
-        passengers={`${passengerCount} hành khách`}
+        passengers={`${passengerCount || 1} hành khách`}
       />
 
       <div className="flex flex-col md:flex-row gap-4 p-4 bg-gray-100 min-h-screen max-w-6xl m-auto">
-        {/* Side filter */}
         <FlightSideFilter filters={filters} setFilters={setFilters} />
 
-        {/* Main content */}
         <div className="flex-1 space-y-4">
           {loading ? (
             <>
@@ -130,7 +126,6 @@ export default function FlightBooking() {
             />
           )}
 
-          {/* Footer message */}
           <div className="text-center text-sm text-gray-500">
             {loading ? (
               <span>Đang tải chuyến bay...</span>
@@ -141,7 +136,6 @@ export default function FlightBooking() {
             )}
           </div>
 
-          {/* Back to home button */}
           <Link href="/">
             <Button variant="orange" className="w-full text-white" disabled={loading}>
               Quay lại trang chủ
