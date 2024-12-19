@@ -11,6 +11,8 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import Admin from "../../models/users/admin.model";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+const firebaseAuth = getAuth(firebase);
 import NodeCache from "node-cache";
 
 const adminCache = new NodeCache({ stdTTL: 300 });
@@ -80,9 +82,10 @@ export const dbGetAllAdmins = async () => {
 
 export const dbUpdateAdmin = async (uid, updateData) => {
   try {
-    const { uid, email, createdAt, updatedAt, ...dataToUpdate } = updateData;
+    const fieldsToRemove = ["uid", "email", "createdAt", "updatedAt"];
+    fieldsToRemove.forEach((field) => delete updateData[field]);
 
-    dataToUpdate.updatedAt = new Date();
+    updateData.updatedAt = new Date();
 
     const docRef = doc(db, ADMIN_COLLECTION_NAME, uid);
     const docSnap = await getDoc(docRef);
@@ -91,7 +94,7 @@ export const dbUpdateAdmin = async (uid, updateData) => {
       throw new Error("Admin not found");
     }
 
-    await updateDoc(docRef, dataToUpdate);
+    await updateDoc(docRef, updateData);
   } catch (error) {
     throw new Error(`Error updating admin: ${error.message}`);
   }
@@ -110,9 +113,15 @@ export const dbDeleteAdmin = async (uid) => {
   }
 };
 
-export const dbChangePassword = async (uid, newPassword) => {
+export const dbChangePassword = async (
+  uid,
+  email,
+  oldPassword,
+  newPassword
+) => {
   try {
-    await adminAuth.updateUser(uid, {
+    await signInWithEmailAndPassword(firebaseAuth, email, oldPassword);
+    await auth.updateUser(uid, {
       password: newPassword,
     });
   } catch (error) {

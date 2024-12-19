@@ -119,7 +119,7 @@ export const changePassword = async (req, res) => {
     if (user.role === "customer") {
       await dbChangePassword(
         user.uid,
-        user.email,
+        req.body.email,
         req.body.oldPassword,
         req.body.newPassword
       );

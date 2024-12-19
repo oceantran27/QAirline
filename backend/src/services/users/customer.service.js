@@ -81,9 +81,10 @@ export const dbGetAllCustomers = async () => {
 
 export const dbUpdateCustomer = async (uid, updateData) => {
   try {
-    const { uid, email, createdAt, updatedAt, ...dataToUpdate } = updateData;
+    const fieldsToRemove = ["uid", "email", "createdAt", "updatedAt"];
+    fieldsToRemove.forEach((field) => delete updateData[field]);
 
-    dataToUpdate.updatedAt = new Date();
+    updateData.updatedAt = new Date();
 
     const docRef = doc(db, CUSTOMER_COLLECTION_NAME, uid);
     const docSnap = await getDoc(docRef);
@@ -92,7 +93,7 @@ export const dbUpdateCustomer = async (uid, updateData) => {
       throw new Error("Customer not found");
     }
 
-    await updateDoc(docRef, dataToUpdate);
+    await updateDoc(docRef, updateData);
 
     customerCache.del(uid);
   } catch (error) {
@@ -110,8 +111,14 @@ export const dbDeleteCustomer = async (uid) => {
   }
 };
 
-export const dbChangePassword = async (uid, newPassword) => {
+export const dbChangePassword = async (
+  uid,
+  email,
+  oldPassword,
+  newPassword
+) => {
   try {
+    await signInWithEmailAndPassword(firebaseAuth, email, oldPassword);
     await adminAuth.updateUser(uid, {
       password: newPassword,
     });
