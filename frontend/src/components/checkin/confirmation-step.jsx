@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useState } from 'react'
-
+import ModernFlightTicket from './flight-ticket'
 export function ConfirmationStep({ bookingReference, passenger, onBack, onHome }) {
   const [showBoardingPass, setShowBoardingPass] = useState(false)
 
@@ -79,50 +79,11 @@ export function ConfirmationStep({ bookingReference, passenger, onBack, onHome }
 
       <Dialog open={showBoardingPass} onOpenChange={setShowBoardingPass}>
         <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Thẻ lên máy bay</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <div className="font-medium">SGN → HAN</div>
-                <div className="text-sm text-zinc-500">VN 250</div>
-              </div>
-              <div className="text-right">
-                <div className="font-medium">30 Thg 05, 2023</div>
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="text-zinc-500">TD</span>
-                <span className="font-medium">{passenger.name}</span>
-                <span className="text-sm text-zinc-500">Người lớn</span>
-              </div>
-              <div className="text-sm">Hạng Phổ thông</div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="text-sm text-zinc-500">Giờ khởi hành</div>
-                <div className="font-medium">14:20</div>
-              </div>
-              <div>
-                <div className="text-sm text-zinc-500">Cửa ra</div>
-                <div className="font-medium">15:00</div>
-              </div>
-              <div>
-                <div className="text-sm text-zinc-500">Ghế</div>
-                <div className="font-medium">23D</div>
-              </div>
-            </div>
-
-            <div className="flex justify-center p-4">
-              <div className="w-32 h-32 bg-zinc-900" /> {/* Placeholder for QR code */}
-            </div>
-          </div>
+          <ModernFlightTicket />
         </DialogContent>
       </Dialog>
+
+      
     </div>
   )
 }

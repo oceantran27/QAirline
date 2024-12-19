@@ -55,9 +55,9 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
   };
 
   // Hàm xử lý khi nhấn submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const newErrors = passengers.map((passenger) => {
       const passengerErrors = {};
       if (!passenger.idNumber) passengerErrors.idNumber = "Vui lòng nhập số CCCD.";
@@ -74,16 +74,21 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
       if (!passenger.address) passengerErrors.address = "Vui lòng nhập địa chỉ.";
       return passengerErrors;
     });
-
+  
     setErrors(newErrors);
-
+  
     // Kiểm tra nếu không có lỗi
     if (newErrors.every((error) => Object.keys(error).length === 0)) {
-      console.log("Thông tin hành khách:", passengers);
-      onInfoFilled(); // Gọi callback để thông báo thông tin hợp lệ
-      onClose(); // Đóng dialog
+      try {
+        // Gửi dữ liệu hành khách hợp lệ về component cha
+        onInfoFilled(passengers);
+        onClose(); // Đóng dialog
+      } catch (error) {
+        console.error("Lỗi khi gửi thông tin hành khách:", error);
+      }
     }
   };
+  
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

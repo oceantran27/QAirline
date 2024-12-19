@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { motion } from 'framer-motion'
 import { Button } from "@/components/ui/button";
+import { CheckCircle } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Calendar, Clock, Plane, CreditCard, Users } from 'lucide-react';
 import { PassengerInfoDialog } from "./PassengerInfoDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { useAccountInfo } from "@/hooks/useAccountInfo";
+
+
+import { format, parse } from "date-fns";
+
 
 export default function ConfirmationPage() {
   const router = useRouter();
@@ -18,6 +24,8 @@ export default function ConfirmationPage() {
     returnOptionId,
     passengerCount,
   } = router.query;
+  
+  const tripType = returnFlightId && returnOptionId ? "roundTrip" : "oneway";
 
   const [departureFlightData, setDepartureFlightData] = useState(null);
   const [returnFlightData, setReturnFlightData] = useState(null);
@@ -28,7 +36,9 @@ export default function ConfirmationPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isPassengerInfoOpen, setIsPassengerInfoOpen] = useState(false);
-  
+  const [bookingId, setBookingId] = useState(null);
+
+
   const fetchFlightData = async (flightId, optionId, setFlightData, setOption) => {
     try {
       const response = await fetch(`http://localhost:3030/api/flight/?id=${flightId}`);
@@ -73,11 +83,14 @@ export default function ConfirmationPage() {
         );
       }
       setLoading(false);
+      
     };
 
     fetchData();
   }, [departureFlightId, departureOptionId, returnFlightId, returnOptionId]);
+
   const totalAmount = (departureOption?.price + (returnOption?.price || 0)) * parseInt(passengerCount || 1, 10);
+  
   const generateTicketOptions = (basePrice, type) => {
     const changeFee = type === "economy" ? 860000 : 360000;
     const refundFee = type === "economy" ? 860000 : 360000;
@@ -148,7 +161,275 @@ export default function ConfirmationPage() {
     setIsPassengerInfoOpen(true);
   };
 
+
+  // Lấy thông tin người dùng từ hook useAccountInfo
+  const { personalInfo, loading: accountLoading } = useAccountInfo();
   
+
+  if (accountLoading) {
+    // Hiển thị trạng thái loading nếu cần
+    return (
+      <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+        <div className="h-[200px] w-full bg-orange relative mb-4">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4 text-center">
+            <Skeleton className="h-8 w-1/2 mb-2" />
+            <Skeleton className="h-6 w-2/3" />
+          </div>
+        </div>
+        
+        <div className="max-w-4xl mx-auto">
+          <Card className="shadow-lg border-orange">
+            <CardContent className="p-4 sm:p-6">
+              {/* Tiêu đề và flightNumber */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                <Skeleton className="h-6 w-1/3 mb-2 sm:mb-0" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+              {/* Thời gian đi - đến và giá */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                <div className="flex items-center space-x-4 mb-4 sm:mb-0">
+                  <Skeleton className="h-8 w-16" />
+                  <div className="flex-1 relative px-8">
+                    <Skeleton className="h-6 w-6 mx-auto" />
+                  </div>
+                  <Skeleton className="h-8 w-16" />
+                </div>
+                <div className="text-right">
+                  <Skeleton className="h-4 w-32 mb-1" />
+                  <Skeleton className="h-6 w-24" />
+                </div>
+              </div>
+              
+              {/* Chi tiết chuyến bay */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8">
+                <div className="flex items-center space-x-3">
+                  <Skeleton className="h-5 w-5 rounded-full" />
+                  <div>
+                    <Skeleton className="h-4 w-24 mb-1" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Skeleton className="h-5 w-5 rounded-full" />
+                  <div>
+                    <Skeleton className="h-4 w-24 mb-1" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Skeleton className="h-5 w-5 rounded-full" />
+                  <div>
+                    <Skeleton className="h-4 w-24 mb-1" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Skeleton className="h-5 w-5 rounded-full" />
+                  <div>
+                    <Skeleton className="h-4 w-24 mb-1" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Tổng cộng và nút */}
+              <div className="border-t border-gray-200 pt-6">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
+                  <div className="mb-2 sm:mb-0">
+                    <Skeleton className="h-4 w-20 mb-1" />
+                    <Skeleton className="h-3 w-32" />
+                  </div>
+                  <Skeleton className="h-6 w-32" />
+                </div>
+                <div className="flex space-x-4">
+                  <Skeleton className="h-10 w-48 rounded" />
+                  <Skeleton className="h-10 w-48 rounded" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+}
+
+const bookerId = personalInfo?.uid; // ID của người dùng đăng nhập
+if (!bookerId) {
+  // Hiển thị toast thông báo lỗi
+  toast({
+      title: "Lỗi",
+      description: "Xin vui lòng đăng nhập.",
+      variant: "destructive",
+      duration: 10000,
+  });
+
+  // Hiển thị trạng thái loading skeleton khi không có bookerId
+  return (
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <div className="h-[200px] w-full bg-orange relative mb-4">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4 text-center">
+          <Skeleton className="h-8 w-1/2 mb-2" />
+          <Skeleton className="h-6 w-2/3" />
+        </div>
+      </div>
+      
+      <div className="max-w-4xl mx-auto">
+        <Card className="shadow-lg border-orange">
+          <CardContent className="p-4 sm:p-6">
+            {/* Tiêu đề và flightNumber */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+              <Skeleton className="h-6 w-1/3 mb-2 sm:mb-0" />
+              <Skeleton className="h-4 w-20" />
+            </div>
+            {/* Thời gian đi - đến và giá */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+              <div className="flex items-center space-x-4 mb-4 sm:mb-0">
+                <Skeleton className="h-8 w-16" />
+                <div className="flex-1 relative px-8">
+                  <Skeleton className="h-6 w-6 mx-auto" />
+                </div>
+                <Skeleton className="h-8 w-16" />
+              </div>
+              <div className="text-right">
+                <Skeleton className="h-4 w-32 mb-1" />
+                <Skeleton className="h-6 w-24" />
+              </div>
+            </div>
+            
+            {/* Chi tiết chuyến bay */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8">
+              <div className="flex items-center space-x-3">
+                <Skeleton className="h-5 w-5 rounded-full" />
+                <div>
+                  <Skeleton className="h-4 w-24 mb-1" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Skeleton className="h-5 w-5 rounded-full" />
+                <div>
+                  <Skeleton className="h-4 w-24 mb-1" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Skeleton className="h-5 w-5 rounded-full" />
+                <div>
+                  <Skeleton className="h-4 w-24 mb-1" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Skeleton className="h-5 w-5 rounded-full" />
+                <div>
+                  <Skeleton className="h-4 w-24 mb-1" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+              </div>
+            </div>
+
+            {/* Tổng cộng và nút */}
+            <div className="border-t border-gray-200 pt-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
+                <div className="mb-2 sm:mb-0">
+                  <Skeleton className="h-4 w-20 mb-1" />
+                  <Skeleton className="h-3 w-32" />
+                </div>
+                <Skeleton className="h-6 w-32" />
+              </div>
+              <div className="flex space-x-4">
+                <Skeleton className="h-10 w-48 rounded" />
+                <Skeleton className="h-10 w-48 rounded" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+  // Hàm lưu thông tin hành khách
+  const handleSavePassengerInfo = async (passengerData) => {
+    const departureTicketDataList = passengerData.map((info) => ({
+      price: departureOption.price,
+      flightClass: departureOption.name.includes("Thương Gia") ? "business" : "economy",
+      ownerData: {
+        identityCardNumber: info.idNumber,
+        firstName: info.firstName,
+        lastName: info.lastName,
+        phoneNumber: info.phoneNumber,
+        dateOfBirth: format(parse(info.birthDate, "dd/MM/yyyy", new Date()), "yyyy-MM-dd"),
+        gender: info.gender,
+        address: info.address,
+      },
+    }));
+  
+    const returnTicketDataList = passengerData.map((info) => ({
+      price: returnOption?.price || 0,
+      flightClass: returnOption?.name.includes("Thương Gia") ? "business" : "economy",
+      ownerData: {
+        identityCardNumber: info.idNumber,
+        firstName: info.firstName,
+        lastName: info.lastName,
+        phoneNumber: info.phoneNumber,
+        dateOfBirth: format(parse(info.birthDate, "dd/MM/yyyy", new Date()), "yyyy-MM-dd"),
+        gender: info.gender,
+        address: info.address,
+      },
+    }));
+    
+    // Dữ liệu booking
+    const bookingData = {
+      bookerId,
+      departureCity: "HAN",
+      arrivalCity: "SGN",
+      departureFlightId: departureFlightData?.flightId,
+      tripType,
+      departureTicketDataList,
+      returnTicketDataList: tripType === "roundTrip" ? returnTicketDataList : undefined,
+    };
+  
+
+    // Gửi dữ liệu booking lên server
+    try {
+      const response = await fetch(
+        tripType === "roundTrip"
+          ? "http://localhost:3030/api/booking/new"
+          : "http://localhost:3030/api/booking/new",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Token lấy từ localStorage hoặc state
+          },
+          body: JSON.stringify(bookingData),
+        }
+      );
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Lỗi khi tạo booking.");
+      }
+      const result = await response.json(); // Lấy dữ liệu JSON trả về từ API
+      const bookingId = result.bookingId;
+      setBookingId(result.bookingId);
+      
+      toast({
+        title: "Đặt vé thành công",
+        description: `Mã đặt vé của bạn là: ${bookingId}`,
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Lỗi đặt vé",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+  
+
   // Hiển thị skeleton khi loading
   if (loading) {
     return (
@@ -354,25 +635,50 @@ export default function ConfirmationPage() {
       </div>
 
       <Dialog open={isPaymentConfirmed} onOpenChange={setIsPaymentConfirmed}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Thanh toán thành công</DialogTitle>
-            <DialogDescription>
-              Cảm ơn quý khách đã đặt vé. Chúc quý khách có chuyến bay vui vẻ!
-            </DialogDescription>
-          </DialogHeader>
-          <Button onClick={handleReturnHome} className="mt-4 bg-orange hover:bg-black">
-            Quay về trang chủ
-          </Button>
-        </DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            className="flex justify-center mb-4"
+          >
+            <CheckCircle className="w-16 h-16 text-green-500" />
+          </motion.div>
+          <DialogTitle className="text-2xl font-bold text-center">Thanh toán thành công</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col items-center space-y-4 text-center">
+          <DialogDescription className="text-lg">
+            Mã đặt vé của bạn là:
+          </DialogDescription>
+          <div className="px-4 py-2 text-xl font-mono font-bold bg-gray-100 rounded-md">
+            {bookingId}
+          </div>
+          <DialogDescription className="text-base">
+            Cảm ơn quý khách đã đặt vé. Chúc quý khách có chuyến bay vui vẻ!
+          </DialogDescription>
+        </div>
+        <Button 
+          onClick={handleReturnHome}
+          variant="orange"
+          className="w-full mt-6 text-white transition-colors duration-200"
+        >
+          Quay về trang chủ
+        </Button>
+      </DialogContent>
       </Dialog>
 
       <PassengerInfoDialog
         isOpen={isPassengerInfoOpen}
         onClose={() => setIsPassengerInfoOpen(false)}
         passengerCount={parseInt(passengerCount) || 1}
-        onInfoFilled={handlePassengerInfoFilled}
+        onInfoFilled={(info) => {
+          handlePassengerInfoFilled();
+          handleSavePassengerInfo(info);
+          setIsPassengerInfoOpen(false);
+        }}
       />
+
     </div>
   );
 }
