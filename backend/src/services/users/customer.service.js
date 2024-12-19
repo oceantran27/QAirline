@@ -12,11 +12,60 @@ import firebase from "../../database/firebase";
 import Customer from "../../models/users/customer.model";
 import admin from "../../database/firebaseAdmin";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import NodeCache from "node-cache";
 
 const db = getFirestore(firebase);
 const adminAuth = admin.auth();
 const CUSTOMER_COLLECTION_NAME = "customers";
 const firebaseAuth = getAuth(firebase);
+const customerCache = new NodeCache({ stdTTL: 300 });
+
+export const dbCreateCustomer = async ({
+  email,
+  password,
+  firstName,
+  lastName,
+}) => {
+  try {
+    const userPromise = adminAuth.createUser({ email, password });
+    const newCustomer = new Customer({ firstName, lastName, email });
+    newCustomer.createdAt = new Date();
+    newCustomer.updatedAt = new Date();
+
+    const user = await userPromise;
+    newCustomer.uid = user.uid;
+    const customerRef = doc(db, CUSTOMER_COLLECTION_NAME, user.uid);
+    await setDoc(customerRef, { ...newCustomer });
+
+    return newCustomer;
+  } catch (error) {
+    throw new Error(`Error creating customer: ${error.message}`);
+  }
+};
+
+export const dbGetCustomerById = async (uid) => {
+  try {
+    const cachedCustomer = customerCache.get(uid);
+    if (cachedCustomer) {
+      console.log("cache");
+      return cachedCustomer;
+    }
+
+    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("none cache");
+      const customer = new Customer({ ...docSnap.data() });
+      customerCache.set(uid, customer);
+      return customer;
+    }
+
+    throw new Error("Customer not found");
+  } catch (error) {
+    throw new Error(`Error getting customer by ID: ${error.message}`);
+  }
+};
 
 export const dbGetAllCustomers = async () => {
   try {
@@ -30,57 +79,11 @@ export const dbGetAllCustomers = async () => {
   }
 };
 
-export const dbGetCustomerById = async (uid) => {
-  try {
-    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, uid);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      return new Customer({ ...docSnap.data() });
-    }
-    throw new Error("Customer not found");
-  } catch (error) {
-    throw new Error(`Error getting customer by ID: ${error.message}`);
-  }
-};
-
-export const dbCreateCustomer = async ({
-  email,
-  password,
-  firstName,
-  lastName,
-}) => {
-  try {
-    const newCustomer = new Customer({ firstName, lastName, email });
-
-    const user = await adminAuth.createUser({
-      email,
-      password,
-    });
-    newCustomer.uid = user.uid;
-    newCustomer.createdAt = new Date();
-    newCustomer.updatedAt = new Date();
-
-    const customerRef = doc(db, CUSTOMER_COLLECTION_NAME, user.uid);
-    await setDoc(customerRef, { ...newCustomer });
-
-    return newCustomer;
-  } catch (error) {
-    throw new Error(`Error creating customer: ${error.message}`);
-  }
-};
-
-// export const dbCreateCustomerWithoutAuth = async ({
-//   email,
-
-// })
-
 export const dbUpdateCustomer = async (uid, updateData) => {
   try {
-    const fieldsToRemove = ["uid", "email", "createdAt", "updatedAt"];
-    fieldsToRemove.forEach((field) => delete updateData[field]);
+    const { uid, email, createdAt, updatedAt, ...dataToUpdate } = updateData;
 
-    updateData.updatedAt = new Date();
+    dataToUpdate.updatedAt = new Date();
 
     const docRef = doc(db, CUSTOMER_COLLECTION_NAME, uid);
     const docSnap = await getDoc(docRef);
@@ -89,7 +92,9 @@ export const dbUpdateCustomer = async (uid, updateData) => {
       throw new Error("Customer not found");
     }
 
-    await updateDoc(docRef, updateData);
+    await updateDoc(docRef, dataToUpdate);
+
+    customerCache.del(uid);
   } catch (error) {
     throw new Error(`Error updating customer: ${error.message}`);
   }
@@ -97,28 +102,16 @@ export const dbUpdateCustomer = async (uid, updateData) => {
 
 export const dbDeleteCustomer = async (uid) => {
   try {
-    const docRef = doc(db, CUSTOMER_COLLECTION_NAME, uid);
-    const docSnap = await getDoc(docRef);
+    const customerRef = doc(db, CUSTOMER_COLLECTION_NAME, uid);
 
-    if (!docSnap.exists()) {
-      throw new Error("Customer not found");
-    }
-
-    await adminAuth.deleteUser(uid);
-    await deleteDoc(docRef);
+    await Promise.all([adminAuth.deleteUser(uid), deleteDoc(customerRef)]);
   } catch (error) {
     throw new Error(`Error deleting customer: ${error.message}`);
   }
 };
 
-export const dbChangePassword = async (
-  uid,
-  email,
-  oldPassword,
-  newPassword
-) => {
+export const dbChangePassword = async (uid, newPassword) => {
   try {
-    await signInWithEmailAndPassword(firebaseAuth, email, oldPassword);
     await adminAuth.updateUser(uid, {
       password: newPassword,
     });

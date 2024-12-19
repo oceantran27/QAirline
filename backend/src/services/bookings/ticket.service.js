@@ -19,10 +19,7 @@ const TICKET_COLLECTION_NAME = "tickets";
 export const dbGetAllTickets = async () => {
   try {
     const snapshot = await getDocs(collection(db, TICKET_COLLECTION_NAME));
-    const tickets = snapshot.docs.map((doc) => ({
-      ...doc.data(),
-    }));
-    return tickets;
+    return snapshot.docs.map((doc) => doc.data());
   } catch (error) {
     throw new Error(`Error getting all tickets: ${error.message}`);
   }
@@ -75,17 +72,6 @@ export const dbGetTicketsByIds = async (ticketIds) => {
     throw new Error(`Error getting tickets by IDs: ${error.message}`);
   }
 };
-
-// export const dbCreateTicket = async (ticket) => {
-//   try {
-//     const docRef = doc(collection(db, TICKET_COLLECTION_NAME));
-//     ticket.ticketId = docRef.id;
-//     await setDoc(docRef, ticket);
-//     return ticket;
-//   } catch (error) {
-//     throw new Error(`Error creating ticket: ${error.message}`);
-//   }
-// };
 
 export const dbUpdateTicket = async (ticketId, updateData) => {
   try {

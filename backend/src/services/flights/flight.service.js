@@ -34,7 +34,6 @@ export const dbGetFlightById = async (flightId) => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log(docSnap.data());
       return docSnap.data();
     }
     throw new Error("Flight not found");
@@ -60,15 +59,9 @@ export const dbCreateFlight = async (flight) => {
 export const dbUpdateFlight = async (flightId, updateData) => {
   try {
     const docRef = doc(db, FLIGHT_COLLECTION_NAME, flightId);
-    const docSnap = await getDoc(docRef);
+    const updateDataWithTimestamp = { ...updateData, updatedAt: new Date() };
 
-    if (!docSnap.exists()) {
-      throw new Error("Flight not found");
-    }
-
-    updateData.updatedAt = new Date();
-
-    await updateDoc(docRef, updateData);
+    await updateDoc(docRef, updateDataWithTimestamp);
   } catch (error) {
     throw new Error(`Error updating flight: ${error.message}`);
   }
@@ -77,12 +70,6 @@ export const dbUpdateFlight = async (flightId, updateData) => {
 export const dbDeleteFlight = async (flightId) => {
   try {
     const docRef = doc(db, FLIGHT_COLLECTION_NAME, flightId);
-    const docSnap = await getDoc(docRef);
-
-    if (!docSnap.exists()) {
-      throw new Error("Flight not found");
-    }
-
     await deleteDoc(docRef);
   } catch (error) {
     throw new Error(`Error deleting flight: ${error.message}`);
@@ -102,15 +89,12 @@ export const dbCreateFlights = async (flights) => {
         collection(db, FLIGHT_COLLECTION_NAME),
         flight.flightId
       );
-
       flight.createdAt = new Date();
       flight.updatedAt = new Date();
-
       batch.set(docRef, flight.toObject());
     });
 
     await batch.commit();
-    console.log("Flights created successfully");
   } catch (error) {
     throw new Error(`Error creating flights: ${error.message}`);
   }
@@ -126,13 +110,14 @@ export const dbRemoveFlightTickets = async (flightId, cancelTickets) => {
     }
 
     const flight = docSnap.data();
-    let cancelSeats = [];
-    for (let ticketId of cancelTickets) {
-      const ticket = await dbGetTicket(ticketId);
-      if (ticket) {
-        cancelSeats.push(ticket.seatCode);
-      }
-    }
+
+    const tickets = await Promise.all(
+      cancelTickets.map((ticketId) => dbGetTicket(ticketId))
+    );
+
+    const cancelSeats = tickets
+      .filter((ticket) => ticket)
+      .map((ticket) => ticket.seatCode);
 
     flight.ticketList = flight.ticketList.filter(
       (ticketId) => !cancelTickets.includes(ticketId)
@@ -141,35 +126,43 @@ export const dbRemoveFlightTickets = async (flightId, cancelTickets) => {
       (seat) => !cancelSeats.includes(seat)
     );
     flight.updatedAt = new Date();
+
     await updateDoc(docRef, flight);
   } catch (error) {
     throw new Error(`Error canceling flights: ${error.message}`);
   }
 };
 
-export const addTicketsToFlights = async (flightTicketsList) => {
+export const dbAddTicketsToFlights = async (flightTicketsList) => {
   try {
     const batch = writeBatch(db);
 
-    for (const { flightId, tickets } of flightTicketsList) {
-      const flightRef = doc(db, FLIGHT_COLLECTION_NAME, flightId);
-      const flightSnap = await getDoc(flightRef);
+    const flightIds = flightTicketsList.map(({ flightId }) => flightId);
 
+    const flightRefs = flightIds.map((flightId) =>
+      doc(db, FLIGHT_COLLECTION_NAME, flightId)
+    );
+    const flightSnaps = await Promise.all(
+      flightRefs.map((flightRef) => getDoc(flightRef))
+    );
+
+    flightSnaps.forEach((flightSnap, index) => {
       if (!flightSnap.exists()) {
-        throw new Error(`Flight with ID ${flightId} not found`);
+        throw new Error(`Flight with ID ${flightIds[index]} not found`);
       }
 
       const flightData = flightSnap.data();
+      const tickets = flightTicketsList[index].tickets;
 
       const updatedTicketList = [
         ...new Set([...flightData.ticketList, ...tickets]),
       ];
 
-      batch.update(flightRef, {
+      batch.update(flightRefs[index], {
         ticketList: updatedTicketList,
         updatedAt: new Date(),
       });
-    }
+    });
 
     await batch.commit();
   } catch (error) {

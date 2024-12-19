@@ -1,32 +1,11 @@
 import {
-  dbCreateMockAdmin,
   dbCreateAdmin,
   dbGetAdminById,
   dbGetAllAdmins,
   dbUpdateAdmin,
   dbDeleteAdmin,
+  dbChangePassword,
 } from "../../services/users/admin.service";
-import { dbChangePassword } from "../../services/users/customer.service";
-
-export const createMockAdmin = async (req, res) => {
-  try {
-    const { email, password, firstName, lastName, permissions } = req.body;
-    await dbCreateMockAdmin({
-      email,
-      password,
-      firstName,
-      lastName,
-      permissions,
-    });
-    res.status(201).send({
-      message: "Admin created successfully",
-    });
-  } catch (error) {
-    res.status(400).send({
-      message: error.message,
-    });
-  }
-};
 
 export const createAdmin = async (req, res) => {
   try {
@@ -103,12 +82,7 @@ export const deleteAdmin = async (req, res) => {
 export const changePassword = async (req, res) => {
   try {
     const user = req.user;
-    await dbChangePassword(
-      user.uid,
-      user.email,
-      req.body.oldPassword,
-      req.body.newPassword
-    );
+    await dbChangePassword(user.uid, req.body.newPassword);
     res.status(200).send({
       message: "Password changed successfully",
     });
