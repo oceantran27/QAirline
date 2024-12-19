@@ -127,7 +127,7 @@ export const dbRemoveFlightTickets = async (flightId, cancelTickets) => {
 
     const flight = docSnap.data();
     let cancelSeats = [];
-    for (ticketId of cancelTickets) {
+    for (let ticketId of cancelTickets) {
       const ticket = await dbGetTicket(ticketId);
       if (ticket) {
         cancelSeats.push(ticket.seatCode);
@@ -144,5 +144,35 @@ export const dbRemoveFlightTickets = async (flightId, cancelTickets) => {
     await updateDoc(docRef, flight);
   } catch (error) {
     throw new Error(`Error canceling flights: ${error.message}`);
+  }
+};
+
+export const addTicketsToFlights = async (flightTicketsList) => {
+  try {
+    const batch = writeBatch(db);
+
+    for (const { flightId, tickets } of flightTicketsList) {
+      const flightRef = doc(db, FLIGHT_COLLECTION_NAME, flightId);
+      const flightSnap = await getDoc(flightRef);
+
+      if (!flightSnap.exists()) {
+        throw new Error(`Flight with ID ${flightId} not found`);
+      }
+
+      const flightData = flightSnap.data();
+
+      const updatedTicketList = [
+        ...new Set([...flightData.ticketList, ...tickets]),
+      ];
+
+      batch.update(flightRef, {
+        ticketList: updatedTicketList,
+        updatedAt: new Date(),
+      });
+    }
+
+    await batch.commit();
+  } catch (error) {
+    throw new Error(`Error adding tickets to flights: ${error.message}`);
   }
 };

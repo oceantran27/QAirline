@@ -1,13 +1,15 @@
 import {
   getFirestore,
-  collection,
   doc,
   setDoc,
   getDoc,
-  getDocs,
   updateDoc,
   deleteDoc,
   writeBatch,
+  query,
+  where,
+  collection,
+  getDocs,
 } from "firebase/firestore";
 import firebase from "../../database/firebase";
 
@@ -19,7 +21,6 @@ export const dbGetAllTickets = async () => {
     const snapshot = await getDocs(collection(db, TICKET_COLLECTION_NAME));
     const tickets = snapshot.docs.map((doc) => ({
       ...doc.data(),
-      ticketId: doc.id,
     }));
     return tickets;
   } catch (error) {
@@ -38,6 +39,40 @@ export const dbGetTicket = async (ticketId) => {
     throw new Error("Ticket not found");
   } catch (error) {
     throw new Error(`Error getting ticket by ID: ${error.message}`);
+  }
+};
+
+export const dbGetTicketsByIds = async (ticketIds) => {
+  try {
+    if (!Array.isArray(ticketIds) || ticketIds.length === 0) {
+      throw new Error("Invalid ticketIds array");
+    }
+
+    const BATCH_SIZE = 10;
+    const batches = [];
+    for (let i = 0; i < ticketIds.length; i += BATCH_SIZE) {
+      batches.push(ticketIds.slice(i, i + BATCH_SIZE));
+    }
+
+    const tickets = [];
+    for (const batch of batches) {
+      const q = query(
+        collection(db, TICKET_COLLECTION_NAME),
+        where("__name__", "in", batch)
+      );
+      const snapshot = await getDocs(q);
+
+      snapshot.forEach((doc) => {
+        tickets.push({
+          ...doc.data(),
+          ticketId: doc.id,
+        });
+      });
+    }
+
+    return tickets;
+  } catch (error) {
+    throw new Error(`Error getting tickets by IDs: ${error.message}`);
   }
 };
 

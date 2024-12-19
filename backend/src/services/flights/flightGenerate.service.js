@@ -22,7 +22,6 @@ const aircraftTypes = [
   "ATR 72",
 ];
 
-// Đảm bảo rằng giá tiền nằm trong phạm vi 800000 - 2200000
 const priceRange = { min: 800000, max: 2200000 };
 
 const getRandomInRange = (min, max) =>
@@ -65,7 +64,6 @@ const generateMockFlight = (departureCity, arrivalCity, flightDate) => {
 
   const flightDurationInHours = flightDurationInMinutes / 60;
 
-  // Sử dụng range giá mới cho basePrice
   const basePrice =
     Math.floor(getRandomInRange(priceRange.min, priceRange.max) / 100000) *
     100000;
@@ -82,6 +80,8 @@ const generateMockFlight = (departureCity, arrivalCity, flightDate) => {
     aircraftType,
     departureAirport,
     arrivalAirport,
+    departureCity,
+    arrivalCity,
     departureTime,
     arrivalTime,
     basePrice,

@@ -8,6 +8,7 @@ import {
   cancelTicket,
   createTickets,
   updateSeatCodeTickets,
+  getTickets,
 } from "../../controllers/bookings/ticket.controller";
 import {
   authenticateToken,
@@ -23,5 +24,6 @@ router.put("/update-seats", authenticateToken, updateSeatCodeTickets);
 // router.put("/update", authenticateToken, updateTicket);
 // router.delete("/delete", authenticateToken, deleteTicket);
 router.put("/cancel", authenticateToken, cancelTicket);
+router.get("/list", authenticateToken, checkAdminRole, getTickets);
 
 export default router;
