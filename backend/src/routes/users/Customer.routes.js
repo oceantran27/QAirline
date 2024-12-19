@@ -9,12 +9,13 @@ import {
 } from "../../controllers/users/customer.controller";
 import {
   authenticateToken,
+  authenticateTokenWithoutCache,
   checkAdminRole,
 } from "../../middleware/auth.middleware";
 
 const router = express.Router();
 
-router.get("/", authenticateToken, getCustomer);
+router.get("/", authenticateTokenWithoutCache, getCustomer);
 router.get("/all", authenticateToken, checkAdminRole, getAllCustomers);
 router.post("/new", createCustomer);
 router.put("/update", authenticateToken, updateCustomer);

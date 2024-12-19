@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  createMockAdmin,
   createAdmin,
   getAdmin,
   updateAdmin,
@@ -10,12 +9,13 @@ import {
 } from "../../controllers/users/admin.controller";
 import {
   authenticateToken,
+  authenticateTokenWithoutCache,
   checkAdminRole,
 } from "../../middleware/auth.middleware";
 
 const router = express.Router();
 
-router.get("/", authenticateToken, checkAdminRole, getAdmin);
+router.get("/", authenticateTokenWithoutCache, checkAdminRole, getAdmin);
 router.get("/all", authenticateToken, checkAdminRole, getAllAdmins);
 router.post("/new", authenticateToken, checkAdminRole, createAdmin);
 router.put("/update", authenticateToken, checkAdminRole, updateAdmin);
@@ -27,5 +27,5 @@ router.put(
   changePassword
 );
 
-router.post("/new_mock", createMockAdmin);
+router.post("/new_mock", createAdmin);
 export default router;

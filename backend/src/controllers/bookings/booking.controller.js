@@ -17,7 +17,7 @@ import {
 import Booking from "../../models/bookings/booking.model";
 import Ticket from "../../models/bookings/ticket.model";
 import {
-  addTicketsToFlights,
+  dbAddTicketsToFlights,
   dbRemoveFlightTickets,
 } from "../../services/flights/flight.service";
 
@@ -126,9 +126,10 @@ export const createBooking = async (req, res) => {
       });
     }
 
-    await dbCreateTickets(tickets);
+    const ticketCreationPromise = dbCreateTickets(tickets);
+    const flightTicketAddPromise = dbAddTicketsToFlights(flightTicketsList);
 
-    await addTicketsToFlights(flightTicketsList);
+    await Promise.all([ticketCreationPromise, flightTicketAddPromise]);
 
     const createdBooking = await dbCreateBooking(booking);
 
@@ -230,16 +231,21 @@ export const cancelBooking = async (req, res) => {
       });
     }
 
-    await dbCancelTickets(bookingData.ticketList);
+    const cancelTicketsPromise = dbCancelTickets(bookingData.ticketList);
+    const removeFlightTicketsPromise = dbRemoveFlightTickets(
+      bookingData.flightId,
+      bookingData.ticketList
+    );
 
-    await dbRemoveFlightTickets(bookingData.flightId, bookingData.ticketList);
+    await Promise.all([cancelTicketsPromise, removeFlightTicketsPromise]);
 
     await dbUpdateBooking(bookingId, {
       ...bookingData,
       updatedAt: new Date(),
     });
+
     return res.status(200).send({
-      message: "Booking updated successfully",
+      message: "Booking cancelled successfully",
     });
   } catch (error) {
     res.status(400).send({
