@@ -4,6 +4,7 @@ import loginRoutes from "./login/index";
 import flightRoutes from "./flights/flight.routes";
 import bookingRoutes from "./bookings/booking.routes";
 import ticketRoutes from "./bookings/ticket.routes";
+import newsRoutes from "./news/news.routes";
 
 const initWebRoutes = (app) => {
   app.use("/api/customer", customerRoutes);
@@ -12,6 +13,7 @@ const initWebRoutes = (app) => {
   app.use("/api/flight", flightRoutes);
   app.use("/api/booking", bookingRoutes);
   app.use("/api/ticket", ticketRoutes);
+  app.use("/api/news", newsRoutes);
   return app;
 };
 
