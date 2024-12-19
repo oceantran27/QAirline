@@ -15,6 +15,9 @@ const {
   MESSAGING_SENDER_ID,
   APP_ID,
   MEASUREMENT_ID,
+  CLOUD_NAME,
+  CLOUD_API_KEY,
+  CLOUD_API_SECRET,
 } = process.env;
 
 assert(PORT, "Port is required");
@@ -33,5 +36,10 @@ export default {
     messagingSenderId: MESSAGING_SENDER_ID,
     appId: APP_ID,
     measurementId: MEASUREMENT_ID,
+  },
+  cloudinaryConfig: {
+    cloud_name: CLOUD_NAME,
+    api_key: CLOUD_API_KEY,
+    api_secret: CLOUD_API_SECRET,
   },
 };
