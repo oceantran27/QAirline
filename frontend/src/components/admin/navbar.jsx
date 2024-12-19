@@ -14,13 +14,13 @@ const navItems = [
     icon: CalendarDays 
   },
   { 
-    name: 'Danh sách hành khách', 
-    href: '/admin/passengers', 
+    name: 'Quản lý đặt vé', 
+    href: '/admin/tickets', 
     icon: Users 
   },
   { 
     name: 'Thông tin & bài đăng', 
-    href: '/admin/posts', 
+    href: '/admin/news', 
     icon: FileText 
   },
   { 

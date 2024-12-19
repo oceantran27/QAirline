@@ -1,92 +1,115 @@
 "use client"
 
-import { useState } from "react"
-import { Search, Plus } from 'lucide-react'
+import { useEffect, useState } from "react"
+import { Search } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { toast } from "@/hooks/use-toast"
+
+import { useRouter } from "next/router"
+
+import { AddFlightDialog } from "@/components/admin/AddFlightDialog"
 
 export default function ScheduledFlights() {
-  const [flights, setFlights] = useState([
-    { 
-      id: 40, aircraft: "Airbus A320", src: "NSK", dest: "BOM",
-      adt: "2024-05-22 23:30:00", ddt: "2024-05-23 01:25:00",
-      cec: "1002", cbc: "8002", noe: 22, nob: 18, status: "edit"
-    },
-    { 
-      id: 39, aircraft: "Airbus A330", src: "NSK", dest: "BOM",
-      adt: "2024-05-22 20:20:00", ddt: "2024-05-22 22:22:00",
-      cec: "1002", cbc: "8002", noe: 40, nob: 30, status: "edit"
-    },
-    { 
-      id: 38, aircraft: "Boeing 767", src: "NSK", dest: "BOM",
-      adt: "2024-05-22 13:20:00", ddt: "2024-05-22 15:15:00",
-      cec: "1003", cbc: "8003", noe: 20, nob: 10, status: "edit"
-    },
-    { 
-      id: 37, aircraft: "Boeing 777", src: "NSK", dest: "BOM",
-      adt: "2024-05-22 09:00:00", ddt: "2024-05-22 11:25:00",
-      cec: "1002", cbc: "0", noe: 25, nob: 0, status: "running"
-    },
-    { 
-      id: 36, aircraft: "Airbus A320", src: "NSK", dest: "BOM",
-      adt: "2024-05-22 03:15:00", ddt: "2024-05-22 05:20:00",
-      cec: "1001", cbc: "8001", noe: 25, nob: 13, status: "arrived"
-    },
-    { 
-      id: 35, aircraft: "Boeing 767", src: "NSK", dest: "BOM",
-      adt: "2024-05-20 17:00:00", ddt: "2024-05-20 19:10:00",
-      cec: "1010", cbc: "8010", noe: 20, nob: 18, status: "arrived"
-    },
-    { 
-      id: 34, aircraft: "Boeing 777", src: "NSK", dest: "BOM",
-      adt: "2024-05-20 13:20:00", ddt: "2024-05-20 14:40:00",
-      cec: "1002", cbc: "8002", noe: 20, nob: 10, status: "arrived"
-    },
-    { 
-      id: 33, aircraft: "Airbus A320", src: "NSK", dest: "BOM",
-      adt: "2024-05-20 11:10:00", ddt: "2024-05-20 12:10:00",
-      cec: "1000", cbc: "8000", noe: 30, nob: 18, status: "arrived"
-    },
-  ])
+  const router = useRouter()
 
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      router.push('/admin')
+    }
+    else getAllFlights()
+
+  }, [router])
+
+  const [flights, setFlights] = useState([])
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredFlights = flights.filter(flight => 
-    flight.id.toString().includes(searchQuery.toLowerCase()) ||
+    flight.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
     flight.aircraft.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const handleRemove = (id) => {
+  const getAllFlights = async () => {
+    const getAllFlightsApi = "http://localhost:3030/api/flight/all" 
+
+    try { 
+        const response = await fetch(getAllFlightsApi, {
+            method: "GET",
+            headers: {
+                "admin": "true",
+                "authorization": "Bearer " + localStorage.getItem("token")
+            }, 
+        })
+        if (!response.ok) {
+            throw new Error("Send request failed")
+        }
+
+        const res = await response.json()
+        setFlights(res.data.map(a => {return {
+            "id": a.flightNumber,
+            "aircraft": a.aircraftType, 
+            "src": a.arrivalCity, 
+            "dest": a.departureCity,
+            "adt": new Date(a.arrivalTime.seconds*1000).toISOString().replace("T", " ").slice(0, -5), 
+            "ddt": new Date(a.departureTime.seconds*1000).toISOString().replace("T", " ").slice(0, -5),
+            "cec": a.basePrice*1.5, 
+            "cbc": a.basePrice*2, 
+            "noe": 198, 
+            "nob": 66, 
+            "status": a.status
+          }}))
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+    }
+  }
+
+  const handleRemove = async (id) => {
     setFlights(flights.filter(flight => flight.id !== id))
+    const deleteFlightApi = "http://localhost:3030/api/flight/delete/?" 
+
+    try {
+        const response = await fetch(deleteFlightApi + 
+        new URLSearchParams({
+          "id": id,
+        }).toString(), {
+            method: "DELETE",
+            headers: {
+                "admin": "true",
+                "authorization": "Bearer " + localStorage.getItem("token")
+            }, 
+        })
+        if (!response.ok) {
+            throw new Error("Send request failed")
+        }
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+    }
+
+    toast({
+      title: "Thông báo",
+      description: "Chuyến bay đã được xóa thành công.",
+      variant: "destructive",
+    })
   }
 
   const getStatusBadge = (flight) => {
     switch(flight.status) {
-      case 'running':
+      case 'OnTime':
         return <Badge className="bg-yellow-400 hover:bg-yellow-400 text-black">Đang Bay</Badge>
-      case 'arrived':
-        return <Badge className="bg-green-600 hover:bg-green-600">Đã Hạ Cánh</Badge>
-      default:
-        return (
-          <div className="flex gap-2">
-            <Button 
-              size="sm"
-              className="bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1 h-7"
-            >
-              Sửa
-            </Button>
-            <Button 
-              size="sm"
-              variant="destructive" 
-              onClick={() => handleRemove(flight.id)}
-              className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 h-7"
-            >
-              Xóa
-            </Button>
-          </div>
-        )
+      // default:
+      //   return (
+      //     <div className="flex gap-2">
+      //       <Button 
+      //         size="sm"
+      //         className="bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1 h-7"
+      //       >
+      //         Sửa
+      //       </Button>
+      //     </div>
+      //   )
     }
   }
 
@@ -94,10 +117,8 @@ export default function ScheduledFlights() {
     <div className="pt-10 pl-64 mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Quản Lý Chuyến Bay</h1>
-        <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium">
-          <Plus className="mr-2 h-4 w-4" />
-          CHUYẾN BAY MỚI
-        </Button>
+        <AddFlightDialog />
+
       </div>
 
       <div className="relative mb-6">
@@ -131,11 +152,11 @@ export default function ScheduledFlights() {
           </TableHeader>
           <TableBody>
             {filteredFlights.map((flight) => (
-              <TableRow key={flight.id} className={flight.id % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+              <TableRow className={flight.id % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                 <TableCell className="text-center">{flight.id}</TableCell>
                 <TableCell className="text-center">{flight.aircraft}</TableCell>
-                <TableCell className="text-center">{`${flight.src} ${flight.adt}`}</TableCell>
-                <TableCell className="text-center">{`${flight.dest} ${flight.ddt}`}</TableCell>
+                <TableCell className="text-center">{`${flight.src} ${flight.ddt}`}</TableCell>
+                <TableCell className="text-center">{`${flight.dest} ${flight.adt}`}</TableCell>
                 <TableCell className="text-center">{`${flight.cec} VND x ${flight.noe}`}</TableCell>
                 <TableCell className="text-center">{`${flight.cbc} VND x ${flight.nob}`}</TableCell>
                 <TableCell>
@@ -145,7 +166,15 @@ export default function ScheduledFlights() {
                       size="sm"
                       className="bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1 h-7"
                     >
-                      Xem
+                      Sửa
+                    </Button>
+                    <Button 
+                      size="sm"
+                      variant="destructive" 
+                      onClick={() => handleRemove(flight.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 h-7"
+                    >
+                      Xóa
                     </Button>
                   </div>
                 </TableCell>
@@ -153,6 +182,7 @@ export default function ScheduledFlights() {
             ))}
           </TableBody>
         </Table>
+        
       </div>
     </div>
   )
