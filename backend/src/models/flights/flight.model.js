@@ -5,6 +5,8 @@ class Flight {
     aircraftType,
     departureAirport,
     arrivalAirport,
+    departureCity,
+    arrivalCity,
     departureTime,
     arrivalTime,
     basePrice,
@@ -17,6 +19,8 @@ class Flight {
     this.aircraftType = aircraftType;
     this.departureAirport = departureAirport;
     this.arrivalAirport = arrivalAirport;
+    this.departureCity = departureCity;
+    this.arrivalCity = arrivalCity;
     this.departureTime = new Date(departureTime);
     this.arrivalTime = new Date(arrivalTime);
     this.basePrice = basePrice;
@@ -38,6 +42,8 @@ class Flight {
       aircraftType: this.aircraftType,
       departureAirport: this.departureAirport,
       arrivalAirport: this.arrivalAirport,
+      departureCity: this.departureCity,
+      arrivalCity: this.arrivalCity,
       departureTime: this.departureTime,
       arrivalTime: this.arrivalTime,
       basePrice: this.basePrice,

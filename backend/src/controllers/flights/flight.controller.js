@@ -108,6 +108,7 @@ export const getFlightSuggestions = async (req, res) => {
   try {
     const today = new Date().toISOString().slice(0, 10);
     const flights = generateFlightSuggestions(today);
+    // console.log(flights);
     await dbCreateFlights(flights);
     res.status(200).send({
       message: "Flights fetched successfully",

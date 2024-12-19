@@ -7,7 +7,9 @@ import {
   dbDeleteTicket,
   dbCreateTickets,
   dbUpdateSeatCodesForTickets,
+  dbGetTicketsByIds,
 } from "../../services/bookings/ticket.service";
+import { dbRemoveFlightTickets } from "../../services/flights/flight.service";
 import {
   dbGetCustomerById,
   dbUpdateCustomer,
@@ -42,6 +44,20 @@ export const getTicket = async (req, res) => {
 
     return res.status(200).send({
       data: ticketData,
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error.message,
+    });
+  }
+};
+
+export const getTickets = async (req, res) => {
+  try {
+    const ticketIds = req.body;
+    const tickets = await dbGetTicketsByIds(ticketIds);
+    return res.status(200).send({
+      data: tickets,
     });
   } catch (error) {
     res.status(400).send({
@@ -178,6 +194,8 @@ export const cancelTicket = async (req, res) => {
         message: "You do not have permission to perform this action",
       });
     }
+
+    await dbRemoveFlightTickets(ticketData.flightId, [ticketId]);
 
     await dbUpdateTicket(ticketId, { ...ticketData, updatedAt: new Date() });
     return res.status(200).send({

@@ -16,7 +16,10 @@ import {
 
 import Booking from "../../models/bookings/booking.model";
 import Ticket from "../../models/bookings/ticket.model";
-import { dbRemoveFlightTickets } from "../../services/flights/flight.service";
+import {
+  addTicketsToFlights,
+  dbRemoveFlightTickets,
+} from "../../services/flights/flight.service";
 
 export const getAllBookings = async (req, res) => {
   try {
@@ -75,6 +78,7 @@ export const createBooking = async (req, res) => {
     }
 
     let tickets = [];
+    let flightTicketsList = [];
 
     for (let ticketData of departureTicketDataList) {
       booking.totalPrice += ticketData.price;
@@ -93,6 +97,11 @@ export const createBooking = async (req, res) => {
       booking.departureIdTickets.push(ticket.ticketId);
     }
 
+    flightTicketsList.push({
+      flightId: booking.departureFlightId,
+      tickets: booking.departureIdTickets,
+    });
+
     if (booking.tripType === "roundTrip") {
       for (let ticketData of returnTicketDataList) {
         booking.totalPrice += ticketData.price;
@@ -110,9 +119,16 @@ export const createBooking = async (req, res) => {
         tickets.push(ticket);
         booking.returnIdTickets.push(ticket.ticketId);
       }
+
+      flightTicketsList.push({
+        flightId: booking.returnFlightId,
+        tickets: booking.returnIdTickets,
+      });
     }
 
     await dbCreateTickets(tickets);
+
+    await addTicketsToFlights(flightTicketsList);
 
     const createdBooking = await dbCreateBooking(booking);
 
@@ -124,6 +140,7 @@ export const createBooking = async (req, res) => {
     await dbUpdateCustomer(booking.bookerId, {
       bookingHistory: updatedBookingHistory,
     });
+
     res.status(201).send({
       bookingId: createdBooking.bookingId,
       message: "Booking created successfully",
