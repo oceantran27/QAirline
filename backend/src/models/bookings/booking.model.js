@@ -1,7 +1,8 @@
 class Booking {
-  generateTicketId() {
+  generateBookingId() {
     const timestamp = Date.now();
-    return `BK${timestamp}`;
+    const randomNumber = Math.floor(Math.random() * (99 - 10 + 1)) + 10;
+    return `BK${timestamp}${randomNumber}`;
   }
   constructor({
     bookingId = null,
@@ -17,7 +18,7 @@ class Booking {
     status = "Confirm",
     paymentStatus = "Paid",
   }) {
-    this.bookingId = bookingId || this.generateTicketId();
+    this.bookingId = bookingId || this.generateBookingId();
     this.bookerId = bookerId;
     this.tripType = tripType;
     this.departureCity = departureCity;

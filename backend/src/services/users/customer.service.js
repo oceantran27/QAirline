@@ -55,7 +55,7 @@ export const dbGetCustomerById = async (uid) => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log("none cache");
+      // console.log("none cache");
       const customer = new Customer({ ...docSnap.data() });
       customerCache.set(uid, customer);
       return customer;
