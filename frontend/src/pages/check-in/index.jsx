@@ -24,6 +24,7 @@ export default function CheckInPage() {
   const [departureFlight, setDepartureFlight] = useState(null);
   const [returnFlight, setReturnFlight] = useState(null);
   const [passengerList, setPassengerList] = useState({ departure: [], return: [] });
+  const [seatData, setSeatData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -75,6 +76,7 @@ export default function CheckInPage() {
           : [];
 
         setPassengerList({ departure: departurePassengers, return: returnPassengers });
+        setSeatData(generateSeatData());
       } catch (err) {
         console.error(err);
         setError(err.message);
@@ -85,6 +87,17 @@ export default function CheckInPage() {
 
     fetchBooking();
   }, [bookingID]);
+
+  const generateSeatData = () => {
+    const columns = ["A", "B", "C", "D", "E", "G"];
+    const rows = Array.from({ length: 44 }, (_, i) => i + 1);
+    return rows.flatMap((row) =>
+      columns.map((col) => ({
+        id: `${row}${col}`,
+        type: row === 18 || row === 32 ? "blocked" : Math.random() < 0.3 ? "unavailable" : "available",
+      }))
+    );
+  };
 
   const fetchFlightDetails = async (flightId, type) => {
     try {
@@ -165,6 +178,25 @@ export default function CheckInPage() {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
+  const handleSeatSelect = (seatId, customerId) => {
+    setPassengerList((prev) => ({
+      ...prev,
+      departure: prev.departure.map((passenger) =>
+        passenger.id === customerId ? { ...passenger, seat: seatId } : passenger
+      ),
+    }));
+    setSeatData((prev) =>
+      prev.map((seat) =>
+        seat.id === seatId
+          ? { ...seat, type: "selected" }
+          : seat.type === "selected" && seat.id === selectedSeat?.[customerId]
+          ? { ...seat, type: "available" }
+          : seat
+      )
+    );
+    setSelectedSeat((prev) => ({ ...prev, [customerId]: seatId }));
+  };
+
   if (loading) return <div className="container mx-auto p-6">Đang tải thông tin...</div>;
   if (error) return <div className="container mx-auto p-6 text-red-600">Lỗi: {error}</div>;
 
@@ -192,13 +224,13 @@ export default function CheckInPage() {
 
       {currentStep === 2 && (
         <SeatSelectionStep
-          passengers={passengerList.departure} // Danh sách hành khách chuyến đi
-          seats={seatData} // Danh sách ghế
+          passengers={passengerList.departure}
+          seats={seatData}
+          onSeatSelect={handleSeatSelect}
           onContinue={handleContinue}
           onBack={handleBack}
         />
       )}
-
 
       {currentStep === 3 && (
         <ConfirmationStep
