@@ -47,7 +47,10 @@ export default function ConfirmationPage() {
       }
       const result = await response.json();
       const data = result.data;
-
+  
+      // Trích xuất thêm departureCity và arrivalCity từ dữ liệu API
+      const { departureCity, arrivalCity, flightId: flightDataId } = data;
+  
       const economyOptions = generateTicketOptions(data.basePrice, "economy");
       const businessOptions = generateTicketOptions(data.basePrice * 1.5, "business");
       const allOptions = [...economyOptions, ...businessOptions];
@@ -55,13 +58,15 @@ export default function ConfirmationPage() {
       if (!option) {
         throw new Error("Không tìm thấy thông tin hạng vé.");
       }
-
-      setFlightData(data);
+  
+      // Lưu thông tin chuyến bay vào state
+      setFlightData({ ...data, departureCity, arrivalCity, flightDataId });
       setOption(option);
     } catch (err) {
       setError(err.message);
     }
   };
+  
 
   useEffect(() => {
     if (!departureFlightId || !departureOptionId) return;
@@ -382,9 +387,10 @@ if (!bookerId) {
     // Dữ liệu booking
     const bookingData = {
       bookerId,
-      departureCity: "HAN",
-      arrivalCity: "SGN",
+      departureCity: departureFlightData?.departureCity,
+      arrivalCity: departureFlightData?.arrivalCity,
       departureFlightId: departureFlightData?.flightId,
+      returnFlightId: tripType === "roundTrip" ? returnFlightData?.flightId : undefined, // Thêm returnFlightId nếu là roundTrip
       tripType,
       departureTicketDataList,
       returnTicketDataList: tripType === "roundTrip" ? returnTicketDataList : undefined,
@@ -535,9 +541,20 @@ if (!bookerId) {
       </div>
 
       <div className="max-w-4xl mx-auto p-4 sm:p-6 m-4 relative z-10">
-        {[{ flightData: departureFlightData, option: departureOption, title: "Chi tiết chuyến bay đi" }, 
-          returnFlightData && { flightData: returnFlightData, option: returnOption, title: "Chi tiết chuyến bay về" }]
-          .filter(Boolean)
+        {[
+          // Nếu là roundTrip, đặt chuyến đi trước và chuyến về sau
+          ...(tripType === "roundTrip"
+            ? [
+                { flightData: departureFlightData, option: departureOption, title: "Chi tiết chuyến bay đi" },
+                returnFlightData && { flightData: returnFlightData, option: returnOption, title: "Chi tiết chuyến bay về" },
+              ]
+            : [
+                // Nếu là oneway, chỉ hiển thị chuyến đi
+                { flightData: departureFlightData, option: departureOption, title: "Chi tiết chuyến bay đi" },
+              ]
+          ),
+        ]
+          .filter(Boolean) // Lọc các phần tử không hợp lệ (null hoặc undefined)
           .map(({ flightData, option, title }, index) => (
             <Card key={index} className="shadow-lg border-orange mb-4">
               <CardContent className="p-4 sm:p-6">
@@ -549,15 +566,23 @@ if (!bookerId) {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                   <div className="flex items-center space-x-4 mb-4 sm:mb-0">
                     <div className="flex flex-col items-center">
-                      <span className="text-2xl sm:text-3xl font-bold text-gray-800">{formatTime(flightData.departureTime.seconds)}</span>
-                      <span className="text-base sm:text-lg font-medium text-gray-600">Điểm khởi hành</span>
+                      <span className="text-2xl sm:text-3xl font-bold text-gray-800">
+                        {formatTime(flightData.departureTime.seconds)}
+                      </span>
+                      <span className="text-base sm:text-lg font-medium text-gray-600">
+                        {tripType === "roundTrip" ? flightData.departureCity : flightData.departureCity}
+                      </span>
                     </div>
                     <div className="flex-1 relative px-8">
                       <Plane className="text-orange absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform rotate-45" />
                     </div>
                     <div className="flex flex-col items-center">
-                      <span className="text-2xl sm:text-3xl font-bold text-gray-800">{formatTime(flightData.arrivalTime.seconds)}</span>
-                      <span className="text-base sm:text-lg font-medium text-gray-600">Điểm đến</span>
+                      <span className="text-2xl sm:text-3xl font-bold text-gray-800">
+                        {formatTime(flightData.arrivalTime.seconds)}
+                      </span>
+                      <span className="text-base sm:text-lg font-medium text-gray-600">
+                        {tripType === "roundTrip" ? flightData.arrivalCity : flightData.arrivalCity}
+                      </span>
                     </div>
                   </div>
                   <div className="text-right">
@@ -580,7 +605,9 @@ if (!bookerId) {
                     <Clock className="text-orange flex-shrink-0" />
                     <div>
                       <div className="text-sm text-gray-500">Thời gian bay</div>
-                      <div className="font-medium">{calculateFlightDuration(flightData.departureTime.seconds, flightData.arrivalTime.seconds)}</div>
+                      <div className="font-medium">
+                        {calculateFlightDuration(flightData.departureTime.seconds, flightData.arrivalTime.seconds)}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -602,6 +629,8 @@ if (!bookerId) {
             </Card>
           ))}
       </div>
+
+
 
       <div className="border-t border-gray-200 pt-6 pb-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

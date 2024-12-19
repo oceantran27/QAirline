@@ -64,15 +64,15 @@ const TrangLienHe = () => {
               
               <h3 className="text-xl font-semibold mt-8 mb-4">Theo Dõi Chúng Tôi</h3>
               <div className="flex space-x-4">
-                <a href="https://github.com/tentaikhoan" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-orange">
+                <a href="https://github.com/oceantran27/QAirline.git" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-orange">
                   <span className=" sr-only">GitHub</span>
                   <Github className="h-6 w-6" />
                 </a>
-                <a href="https://linkedin.com/in/tentaikhoan" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-orange">
+                <a href="https://www.linkedin.com/in/h%C6%B0ng-nguy%E1%BB%85n-duy-685477295/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-orange">
                   <span className="sr-only">LinkedIn</span>
                   <Linkedin className="h-6 w-6" />
                 </a>
-                <a href="https://linkedin.com/in/tentaikhoan" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-orange">
+                <a href="https://www.facebook.com/profile.php?id=100045370126663" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-orange">
                   <span className="sr-only">LinkedIn</span>
                   <Facebook className="h-6 w-6" />
                 </a>
