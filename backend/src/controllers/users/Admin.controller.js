@@ -82,7 +82,12 @@ export const deleteAdmin = async (req, res) => {
 export const changePassword = async (req, res) => {
   try {
     const user = req.user;
-    await dbChangePassword(user.uid, req.body.newPassword);
+    await dbChangePassword(
+      user.uid,
+      req.body.email,
+      req.body.oldPassword,
+      req.body.newPassword
+    );
     res.status(200).send({
       message: "Password changed successfully",
     });
