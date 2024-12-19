@@ -1,49 +1,135 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useRouter } from 'next/router'
 
 export default function AdminProfilePage() {
-    const router = useRouter()
+  const router = useRouter()
 
   const [admin, setAdmin] = useState({
-    uid: 'ADM001',
-    firstname: 'John',
-    lastname: 'Doe',
-    email: 'john.doe@example.com'
+    uid: '',
+    firstName: '',
+    lastName: '',
+    email: ''
   })
-
   const [editForm, setEditForm] = useState({ ...admin })
+  const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
-  const handleEditSubmit = (e) => {
-    e.preventDefault()
-    setAdmin(editForm)
-    alert("Profile Updated")
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      router.push('/admin')
+    }
+    else getAdmin()
+
+  }, [router])
+
+  const getAdmin = async () => {
+    const getAdminApi = "http://localhost:3030/api/admin" 
+
+    try {
+        const response = await fetch(getAdminApi, {
+            method: "GET",
+            headers: {
+                "admin": "true",
+                "authorization": "Bearer " + localStorage.getItem("token")
+            }, 
+        })
+        if (!response.ok) {
+            throw new Error("Send request failed")
+        }
+
+        const res = await response.json()
+        setAdmin({"uid": res.data.uid, "firstName": res.data.firstName, "lastName": res.data.lastName, "email": res.data.email})
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+    }
   }
 
-  const handlePasswordReset = (e) => {
+  const handleUpdateAdmin = async (e) => {
     e.preventDefault()
+    const updateAdminApi = "http://localhost:3030/api/admin/update" 
+
+    try {
+        const response = await fetch(updateAdminApi, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "admin": "true",
+                "authorization": "Bearer " + localStorage.getItem("token")
+            }, 
+            body: JSON.stringify(editForm)
+        })
+        if (!response.ok) {
+            throw new Error("Send request failed")
+        }
+        getAdmin()
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    const deleteAdminApi = "http://localhost:3030/api/admin/delete" 
+
+    try {
+        const response = await fetch(deleteAdminApi, {
+            method: "DELETE",
+            headers: {
+                "admin": "true",
+                "authorization": "Bearer " + localStorage.getItem("token")
+            }, 
+        })
+        if (!response.ok) {
+            throw new Error("Send request failed")
+        }
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+    }
+
+    localStorage.removeItem('token')
+    router.push('/admin')
+  }
+
+  const handlePasswordReset = async (e) => {
+    e.preventDefault()
+    const changePasswordApi = "http://localhost:3030/api/customer/change-password?" 
+
     if (newPassword !== confirmPassword) {
       alert("Error: Passwords do not match.")
       return
     }
-    // Here you would typically call an API to update the password
-    alert("Your password has been reset successfully.")
-    setNewPassword('')
-    setConfirmPassword('')
-  }
 
-  const handleDeleteAccount = () => {
-    // Here you would typically call an API to delete the account
-    alert("Account Deleted")
+    try {
+        const response = await fetch(changePasswordApi + 
+          new URLSearchParams({
+            id: admin.uid,
+            admin: "true",
+          }).toString(), {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "admin": "true",
+                "authorization": "Bearer " + localStorage.getItem("token")
+            }, 
+            body: JSON.stringify({"email": admin.email, "oldPassword": oldPassword, "newPassword": newPassword})
+        })
+        if (!response.ok) {
+            throw new Error("Send request failed")
+        }
+        alert("Đổi mật khẩu thành công. Vui lòng đăng nhập lại")
+        router.push("/admin")
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+    }
   }
 
   const handleLogout = () => {
@@ -53,7 +139,7 @@ export default function AdminProfilePage() {
 
   return (
     <div className="container mx-auto pt-10 pl-64 space-y-6">
-      <h1 className="text-2xl font-semibold">Hồ sơ cá nhân</h1>
+      <h1 className="text-2xl font-semibold">Hồ Sơ Cá Nhân</h1>
 
       <Card>
         <CardHeader>
@@ -62,8 +148,8 @@ export default function AdminProfilePage() {
         <CardContent>
           <div className="space-y-2">
             <p><strong>UID:</strong> {admin.uid}</p>
-            <p><strong>Tên:</strong> {admin.firstname}</p>
-            <p><strong>Họ:</strong> {admin.lastname}</p>
+            <p><strong>Tên:</strong> {admin.firstName}</p>
+            <p><strong>Họ:</strong> {admin.lastName}</p>
             <p><strong>Email:</strong> {admin.email}</p>
           </div>
         </CardContent>
@@ -76,22 +162,22 @@ export default function AdminProfilePage() {
               <DialogHeader>
                 <DialogTitle>Thông tin hồ sơ</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleEditSubmit}>
+              <form onSubmit={handleUpdateAdmin}>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="firstname">Tên</Label>
+                    <Label htmlFor="firstName">Tên</Label>
                     <Input
-                      id="firstname"
-                      value={editForm.firstname}
-                      onChange={(e) => setEditForm({...editForm, firstname: e.target.value})}
+                      id="firstName"
+                      value={editForm.firstName}
+                      onChange={(e) => setEditForm({...editForm, firstName: e.target.value})}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="lastname">Họ</Label>
+                    <Label htmlFor="lastName">Họ</Label>
                     <Input
-                      id="lastname"
-                      value={editForm.lastname}
-                      onChange={(e) => setEditForm({...editForm, lastname: e.target.value})}
+                      id="lastName"
+                      value={editForm.lastName}
+                      onChange={(e) => setEditForm({...editForm, lastName: e.target.value})}
                     />
                   </div>
                 </div>
@@ -110,6 +196,15 @@ export default function AdminProfilePage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handlePasswordReset} className="space-y-4">
+            <div>
+              <Label htmlFor="oldPassword">Mật khẩu hiện tại</Label>
+              <Input
+                id="oldPassword"
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+              />
+            </div>
             <div>
               <Label htmlFor="newPassword">Mật khẩu mới</Label>
               <Input
