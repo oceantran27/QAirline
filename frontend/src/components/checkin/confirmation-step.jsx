@@ -2,10 +2,63 @@ import { Check, Printer, Download, Mail, ArrowLeft, Home } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import ModernFlightTicket from './flight-ticket'
+import jsPDF from 'jspdf' // Add this if using jspdf for PDF download
+import html2canvas from 'html2canvas' // Optional: To render the content as an image
+
 export function ConfirmationStep({ bookingReference, passenger, onBack, onHome }) {
   const [showBoardingPass, setShowBoardingPass] = useState(false)
+  const ticketRef = useRef()
+
+  const handleDownload = async () => {
+    setShowBoardingPass(true); // Hiển thị Dialog để nội dung được render
+    setTimeout(async () => {
+      try {
+        const ticketElement = ticketRef.current;
+        if (!ticketElement) {
+          console.error("Ticket element not found!");
+          return;
+        }
+  
+        const canvas = await html2canvas(ticketElement);
+        const imgData = canvas.toDataURL('image/png');
+  
+        const pdf = new jsPDF();
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save('boarding-pass.pdf');
+        console.log("PDF downloaded successfully!");
+      } catch (error) {
+        console.error("Error during download:", error);
+      }
+    }, 500); // Đợi 500ms để đảm bảo nội dung được render
+  };
+  
+  
+  const handlePrint = () => {
+    setShowBoardingPass(true);
+    try {
+      const ticketElement = ticketRef.current;
+      if (!ticketElement) {
+        console.error("Ticket element not found!");
+        return;
+      }
+  
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write('<html><head><title>Boarding Pass</title></head><body>');
+      printWindow.document.write(ticketElement.outerHTML);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.print();
+      console.log("Print dialog opened successfully!");
+    } catch (error) {
+      console.error("Error during print:", error);
+    }
+  };
+  
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -41,10 +94,10 @@ export function ConfirmationStep({ bookingReference, passenger, onBack, onHome }
             <div className="flex items-center gap-3">
               <span className="text-sm text-zinc-500">Thẻ lên máy bay:</span>
               <div className="flex gap-2">
-                <Button variant="outline" size="icon" onClick={() => setShowBoardingPass(true)}>
+                <Button variant="outline" size="icon" onClick={handleDownload}>
                   <Download className="w-4 h-4" />
                 </Button>
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="icon" onClick={handlePrint}>
                   <Printer className="w-4 h-4" />
                 </Button>
                 <Button variant="outline" size="icon">
@@ -79,12 +132,11 @@ export function ConfirmationStep({ bookingReference, passenger, onBack, onHome }
 
       <Dialog open={showBoardingPass} onOpenChange={setShowBoardingPass}>
         <DialogContent className="sm:max-w-md">
-          <ModernFlightTicket />
+          <div ref={ticketRef}>
+            <ModernFlightTicket />
+          </div>
         </DialogContent>
       </Dialog>
-
-      
     </div>
   )
 }
-

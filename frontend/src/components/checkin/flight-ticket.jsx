@@ -1,14 +1,16 @@
 import React from 'react'
 import { Plane, Calendar, Clock, MapPin, User, Barcode, Star, DoorOpen } from 'lucide-react'
-
+import Image from 'next/image'
 export default function ModernFlightTicket({ onClose }) {
   return (
     <div className="bg-gradient-to-br from-red-400 to-red-600 text-white shadow-xl rounded-xl overflow-hidden w-full max-w-md mx-auto">
       <div className="relative p-6">
         
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Vietnam Airlines</h2>
-          <Plane className="w-10 h-10 transform -rotate-45" />
+          
+          <img src="/logo-white.png" alt="Logo" className="w-36" />
+          <h2 className="text-2xl font-bold">QAirlines</h2>
+          
         </div>
         
         <div className="space-y-6">
@@ -51,7 +53,7 @@ export default function ModernFlightTicket({ onClose }) {
                 Hanoi (HAN)
               </p>
             </div>
-            <Plane className="w-8 h-8 transform rotate-90" />
+            
             <div>
               <p className="text-xs uppercase tracking-wide opacity-75">To</p>
               <p className="text-lg font-semibold flex items-center mt-1">

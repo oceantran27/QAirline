@@ -20,10 +20,10 @@ export default function Footer() {
           <div className="border-t border-[#A9A8B6] pt-[15px]">
             <ul className="flex flex-col gap-4">
               <a href="#" className="flex items-center gap-2 hover:text-orange">
-                <MdPhone className="text-orange" /> 92 666 888 0000
+                <MdPhone className="text-orange" /> +84 123 456 789
               </a>
               <a href="#" className="flex items-center gap-2 hover:text-orange">
-                <MdOutlineMailOutline className="text-orange" /> qairline-support@gmail.com
+                <MdOutlineMailOutline className="text-orange" /> qairline-support@qairline.website
               </a>
               <a href="#" className="flex items-center gap-2 hover:text-orange">
                 <MdOutlineLocationOn className="text-orange" /> Nhà E3, 144 Xuân Thủy, quận Cầu Giấy, Hà Nội , Việt Nam
@@ -32,31 +32,30 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Phần thông tin công ty */}
-        <div className="lg:w-1/5">
-          <h6 className="text-white text-xl font-bold my-5 lg:mt-0">Công ty</h6>
-          <ul className="flex flex-col gap-4">
-            <a href="#" className="hover:text-white">About us</a>
-            <a href="#" className="hover:text-white">Community Blogs</a>
-            <a href="#" className="hover:text-white">Rewards</a>
-            <a href="#" className="hover:text-white">Work with us</a>
-            <a href="#" className="hover:text-white">Contact</a>
-          </ul>
-        </div>
+          <div className="lg:w-1/5">
+            <h6 className="text-white text-xl font-bold my-5 lg:mt-0">Công ty</h6>
+            <ul className="flex flex-col gap-4">
+              <a href="#" className="hover:text-white">Về chúng tôi</a>
+              <a href="#" className="hover:text-white">Blog cộng đồng</a>
+              <a href="#" className="hover:text-white">Phần thưởng</a>
+              <a href="#" className="hover:text-white">Làm việc với chúng tôi</a>
+              <a href="#" className="hover:text-white">Liên hệ</a>
+            </ul>
+          </div>
 
-        {/* Phần khám phá */}
-        <div className="lg:w-1/5">
-          <h6 className="text-white text-xl font-bold my-5 lg:mt-0">Khám phá</h6>
-          <ul className="flex flex-col gap-4">
-            <a href="#" className="hover:text-white">Account</a>
-            <a href="#" className="hover:text-white">Privacy Policy</a>
-            <a href="#" className="hover:text-white">Affiliate Program</a>
-            <a href="#" className="hover:text-white">Our Partner</a>
-            <a href="#" className="hover:text-white">Events</a>
-          </ul>
-        </div>
+          {/* Phần khám phá */}
+          <div className="lg:w-1/5">
+            <h6 className="text-white text-xl font-bold my-5 lg:mt-0">Khám phá</h6>
+            <ul className="flex flex-col gap-4">
+              <a href="#" className="hover:text-white">Tài khoản</a>
+              <a href="#" className="hover:text-white">Chính sách bảo mật</a>
+              <a href="#" className="hover:text-white">Chương trình liên kết</a>
+              <a href="#" className="hover:text-white">Đối tác của chúng tôi</a>
+              <a href="#" className="hover:text-white">Sự kiện</a>
+            </ul>
+          </div>
 
-        {/* Phần đăng ký nhận tin */}
+          {/* Phần đăng ký nhận tin */}
         <div className="flex flex-col lg:w-1/3">
           <h6 className="text-white text-xl font-bold my-5 lg:mt-0">Nhận tin tức</h6>
           <input
