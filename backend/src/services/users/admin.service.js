@@ -59,7 +59,7 @@ export const dbGetAdminById = async (uid) => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log("none cache");
+      // console.log("none cache");
       const adminData = new Admin({ ...docSnap.data() });
       adminCache.set(uid, adminData);
       return adminData;
