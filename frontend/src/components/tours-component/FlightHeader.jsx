@@ -15,7 +15,7 @@ export function FlightHeader({ departureCode, arrivalCode, departureCity, arriva
         <div className="absolute inset-0 bg-black/30" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
           <h1 className="text-4xl font-bold mb-2">Explore The Worlds</h1>
-          <p className="text-lg">People Don't Take Trips Take People</p>
+          <p className="text-lg">People Dont Take Trips Take People</p>
         </div>
       </div>
 

@@ -167,7 +167,7 @@ export default function ScheduledFlights() {
           </TableHeader>
           <TableBody>
             {filteredFlights.map((flight) => (
-              <TableRow className={flight.id % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+              <TableRow key={flight.id} className={flight.id % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                 <TableCell className="text-center">{flight.id}</TableCell>
                 <TableCell className="text-center">{flight.aircraft}</TableCell>
                 <TableCell className="text-center">{`${flight.src} ${flight.ddt}`}</TableCell>
