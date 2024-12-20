@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useAccountInfo } from "@/hooks/useAccountInfo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast"; 
-
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export default function PasswordChange() {
   const { personalInfo, loading, errorMessage } = useAccountInfo();
   const [currentPassword, setCurrentPassword] = useState("");
@@ -44,7 +44,7 @@ export default function PasswordChange() {
       }
 
       const response = await fetch(
-        `http://localhost:3030/api/customer/change-password?id=${personalInfo.uid}`,
+        `${API_BASE_URL}/api/customer/change-password?id=${personalInfo.uid}`,
         {
           method: "PUT",
           headers: {

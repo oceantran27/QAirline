@@ -7,7 +7,9 @@ import { FlightDetailsStep } from "@/components/checkin/flight-details";
 import { PassengerListStep } from "@/components/checkin/passenger-list";
 import { SeatSelectionStep } from "@/components/checkin/seat-selection";
 import { ConfirmationStep } from "@/components/checkin/confirmation-step";
+import LoadingSkeleton from "@/components/checkin/loading-skeleton";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const steps = [
   { title: "Chi tiết chuyến bay", description: "Xem lại thông tin chuyến bay" },
   { title: "Hành khách", description: "Chọn hành khách" },
@@ -53,7 +55,7 @@ export default function CheckInPage() {
 
         // Fetch booking data
         const response = await fetch(
-          `http://localhost:3030/api/booking/?id=${bookingID}`,
+          `${API_BASE_URL}/api/booking/?id=${bookingID}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -112,7 +114,7 @@ export default function CheckInPage() {
   const fetchFlightDetails = async (flightId, type) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:3030/api/flight/?id=${flightId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/flight/?id=${flightId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error(`Error fetching flight: ${response.statusText}`);
@@ -148,7 +150,7 @@ export default function CheckInPage() {
     try {
       const token = localStorage.getItem("token");
       const ticketPromises = ticketIds.map(async (ticketId) => {
-        const response = await fetch(`http://localhost:3030/api/ticket/?id=${ticketId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/ticket/?id=${ticketId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!response.ok) throw new Error(`Error fetching ticket ${ticketId}: ${response.statusText}`);
@@ -196,7 +198,7 @@ export default function CheckInPage() {
       }
   
       // Gọi API PUT
-      const response = await fetch("http://localhost:3030/api/ticket/update-seats", {
+      const response = await fetch(`${API_BASE_URL}/api/ticket/update-seats`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -248,7 +250,7 @@ export default function CheckInPage() {
         return false;
       }
   
-      const response = await fetch("http://localhost:3030/api/ticket/update-seats", {
+      const response = await fetch(`${API_BASE_URL}/api/ticket/update-seats`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -310,7 +312,9 @@ export default function CheckInPage() {
   };  
   
 
-  if (loading) return <div className="container mx-auto p-6">Đang tải thông tin...</div>;
+  if (loading) {
+    return <LoadingSkeleton />;
+  }
   if (error) return <div className="container mx-auto p-6 text-red-600">Lỗi: {error}</div>;
 
   return (
