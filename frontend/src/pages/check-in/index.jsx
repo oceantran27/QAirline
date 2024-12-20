@@ -28,6 +28,8 @@ export default function CheckInPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
+  const [currentTrip, setCurrentTrip] = useState("departure"); // "departure" hoặc "return"
+  
 
   // Lấy thông tin từ query string
   useEffect(() => {
@@ -91,14 +93,22 @@ export default function CheckInPage() {
   const generateSeatData = () => {
     const columns = ["A", "B", "C", "D", "E", "G"];
     const rows = Array.from({ length: 44 }, (_, i) => i + 1);
+  
     return rows.flatMap((row) =>
       columns.map((col) => ({
         id: `${row}${col}`,
-        type: row === 18 || row === 32 ? "blocked" : Math.random() < 0.3 ? "unavailable" : "available",
+        type:
+          row === 18 || row === 32
+            ? "blocked"
+            : Math.random() < 0.3
+            ? "unavailable"
+            : "available",
       }))
     );
   };
-
+  
+  const [departureSeats, setDepartureSeats] = useState(generateSeatData());
+  const [returnSeats, setReturnSeats] = useState(generateSeatData());
   const fetchFlightDetails = async (flightId, type) => {
     try {
       const token = localStorage.getItem("token");
@@ -178,24 +188,31 @@ export default function CheckInPage() {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
-  const handleSeatSelect = (seatId, customerId) => {
+  const handleSeatSelect = (seatId, customerId, tripType) => {
     setPassengerList((prev) => ({
       ...prev,
-      departure: prev.departure.map((passenger) =>
+      [tripType]: prev[tripType].map((passenger) =>
         passenger.id === customerId ? { ...passenger, seat: seatId } : passenger
       ),
     }));
-    setSeatData((prev) =>
-      prev.map((seat) =>
+  
+    const updateSeats = (seats) =>
+      seats.map((seat) =>
         seat.id === seatId
           ? { ...seat, type: "selected" }
-          : seat.type === "selected" && seat.id === selectedSeat?.[customerId]
+          : seat.type === "selected" &&
+            passengerList[tripType].some((p) => p.seat === seat.id)
           ? { ...seat, type: "available" }
           : seat
-      )
-    );
-    setSelectedSeat((prev) => ({ ...prev, [customerId]: seatId }));
-  };
+      );
+  
+    if (tripType === "departure") {
+      setDepartureSeats((prev) => updateSeats(prev));
+    } else {
+      setReturnSeats((prev) => updateSeats(prev));
+    }
+  };  
+  
 
   if (loading) return <div className="container mx-auto p-6">Đang tải thông tin...</div>;
   if (error) return <div className="container mx-auto p-6 text-red-600">Lỗi: {error}</div>;
@@ -208,7 +225,7 @@ export default function CheckInPage() {
         <FlightDetailsStep
           flightDetails={departureFlight}
           returnFlightDetails={bookingData?.tripType === "roundTrip" ? returnFlight : null}
-          passengerCount={passengerList.departure.length + passengerList.return.length}
+          passengerCount={passengerList.departure.length}
           onContinue={handleContinue}
           onCancel={() => window.history.back()}
         />
@@ -224,11 +241,13 @@ export default function CheckInPage() {
 
       {currentStep === 2 && (
         <SeatSelectionStep
-          passengers={passengerList.departure}
-          seats={seatData}
-          onSeatSelect={handleSeatSelect}
+          passengers={currentTrip === "departure" ? passengerList.departure : passengerList.return}
+          seats={currentTrip === "departure" ? departureSeats : returnSeats}
+          onSeatSelect={(seatId, customerId) => handleSeatSelect(seatId, customerId, currentTrip)}
           onContinue={handleContinue}
           onBack={handleBack}
+          onSwitchTrip={() => setCurrentTrip(currentTrip === "departure" ? "return" : "departure")}
+          currentTrip={currentTrip}
         />
       )}
 
