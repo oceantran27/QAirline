@@ -44,13 +44,12 @@ export const dbGetFlightById = async (flightId) => {
 
 export const dbCreateFlight = async (flight) => {
   try {
-    const docRef = doc(collection(db, FLIGHT_COLLECTION_NAME));
-    flight.flightId = docRef.id;
+    const docRef = doc(collection(db, FLIGHT_COLLECTION_NAME), flight.flightId);
 
     flight.createdAt = new Date();
     flight.updatedAt = new Date();
 
-    await setDoc(docRef, flight);
+    await setDoc(docRef, flight.toObject());
   } catch (error) {
     throw new Error(`Error creating flight: ${error.message}`);
   }

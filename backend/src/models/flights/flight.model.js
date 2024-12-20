@@ -10,7 +10,7 @@ class Flight {
     departureTime,
     arrivalTime,
     basePrice,
-    status,
+    status = "Scheduled",
     ticketList = [],
     bookedSeats = [],
   }) {
