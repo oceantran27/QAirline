@@ -7,6 +7,7 @@ export const flightSuggestionsCache = new NodeCache({
 });
 export const userCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
 export const newsCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
+export const ticketCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
 
 export const getCache = (cache, key) => {
   return cache.get(key);
