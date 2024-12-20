@@ -1,4 +1,4 @@
-import adminRoutes from "./users/admin.routes";
+import adminRoutes from "./users/Admin.routes.js";
 import customerRoutes from "./users/customer.routes";
 import loginRoutes from "./login/index";
 import flightRoutes from "./flights/flight.routes";
