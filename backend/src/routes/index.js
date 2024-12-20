@@ -1,11 +1,11 @@
 import adminRoutes from "./users/Admin.routes.js";
-import customerRoutes from "./users/customer.routes.js";
+import customerRoutes from "./users/Customer.routes.js";
 import loginRoutes from "./login/index.js";
 import flightRoutes from "./flights/flight.routes.js";
 import bookingRoutes from "./bookings/booking.routes.js";
 import ticketRoutes from "./bookings/ticket.routes.js";
 import newsRoutes from "./news/news.routes.js";
-
+//asdasdsad
 const initWebRoutes = (app) => {
   app.use("/api/customer", customerRoutes);
   app.use("/api/admin", adminRoutes);
