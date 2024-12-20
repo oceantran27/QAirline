@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export const useFlightData = (departureCity, arrivalCity, flightDate) => {
   const [flights, setFlights] = useState([]); // Danh sách chuyến bay đi
@@ -11,6 +11,9 @@ export const useFlightData = (departureCity, arrivalCity, flightDate) => {
     budget: [1929000, 6400000],
     departureTime: "all",
   });
+
+  // Biến ref để hạn chế gọi API 2 lần do React Strict Mode
+  const initialFetchDoneRef = useRef(false);
 
   const fetchFlights = async (from, to, date, setState) => {
     try {
@@ -45,50 +48,64 @@ export const useFlightData = (departureCity, arrivalCity, flightDate) => {
   };
 
   const transformFlights = (data, from, to) => {
-    return data.map((flight) => ({
-      id: flight.flightId,
-      departureTime: new Date(flight.departureTime).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      arrivalTime: new Date(flight.arrivalTime).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      departureCode: from || flight.departureCityCode,
-      arrivalCode: to || flight.arrivalCityCode,
-      duration: calculateDuration(flight.departureTime, flight.arrivalTime),
-      airline: flight.airline || "VietNam Airline",
-      economyPrice: flight.basePrice,
-      businessPrice: flight.basePrice * 1.5,
-      seatsLeft: Math.floor(Math.random() * (100 - 10 + 1)) + 10,
-      flightNumber: flight.flightNumber,
-      departureAirport: flight.departureAirport,
-      arrivalAirport: flight.arrivalAirport,
-      departureDate: new Date(flight.departureTime).toLocaleDateString(),
-      aircraft: flight.aircraftType,
-      economyOptions: generateTicketOptions(flight.basePrice, "economy"),
-      businessOptions: generateTicketOptions(flight.basePrice * 1.5, "business"),
-    }));
+    return data.map((flight) => {
+      const departureDateObj = new Date(flight.departureTime);
+      const arrivalDateObj = new Date(flight.arrivalTime);
+
+      return {
+        id: flight.flightId,
+        departureTimeRaw: departureDateObj,
+        arrivalTimeRaw: arrivalDateObj,
+        departureTime: departureDateObj.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        arrivalTime: arrivalDateObj.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        departureCode: from || flight.departureCityCode,
+        arrivalCode: to || flight.arrivalCityCode,
+        duration: calculateDuration(flight.departureTime, flight.arrivalTime),
+        airline: flight.airline || "VietNam Airline",
+        economyPrice: flight.basePrice,
+        businessPrice: flight.basePrice * 1.5,
+        seatsLeft: Math.floor(Math.random() * (100 - 10 + 1)) + 10,
+        flightNumber: flight.flightNumber,
+        departureAirport: flight.departureAirport,
+        arrivalAirport: flight.arrivalAirport,
+        departureDate: departureDateObj.toLocaleDateString(),
+        aircraft: flight.aircraftType,
+        economyOptions: generateTicketOptions(flight.basePrice, "economy"),
+        businessOptions: generateTicketOptions(flight.basePrice * 1.5, "business"),
+      };
+    });
   };
 
   useEffect(() => {
     const loadFlights = async () => {
+      // Ngăn không cho chạy lại khi Strict Mode re-render
+      if (initialFetchDoneRef.current) return;
+      initialFetchDoneRef.current = true;
+
       setLoading(true);
+
       if (departureCity && arrivalCity && flightDate) {
         await fetchFlights(departureCity, arrivalCity, flightDate, setFlights);
       } else {
         await fetchSuggestedFlights(setFlights);
       }
+
       setLoading(false);
     };
 
     loadFlights();
   }, [departureCity, arrivalCity, flightDate]);
 
-  const fetchReturnFlights = (from, to, date) => {
+  const fetchReturnFlights = async (from, to, date) => {
     setLoading(true);
-    fetchFlights(from, to, date, setReturnFlights).finally(() => setLoading(false));
+    await fetchFlights(from, to, date, setReturnFlights);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -98,7 +115,8 @@ export const useFlightData = (departureCity, arrivalCity, flightDate) => {
           flight.economyPrice >= filters.budget[0] &&
           flight.economyPrice <= filters.budget[1];
 
-        const hour = new Date(flight.departureTime).getHours();
+        // Vì ta đã lưu departureTimeRaw là Date, có thể lấy hour từ đó
+        const hour = flight.departureTimeRaw.getHours();
         const inTimeRange =
           filters.departureTime === "all" ||
           (filters.departureTime === "morning" && hour >= 0 && hour < 12) ||

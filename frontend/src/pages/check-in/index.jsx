@@ -28,6 +28,8 @@ export default function CheckInPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
+  const [currentTrip, setCurrentTrip] = useState("departure"); // "departure" hoặc "return"
+  
 
   // Lấy thông tin từ query string
   useEffect(() => {
@@ -91,14 +93,22 @@ export default function CheckInPage() {
   const generateSeatData = () => {
     const columns = ["A", "B", "C", "D", "E", "G"];
     const rows = Array.from({ length: 44 }, (_, i) => i + 1);
+  
     return rows.flatMap((row) =>
       columns.map((col) => ({
         id: `${row}${col}`,
-        type: row === 18 || row === 32 ? "blocked" : Math.random() < 0.3 ? "unavailable" : "available",
+        type:
+          row === 18 || row === 32
+            ? "blocked"
+            : Math.random() < 0.3
+            ? "unavailable"
+            : "available",
       }))
     );
   };
-
+  
+  const [departureSeats, setDepartureSeats] = useState(generateSeatData());
+  const [returnSeats, setReturnSeats] = useState(generateSeatData());
   const fetchFlightDetails = async (flightId, type) => {
     try {
       const token = localStorage.getItem("token");
@@ -163,14 +173,110 @@ export default function CheckInPage() {
     }
   };
 
+  const saveSelectedSeats = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token không tồn tại.");
+  
+      // Tạo payload từ danh sách hành khách
+      const payload = [
+        ...passengerList.departure.map((passenger) => ({
+          ticketId: passenger.id,
+          seatCode: passenger.seat,
+        })),
+        ...passengerList.return.map((passenger) => ({
+          ticketId: passenger.id,
+          seatCode: passenger.seat,
+        })),
+      ].filter((entry) => entry.seatCode); // Chỉ lấy ghế đã chọn
+  
+      if (payload.length === 0) {
+        alert("Không có ghế nào được chọn để lưu.");
+        return;
+      }
+  
+      // Gọi API PUT
+      const response = await fetch("http://localhost:3030/api/ticket/update-seats", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+      alert("Ghế đã được cập nhật thành công!");
+    } catch (error) {
+      console.error("Error updating seats:", error);
+      alert("Cập nhật ghế thất bại, vui lòng thử lại.");
+    }
+  };
+
   const calculateDuration = (departure, arrival) => {
     const durationInMinutes = (arrival - departure) / 60;
     const hours = Math.floor(durationInMinutes / 60);
     const minutes = durationInMinutes % 60;
     return `${hours}h ${minutes}m`;
   };
+  
+  
+  const generateGate = () => `Gate ${Math.floor(Math.random() * 9) + 1}`;
 
-  const handleContinue = () => {
+  const updateSeatsApi = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token không tồn tại.");
+  
+      const payload = [
+        ...passengerList.departure.map((passenger) => ({
+          ticketId: passenger.id,
+          seatCode: passenger.seat,
+        })),
+        ...passengerList.return.map((passenger) => ({
+          ticketId: passenger.id,
+          seatCode: passenger.seat,
+        })),
+      ].filter((entry) => entry.seatCode); // Chỉ lấy ghế đã chọn
+  
+      if (payload.length === 0) {
+        alert("Không có ghế nào được chọn để lưu.");
+        return false;
+      }
+  
+      const response = await fetch("http://localhost:3030/api/ticket/update-seats", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+      alert("Ghế đã được cập nhật thành công!");
+      return true;
+    } catch (error) {
+      console.error("Error updating seats:", error);
+      alert("Cập nhật ghế thất bại, vui lòng thử lại.");
+      return false;
+    }
+  };
+
+  
+  const handleContinue = async () => {
+    if (currentStep === 2) {
+      const isUpdated = await updateSeatsApi();
+      if (!isUpdated) return; // Dừng nếu cập nhật thất bại
+    }
     if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
   };
 
@@ -178,24 +284,31 @@ export default function CheckInPage() {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
-  const handleSeatSelect = (seatId, customerId) => {
+  const handleSeatSelect = (seatId, customerId, tripType) => {
     setPassengerList((prev) => ({
       ...prev,
-      departure: prev.departure.map((passenger) =>
+      [tripType]: prev[tripType].map((passenger) =>
         passenger.id === customerId ? { ...passenger, seat: seatId } : passenger
       ),
     }));
-    setSeatData((prev) =>
-      prev.map((seat) =>
+  
+    const updateSeats = (seats) =>
+      seats.map((seat) =>
         seat.id === seatId
           ? { ...seat, type: "selected" }
-          : seat.type === "selected" && seat.id === selectedSeat?.[customerId]
+          : seat.type === "selected" &&
+            passengerList[tripType].some((p) => p.seat === seat.id)
           ? { ...seat, type: "available" }
           : seat
-      )
-    );
-    setSelectedSeat((prev) => ({ ...prev, [customerId]: seatId }));
-  };
+      );
+  
+    if (tripType === "departure") {
+      setDepartureSeats((prev) => updateSeats(prev));
+    } else {
+      setReturnSeats((prev) => updateSeats(prev));
+    }
+  };  
+  
 
   if (loading) return <div className="container mx-auto p-6">Đang tải thông tin...</div>;
   if (error) return <div className="container mx-auto p-6 text-red-600">Lỗi: {error}</div>;
@@ -208,7 +321,7 @@ export default function CheckInPage() {
         <FlightDetailsStep
           flightDetails={departureFlight}
           returnFlightDetails={bookingData?.tripType === "roundTrip" ? returnFlight : null}
-          passengerCount={passengerList.departure.length + passengerList.return.length}
+          passengerCount={passengerList.departure.length}
           onContinue={handleContinue}
           onCancel={() => window.history.back()}
         />
@@ -224,22 +337,46 @@ export default function CheckInPage() {
 
       {currentStep === 2 && (
         <SeatSelectionStep
-          passengers={passengerList.departure}
-          seats={seatData}
-          onSeatSelect={handleSeatSelect}
+          passengers={currentTrip === "departure" ? passengerList.departure : passengerList.return}
+          seats={currentTrip === "departure" ? departureSeats : returnSeats}
+          onSeatSelect={(seatId, customerId) => handleSeatSelect(seatId, customerId, currentTrip)}
           onContinue={handleContinue}
           onBack={handleBack}
+          onSwitchTrip={() => setCurrentTrip(currentTrip === "departure" ? "return" : "departure")}
+          currentTrip={currentTrip}
         />
       )}
 
-      {currentStep === 3 && (
-        <ConfirmationStep
-          bookingReference={bookingData?.bookingId || "Không rõ"}
-          passenger={passengerList.departure[0]?.name || "Không rõ"}
-          email={email || "Không rõ"}
+        {currentStep === 3 && (
+          <ConfirmationStep
+            bookingReference={bookingData?.bookingId || "Không rõ"}
+            departurePassengers={passengerList.departure || []}
+            returnPassengers={passengerList.return || []}
+            departureFlight={{
+              flightNumber: departureFlight?.flightNumber || "N/A",
+              date: departureFlight?.date || "N/A",
+              departureTime: departureFlight?.departureTime || "N/A",
+              from: departureFlight?.from || "N/A",
+              to: departureFlight?.to || "N/A",
+              gate: generateGate(),
+            }}
+          returnFlight={
+            bookingData?.tripType === "roundTrip"
+              ? {
+                  flightNumber: returnFlight?.flightNumber || "N/A",
+                  date: returnFlight?.date || "N/A",
+                  departureTime: returnFlight?.departureTime || "N/A",
+                  from: returnFlight?.from || "N/A",
+                  to: returnFlight?.to || "N/A",
+                  gate: generateGate(),
+                }
+              : null
+          }
           onBack={handleBack}
+          onHome={() => router.push("/")}
         />
-      )}
+        )}
+
     </div>
   );
 }
