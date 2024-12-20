@@ -11,6 +11,7 @@ export default function NewsPostingPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
+  const [previewImage, setPreviewImage] = useState(null);
   const [image, setImage] = useState(null);
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -18,7 +19,8 @@ export default function NewsPostingPage() {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImage(e.target.result);
+        setPreviewImage(e.target.result);
+        setImage(file);
       };
       reader.readAsDataURL(file);
     }
@@ -30,12 +32,33 @@ export default function NewsPostingPage() {
     multiple: false
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the data to your backend
-    console.log({ title, description, content, image });
-    alert("success")
-    // Clear the form after submission
+    const formData  = new FormData();
+    formData.append("news-image", image)
+    formData.append("title", title)
+    formData.append("content", content)
+    formData.append("authorId", "test")
+    const createNewsApi = "http://localhost:3030/api/news/create"
+  
+    try {
+        const response = await fetch(createNewsApi, {
+            method: "POST",
+            headers: {
+                "admin": "true",
+                "authorization": "Bearer " + localStorage.getItem("token")
+            }, 
+            body: formData
+        })
+        if (!response.ok) {
+            throw new Error("failed")
+        }
+        alert("success")
+    } catch (error) {
+        alert("Đã xảy ra lỗi, vui lòng thử lại")
+        console.log(error)
+    }
+    // console.log({ title, description, content, image });
     setTitle('');
     setDescription('');
     setContent('');
@@ -44,7 +67,7 @@ export default function NewsPostingPage() {
 
   return (
     <div className="container mx-auto pt-10 pl-64">
-      <h1 className="text-2xl font-semibold mb-4">Thông Tin & Bài Đăng</h1>
+      <h1 className="text-2xl font-semibold mb-4">Tạo Bài Viết Mới</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -99,7 +122,7 @@ export default function NewsPostingPage() {
             </div>
           </div>
           
-          <Button type="submit" className="w-full">Đăng Bài</Button>
+          <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600">Đăng Bài</Button>
         </form>
         
         <Card className="w-full">
@@ -110,7 +133,7 @@ export default function NewsPostingPage() {
             {image && (
               <div className="mb-4">
                 <Image
-                  src={image}
+                  src={previewImage}
                   alt="News article illustration"
                   width={400}
                   height={200}
