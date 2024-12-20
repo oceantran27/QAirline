@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState, useRef } from 'react';
-import { Download} from 'lucide-react';
+import { Download } from 'lucide-react';
 import { FlightSection } from '@/components/BookingManagement/flight-section';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
@@ -150,8 +150,26 @@ export default function FlightBookingPage() {
       console.error("Error during download:", error);
     }
   };
-  
-  
+
+  const handleCancelTicket = async (ticketID) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('Không tìm thấy token. Vui lòng đăng nhập lại.');
+        return;
+      }
+      await axios.delete(`${API_BASE_URL}/api/ticket/?id=${ticketID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert('Hủy vé thành công!');
+      setDialogOpen(false);
+    } catch (error) {
+      console.error('Lỗi khi hủy vé:', error);
+      alert('Không thể hủy vé. Vui lòng thử lại sau.');
+    }
+  };
 
   if (error) {
     return (
@@ -206,14 +224,16 @@ export default function FlightBookingPage() {
           duration={`${Math.round((returnFlightData.arrivalTime.seconds - returnFlightData.departureTime.seconds) / 60)} phút`}
           passengers={returnTicketData.length}
           paymentMethod="Thẻ tín dụng"
-          passengerDetails={returnTicketData.map((ticket) => ({
-            firstName: ticket.ownerData.firstName,
-            lastName: ticket.ownerData.lastName,
-            seatCode: ticket.seatCode,
-            flightClass: ticket.flightClass,
-            onView: () => handleViewTicket(ticket),
-            onDownload: () => handleDownload(ticketRef.current),
-          }))}
+          passengerDetails={departureTicketData
+            .filter(ticket => ticket.status === 'Active') // Lọc chỉ hiển thị vé Active
+            .map(ticket => ({
+              firstName: ticket.ownerData.firstName,
+              lastName: ticket.ownerData.lastName,
+              seatCode: ticket.seatCode,
+              flightClass: ticket.flightClass,
+              onView: () => handleViewTicket(ticket),
+              onDownload: () => handleDownload(ticketRef.current),
+          }))}          
           ticketRef={ticketRef}
         />
       )}
@@ -245,6 +265,14 @@ export default function FlightBookingPage() {
             >
               <Download className="w-4 h-4" />
               Tải về
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => handleCancelTicket(selectedTicket?.id)} // Gọi API hủy vé
+              className="gap-2"
+            >
+              Hủy vé
             </Button>
           </div>
         </DialogContent>
