@@ -1,4 +1,4 @@
-import Ticket from "../../models/bookings/ticket.model";
+import Ticket from "../../models/bookings/ticket.model.js";
 import {
   dbGetAllTickets,
   dbGetTicket,
@@ -8,12 +8,15 @@ import {
   dbCreateTickets,
   dbUpdateSeatCodesForTickets,
   dbGetTicketsByIds,
-} from "../../services/bookings/ticket.service";
-import { dbRemoveFlightTickets } from "../../services/flights/flight.service";
+} from "../../services/bookings/ticket.service.js";
+import {
+  dbGetFlightById,
+  dbRemoveFlightTickets,
+} from "../../services/flights/flight.service.js";
 import {
   dbGetCustomerById,
   dbUpdateCustomer,
-} from "../../services/users/customer.service";
+} from "../../services/users/customer.service.js";
 
 export const getAllTickets = async (req, res) => {
   try {
@@ -57,8 +60,9 @@ export const getTicket = async (req, res) => {
 
 export const getTickets = async (req, res) => {
   try {
-    const ticketIds = req.body;
-    const tickets = await dbGetTicketsByIds(ticketIds);
+    const flightId = req.query.flightId;
+    const flight = await dbGetFlightById(flightId);
+    const tickets = await dbGetTicketsByIds(flight.ticketList);
     return res.status(200).send({
       data: tickets,
     });

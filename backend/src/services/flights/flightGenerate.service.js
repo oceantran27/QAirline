@@ -29,26 +29,26 @@ const getRandomInRange = (min, max) =>
 
 const flightDurations = [60, 75, 90, 105, 120, 135, 150];
 
-const generateRandomTimeInDayAfterNow = (date) => {
+const generateRandomTimeInDayAfterNow = () => {
   const now = new Date();
-  let randomHours, randomMinutes;
 
-  do {
-    randomHours = getRandomInRange(6, 21);
-    randomMinutes = [0, 15, 30, 45][getRandomInRange(0, 3)];
+  const randomOffsetInMinutes = getRandomInRange(0, 24 * 60);
+  const randomTime = new Date(
+    now.getTime() + randomOffsetInMinutes * 60 * 1000
+  );
 
-    const randomTime = new Date(date);
-    randomTime.setHours(randomHours);
-    randomTime.setMinutes(randomMinutes);
-    randomTime.setSeconds(0);
+  const roundedMinutes = [0, 15, 30, 45].reduce((prev, curr) =>
+    Math.abs(curr - randomTime.getMinutes()) <
+    Math.abs(prev - randomTime.getMinutes())
+      ? curr
+      : prev
+  );
+  randomTime.setMinutes(roundedMinutes, 0, 0);
 
-    if (randomTime > now) {
-      return randomTime;
-    }
-  } while (true);
+  return randomTime;
 };
 
-const generateMockFlight = (departureCity, arrivalCity, flightDate) => {
+const generateMockFlight = (departureCity, arrivalCity) => {
   const departureAirport = airports[departureCity];
   const arrivalAirport = airports[arrivalCity];
 
@@ -61,7 +61,7 @@ const generateMockFlight = (departureCity, arrivalCity, flightDate) => {
   const aircraftType =
     aircraftTypes[getRandomInRange(0, aircraftTypes.length - 1)];
 
-  const departureTime = generateRandomTimeInDayAfterNow(flightDate);
+  const departureTime = generateRandomTimeInDayAfterNow();
 
   const flightDurationInMinutes =
     flightDurations[getRandomInRange(0, flightDurations.length - 1)];
@@ -77,8 +77,9 @@ const generateMockFlight = (departureCity, arrivalCity, flightDate) => {
 
   const status = Math.random() > 0.9 ? "Delayed" : "OnTime";
 
-  const flightId = `${departureCity}${flightNumber.slice(-2)}-${flightDate
-    .slice(2)
+  const flightId = `${departureCity}${flightNumber.slice(-2)}-${departureTime
+    .toISOString()
+    .slice(2, 10)
     .replace(/-/g, "")}`;
 
   const flight = new Flight({
@@ -98,16 +99,16 @@ const generateMockFlight = (departureCity, arrivalCity, flightDate) => {
   return flight;
 };
 
-const generateMockFlights = (departureCity, arrivalCity, flightDate) => {
+const generateMockFlights = (departureCity, arrivalCity) => {
   const numFlights = getRandomInRange(1, 5);
   const flights = [];
   for (let i = 0; i < numFlights; i++) {
-    flights.push(generateMockFlight(departureCity, arrivalCity, flightDate));
+    flights.push(generateMockFlight(departureCity, arrivalCity));
   }
   return flights;
 };
 
-const generateFlightSuggestions = (flightDate) => {
+const generateFlightSuggestions = () => {
   const airportCodes = Object.keys(airports);
   const suggestions = [];
 
@@ -120,7 +121,7 @@ const generateFlightSuggestions = (flightDate) => {
       arrivalCity = airportCodes[getRandomInRange(0, airportCodes.length - 1)];
     } while (arrivalCity === departureCity);
 
-    const flights = generateMockFlights(departureCity, arrivalCity, flightDate);
+    const flights = generateMockFlights(departureCity, arrivalCity);
     suggestions.push(...flights);
   }
 

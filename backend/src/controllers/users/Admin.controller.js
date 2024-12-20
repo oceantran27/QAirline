@@ -5,13 +5,13 @@ import {
   dbUpdateAdmin,
   dbDeleteAdmin,
   dbChangePassword,
-} from "../../services/users/admin.service";
+} from "../../services/users/admin.service.js";
 import {
   userCache,
   setCache,
   getCache,
   deleteCache,
-} from "../../cache/cacheManager";
+} from "../../cache/cacheManager.js";
 
 export const createAdmin = async (req, res) => {
   try {

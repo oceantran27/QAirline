@@ -6,19 +6,19 @@ import {
   dbDeleteFlight,
   dbCreateFlights,
   dbUpdateFlights,
-} from "../../services/flights/flight.service";
-import Flight from "../../models/flights/flight.model";
+} from "../../services/flights/flight.service.js";
+import Flight from "../../models/flights/flight.model.js";
 import {
   generateFlightSuggestions,
   generateMockFlights,
-} from "../../services/flights/flightGenerate.service";
+} from "../../services/flights/flightGenerate.service.js";
 import {
   flightSuggestionsCache,
   flightCache,
   getCache,
   setCache,
   deleteCache,
-} from "../../cache/cacheManager";
+} from "../../cache/cacheManager.js";
 
 export const getAllFlights = async (req, res) => {
   try {
@@ -216,8 +216,6 @@ export const searchFlight = async (req, res) => {
 export const getFlightSuggestions = async (req, res) => {
   try {
     const cachedFlights = getCache(flightSuggestionsCache, "flights");
-    const today = new Date().toISOString().slice(0, 10);
-
     if (cachedFlights) {
       const currentTime = new Date();
       const validFlights = cachedFlights.filter((flight) => {
@@ -232,7 +230,7 @@ export const getFlightSuggestions = async (req, res) => {
       });
     }
 
-    const flights = generateFlightSuggestions(today);
+    const flights = generateFlightSuggestions();
     await dbCreateFlights(flights);
 
     setCache(flightSuggestionsCache, "flights", flights);

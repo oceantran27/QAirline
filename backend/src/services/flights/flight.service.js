@@ -9,8 +9,8 @@ import {
   deleteDoc,
   writeBatch,
 } from "firebase/firestore";
-import firebase from "../../database/firebase";
-import { dbGetTicket } from "../bookings/ticket.service";
+import firebase from "../../database/firebase.js";
+import { dbGetTicket } from "../bookings/ticket.service.js";
 
 const db = getFirestore(firebase);
 const FLIGHT_COLLECTION_NAME = "flights";

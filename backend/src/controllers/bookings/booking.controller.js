@@ -4,22 +4,22 @@ import {
   dbCreateBooking,
   dbUpdateBooking,
   dbDeleteBooking,
-} from "../../services/bookings/booking.service";
+} from "../../services/bookings/booking.service.js";
 import {
   dbCancelTickets,
   dbCreateTickets,
-} from "../../services/bookings/ticket.service";
+} from "../../services/bookings/ticket.service.js";
 import {
   dbGetCustomerById,
   dbUpdateCustomer,
-} from "../../services/users/customer.service";
+} from "../../services/users/customer.service.js";
 
-import Booking from "../../models/bookings/booking.model";
-import Ticket from "../../models/bookings/ticket.model";
+import Booking from "../../models/bookings/booking.model.js";
+import Ticket from "../../models/bookings/ticket.model.js";
 import {
   dbAddTicketsToFlights,
   dbRemoveFlightTickets,
-} from "../../services/flights/flight.service";
+} from "../../services/flights/flight.service.js";
 
 export const getAllBookings = async (req, res) => {
   try {
