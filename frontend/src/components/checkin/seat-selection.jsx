@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import SeatSelector from "@/components/checkin/seat-selector";
+import { ArrowLeftRight } from 'lucide-react';
 
 export function SeatSelectionStep({
   seats,
@@ -14,7 +15,24 @@ export function SeatSelectionStep({
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardContent className="p-6">
-        <h2 className="text-2xl font-semibold mb-6">Chọn Ghế Ngồi ({currentTrip === "departure" ? "Chuyến đi" : "Chuyến về"})</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-semibold">
+            Chọn Ghế Ngồi ({currentTrip === "departure" ? "Chuyến đi" : "Chuyến về"})
+          </h2>
+          {onSwitchTrip && (
+            <Button
+              variant="outline"
+              onClick={onSwitchTrip}
+              className="flex items-center gap-2 hover:bg-gray-100"
+            >
+              <ArrowLeftRight className="w-4 h-4" />
+              <span className="hidden sm:inline">
+                {currentTrip === "departure" ? "Chuyển sang Chuyến về" : "Chuyển sang Chuyến đi"}
+              </span>
+              <span className="sm:hidden">Đổi chuyến</span>
+            </Button>
+          )}
+        </div>
 
         <SeatSelector seats={seats} passengers={passengers} onSeatSelect={onSeatSelect} />
 
@@ -22,11 +40,6 @@ export function SeatSelectionStep({
           <Button variant="outline" onClick={onBack}>
             Quay Lại
           </Button>
-          {onSwitchTrip && (
-            <Button variant="outline" onClick={onSwitchTrip}>
-              {currentTrip === "departure" ? "Chuyển sang Chuyến về" : "Chuyển sang Chuyến đi"}
-            </Button>
-          )}
           <Button
             variant="orange"
             onClick={() => {
@@ -45,3 +58,4 @@ export function SeatSelectionStep({
     </Card>
   );
 }
+

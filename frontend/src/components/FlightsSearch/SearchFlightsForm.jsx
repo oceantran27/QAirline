@@ -20,8 +20,8 @@ import { format } from "date-fns";
 
 function SearchFlightsForm({ onSearch }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [adultCount, setAdultCount] = useState(1); // Số lượng người lớn
-  const [childCount, setChildCount] = useState(0); // Số lượng trẻ em
+  const [adultCount, setAdultCount] = useState(1); 
+  const [childCount, setChildCount] = useState(0); 
 
   const handleExpand = () => {
     setIsExpanded(true);
