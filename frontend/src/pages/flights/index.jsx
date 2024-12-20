@@ -95,6 +95,9 @@ export default function FlightBooking() {
 
   if (error) return <div>Có lỗi xảy ra: {error}</div>;
 
+  // Khi không chọn chiều về, sử dụng filteredFlights để áp dụng filter.
+  const displayedFlights = isSelectingReturn ? returnFlights : filteredFlights;
+
   return (
     <div>
       <FlightHeader
@@ -108,6 +111,7 @@ export default function FlightBooking() {
       />
 
       <div className="flex flex-col md:flex-row gap-4 p-4 bg-gray-100 min-h-screen max-w-6xl m-auto">
+        {/* Truyền filters và setFilters vào FlightSideFilter */}
         <FlightSideFilter filters={filters} setFilters={setFilters} />
 
         <div className="flex-1 space-y-4">
@@ -122,7 +126,7 @@ export default function FlightBooking() {
             </>
           ) : (
             <FlightCard
-              flights={isSelectingReturn ? returnFlights : flights}
+              flights={displayedFlights}
               passengerCount={passengerCount}
               onSelectFlight={
                 isSelectingReturn ? handleSelectReturnFlight : handleSelectDepartureFlight
@@ -132,15 +136,15 @@ export default function FlightBooking() {
 
           <div className="text-center text-sm text-gray-500">
             {loading ? (
-               <>
-               <SkeletonFlightCard />
-               <SkeletonFlightCard />
-               <SkeletonFlightCard />
+              <>
+                <SkeletonFlightCard />
+                <SkeletonFlightCard />
+                <SkeletonFlightCard />
               </>
             ) : isSelectingReturn ? (
               <span>Có {returnFlights.length} chuyến bay quay về</span>
             ) : (
-              <span>Có {flights.length} chuyến bay</span>
+              <span>Có {filteredFlights.length} chuyến bay</span>
             )}
           </div>
 
