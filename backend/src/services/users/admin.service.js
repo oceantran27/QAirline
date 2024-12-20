@@ -10,7 +10,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import Admin from "../../models/users/admin.model.js";
+import Admin from "../../models/users/Admin.model.js";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const firebaseAuth = getAuth(firebase);

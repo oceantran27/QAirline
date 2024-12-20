@@ -6,12 +6,12 @@ import {
   deleteCustomer,
   getAllCustomers,
   changePassword,
-} from "../../controllers/users/customer.controller.js";
+} from "../../controllers/users/Customer.controller.js";
 import {
   authenticateToken,
   authenticateTokenWithoutCache,
   checkAdminRole,
-} from "../../middleware/auth.middleware.js";
+} from "../../middleware/Auth.middleware.js";
 
 const router = express.Router();
 

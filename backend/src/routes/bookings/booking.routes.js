@@ -11,7 +11,7 @@ import {
 import {
   authenticateToken,
   checkAdminRole,
-} from "../../middleware/auth.middleware.js";
+} from "../../middleware/Auth.middleware.js";
 
 const router = express.Router();
 

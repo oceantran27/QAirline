@@ -9,7 +9,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import firebase from "../../database/firebase.js";
-import Customer from "../../models/users/customer.model.js";
+import Customer from "../../models/users/Customer.model.js";
 import admin from "../../database/firebaseAdmin.js";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
