@@ -32,6 +32,7 @@ export const getTicket = async (req, res) => {
   try {
     const user = req.user;
     const ticketData = await dbGetTicket(req.query.id);
+    console.log(ticketData);
 
     if (
       user.role !== "admin" &&

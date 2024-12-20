@@ -1,8 +1,14 @@
 import express from "express";
-import { handleLogin } from "../../controllers/login";
+import {
+  handleAdminLogin,
+  handleCustomerLogin,
+  handleLogin,
+} from "../../controllers/login";
 
 const router = express.Router();
 
 router.post("/", handleLogin);
+router.post("/admin", handleAdminLogin);
+router.post("/customer", handleCustomerLogin);
 
 export default router;
