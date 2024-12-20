@@ -36,7 +36,10 @@ export default function ModernFlightTicket({
             </div>
             <div>
               <p className="text-xs uppercase tracking-wide opacity-75">Chuyến bay</p>
-              <p className="text-lg font-semibold mt-1">{flightNumber}</p>
+              <p className="text-lg font-semibold flex items-center mt-1">
+                <Plane className="w-5 h-5 mr-2" />
+                <p className="text-lg font-semibold mt-1">{flightNumber}</p>
+              </p>  
             </div>
           </div>
 

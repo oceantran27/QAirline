@@ -1,7 +1,7 @@
 import { Check, Printer, Download, Mail, ArrowLeft, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState, useRef } from "react";
 import ModernFlightTicket from "./flight-ticket";
 import jsPDF from "jspdf";
@@ -20,6 +20,62 @@ export function ConfirmationStep({
   const [currentTicket, setCurrentTicket] = useState(null); // Lưu vé hiện tại để hiển thị trong Dialog
   const ticketRef = useRef();
 
+
+  const calculateBoardingTime = (departureTime) => {
+    if (!departureTime) return "N/A";
+    
+    try {
+      // Giả sử departureTime dạng "07:45 AM"
+      const parts = departureTime.split(" ");
+      if (parts.length !== 2) {
+        console.error("Invalid departure time format");
+        return "N/A";
+      }
+  
+      const [timeStr, meridiem] = parts;
+      const [hourStr, minuteStr] = timeStr.split(":");
+      if (!hourStr || !minuteStr) {
+        console.error("Invalid time format");
+        return "N/A";
+      }
+  
+      let hour = parseInt(hourStr, 10);
+      const minute = parseInt(minuteStr, 10);
+  
+      // Chuyển đổi sang 24h
+      const meridiemUpper = meridiem.toUpperCase();
+      if (meridiemUpper === "PM" && hour !== 12) {
+        hour += 12;
+      } else if (meridiemUpper === "AM" && hour === 12) {
+        hour = 0;
+      }
+  
+      // Tạo đối tượng Date hôm nay với giờ và phút tương ứng
+      const now = new Date();
+      now.setHours(hour);
+      now.setMinutes(minute);
+      now.setSeconds(0);
+      now.setMilliseconds(0);
+  
+      // Lấy thời gian dưới dạng giây
+      const departureTimeInSeconds = Math.floor(now.getTime() / 1000);
+      const boardingTimeInSeconds = departureTimeInSeconds - 30 * 60; // trừ 30 phút
+      const boardingDate = new Date(boardingTimeInSeconds * 1000);
+  
+      if (isNaN(boardingDate.getTime())) {
+        console.error("Invalid boarding time:", boardingTimeInSeconds);
+        return "N/A";
+      }
+  
+      return boardingDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    } catch (error) {
+      console.error("Error calculating boarding time:", error);
+      return "N/A";
+    }
+  };
+  
+  
+  // Tải vé dưới dạng PDF
   const handleDownload = async () => {
     try {
       const ticketElement = ticketRef.current;
@@ -42,6 +98,7 @@ export function ConfirmationStep({
     }
   };
 
+  // In vé
   const handlePrint = () => {
     try {
       const ticketElement = ticketRef.current;
@@ -61,6 +118,7 @@ export function ConfirmationStep({
     }
   };
 
+  // Hiển thị danh sách vé cho hành khách
   const renderTickets = (passengers, flight, title) => (
     <div className="mb-6">
       <h2 className="text-xl font-semibold text-orange mb-4">{title}</h2>
@@ -135,6 +193,7 @@ export function ConfirmationStep({
         </Button>
       </div>
 
+      {/* Dialog hiển thị thẻ lên máy bay */}
       <Dialog open={showBoardingPass} onOpenChange={setShowBoardingPass}>
         <DialogContent className="sm:max-w-md">
           <div ref={ticketRef}>
@@ -147,9 +206,11 @@ export function ConfirmationStep({
                 from={currentTicket.flight.from}
                 to={currentTicket.flight.to}
                 flightClass={
-                  currentTicket.passenger.type?.toLowerCase() === "business" ? "Thương gia" : "Phổ thông"
-                } // Sử dụng .toLowerCase() để xử lý trường hợp chữ hoa/chữ thường
-                boardingTime={currentTicket.flight.boardingTime}
+                  currentTicket.passenger.type?.trim().toLowerCase() === "business"
+                    ? "Thương gia"
+                    : "Phổ thông"
+                }
+                boardingTime={calculateBoardingTime(currentTicket.flight.departureTime)}
                 gate={currentTicket.flight.gate}
                 seat={currentTicket.passenger.seat || "Chưa chọn"}
               />

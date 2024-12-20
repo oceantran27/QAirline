@@ -223,19 +223,6 @@ export default function CheckInPage() {
     const minutes = durationInMinutes % 60;
     return `${hours}h ${minutes}m`;
   };
-
-  const calculateBoardingTime = (departureTime) => {
-    if (!departureTime) return "N/A"; // Trả về giá trị mặc định nếu không có thời gian
-    try {
-      const departureDate = new Date(departureTime); // Tạo đối tượng Date
-      if (isNaN(departureDate.getTime())) return "N/A"; // Kiểm tra nếu thời gian không hợp lệ
-      departureDate.setMinutes(departureDate.getMinutes() - 30); // Trừ đi 30 phút
-      return departureDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); // Định dạng HH:mm
-    } catch (error) {
-      console.error("Error calculating boarding time:", error);
-      return "N/A";
-    }
-  };
   
   
   const generateGate = () => `Gate ${Math.floor(Math.random() * 9) + 1}`;
@@ -360,20 +347,19 @@ export default function CheckInPage() {
         />
       )}
 
-      {currentStep === 3 && (
-        <ConfirmationStep
-          bookingReference={bookingData?.bookingId || "Không rõ"}
-          departurePassengers={passengerList.departure || []}
-          returnPassengers={passengerList.return || []}
-          departureFlight={{
-            flightNumber: departureFlight?.flightNumber || "N/A",
-            date: departureFlight?.date || "N/A",
-            departureTime: departureFlight?.departureTime || "N/A",
-            from: departureFlight?.from || "N/A",
-            to: departureFlight?.to || "N/A",
-            boardingTime: calculateBoardingTime(departureFlight?.departureTime), // Không cần || "N/A", đã xử lý trong hàm
-            gate: generateGate(),
-          }}
+        {currentStep === 3 && (
+          <ConfirmationStep
+            bookingReference={bookingData?.bookingId || "Không rõ"}
+            departurePassengers={passengerList.departure || []}
+            returnPassengers={passengerList.return || []}
+            departureFlight={{
+              flightNumber: departureFlight?.flightNumber || "N/A",
+              date: departureFlight?.date || "N/A",
+              departureTime: departureFlight?.departureTime || "N/A",
+              from: departureFlight?.from || "N/A",
+              to: departureFlight?.to || "N/A",
+              gate: generateGate(),
+            }}
           returnFlight={
             bookingData?.tripType === "roundTrip"
               ? {
@@ -382,7 +368,6 @@ export default function CheckInPage() {
                   departureTime: returnFlight?.departureTime || "N/A",
                   from: returnFlight?.from || "N/A",
                   to: returnFlight?.to || "N/A",
-                  boardingTime: calculateBoardingTime(returnFlight?.departureTime), // Sửa lại thành returnFlight
                   gate: generateGate(),
                 }
               : null
@@ -390,8 +375,7 @@ export default function CheckInPage() {
           onBack={handleBack}
           onHome={() => router.push("/")}
         />
-      )}
-
+        )}
 
     </div>
   );
