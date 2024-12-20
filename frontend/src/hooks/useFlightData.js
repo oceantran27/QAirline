@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const useFlightData = (departureCity, arrivalCity, flightDate) => {
   const [flights, setFlights] = useState([]); // Danh sách chuyến bay đi
   const [returnFlights, setReturnFlights] = useState([]); // Danh sách chuyến bay quay về
@@ -18,7 +18,7 @@ export const useFlightData = (departureCity, arrivalCity, flightDate) => {
   const fetchFlights = async (from, to, date, setState) => {
     try {
       const response = await fetch(
-        `http://localhost:3030/api/flight/search?departureCity=${from}&arrivalCity=${to}&flightDate=${date}`
+        `${API_BASE_URL}/api/flight/search?departureCity=${from}&arrivalCity=${to}&flightDate=${date}`
       );
       const result = await response.json();
       if (result.data) {
@@ -34,7 +34,7 @@ export const useFlightData = (departureCity, arrivalCity, flightDate) => {
 
   const fetchSuggestedFlights = async (setState) => {
     try {
-      const response = await fetch(`http://localhost:3030/api/flight/suggest`);
+      const response = await fetch(`${API_BASE_URL}/api/flight/suggest`);
       const result = await response.json();
       if (result.data) {
         const transformedFlights = transformFlights(result.data);

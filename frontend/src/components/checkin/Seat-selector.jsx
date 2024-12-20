@@ -158,7 +158,7 @@ export default function SeatSelector({ seats, passengers, onSeatSelect }) {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Hủy
             </Button>
-            <Button onClick={confirmSeatSelection}>Xác nhận</Button>
+            <Button variant="orange" onClick={confirmSeatSelection}>Xác nhận</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

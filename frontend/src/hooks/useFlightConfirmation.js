@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { format, parse } from "date-fns";
 import { useAccountInfo } from "@/hooks/useAccountInfo";
 import { toast } from "@/hooks/use-toast";
-
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export function useFlightConfirmation() {
   const router = useRouter();
   const {
@@ -58,7 +58,7 @@ export function useFlightConfirmation() {
 
   const fetchFlightData = async (flightId, optionId, setFlightData, setOption) => {
     try {
-      const response = await fetch(`http://localhost:3030/api/flight/?id=${flightId}`);
+      const response = await fetch(`${API_BASE_URL}/api/flight/?id=${flightId}`);
       if (!response.ok) {
         throw new Error("Không thể lấy dữ liệu chuyến bay.");
       }
@@ -179,8 +179,7 @@ export function useFlightConfirmation() {
     };
   
     try {
-      const response = await fetch(
-        "http://localhost:3030/api/booking/new",
+      const response = await fetch(`${API_BASE_URL}/api/booking/new`,
         {
           method: "POST",
           headers: {
