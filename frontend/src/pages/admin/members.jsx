@@ -251,7 +251,7 @@ export default function AdminManagementPage() {
         </TableHeader>
         <TableBody>
           {admins.map((admin) => (
-            <TableRow>
+            <TableRow key={admin.uid}>
               <TableCell>{admin.name}</TableCell>
               <TableCell>{admin.email}</TableCell>
               <TableCell>{admin.createdAt}</TableCell>
