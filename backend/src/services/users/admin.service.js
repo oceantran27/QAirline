@@ -13,9 +13,7 @@ import {
 import Admin from "../../models/users/admin.model";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 const firebaseAuth = getAuth(firebase);
-import NodeCache from "node-cache";
 
-const adminCache = new NodeCache({ stdTTL: 300 });
 const db = getFirestore(firebase);
 const auth = admin.auth();
 const ADMIN_COLLECTION_NAME = "admins";
@@ -49,19 +47,11 @@ export const dbCreateAdmin = async ({
 
 export const dbGetAdminById = async (uid) => {
   try {
-    const cachedAdmin = adminCache.get(uid);
-    if (cachedAdmin) {
-      console.log("cache");
-      return cachedAdmin;
-    }
-
     const docRef = doc(db, ADMIN_COLLECTION_NAME, uid);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      // console.log("none cache");
       const adminData = new Admin({ ...docSnap.data() });
-      adminCache.set(uid, adminData);
       return adminData;
     }
     throw new Error("Admin not found");

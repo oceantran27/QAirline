@@ -34,6 +34,27 @@ export const getAllBookings = async (req, res) => {
   }
 };
 
+export const getBookings = async (req, res) => {
+  try {
+    const bookingIds = req.body;
+    console.log(bookingIds);
+    const bookings = await Promise.all(
+      bookingIds.map(async (bookingId) => {
+        const bookingData = await dbGetBooking(bookingId);
+        console.log(bookingData);
+        return { ...bookingData, bookingId };
+      })
+    );
+    return res.status(200).send({
+      data: bookings,
+    });
+  } catch (error) {
+    res.status(400).send({
+      message: error.message,
+    });
+  }
+};
+
 export const getBooking = async (req, res) => {
   try {
     const user = req.user;

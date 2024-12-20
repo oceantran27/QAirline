@@ -10,11 +10,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
+import { useRouter } from 'next/router';
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const [dropdown, setDropdown] = useState(false);
-
+  const router = useRouter();
+  
   const showDropdown = () => {
     setDropdown(!dropdown);
   };
@@ -38,24 +40,44 @@ export default function Navbar() {
           {/* Menu */}
           <ul className="flex items-center flex-1 justify-center gap-x-8 lg:gap-x-12 max-lg:hidden">
             <li>
-              <Link href="/" className="leading-normal no-underline text-lg hover:text-orange">
-                Trang chủ
-              </Link>
+            <Link
+              href="/"
+              className={`leading-normal no-underline text-lg ${
+                router.pathname === '/' ? 'text-orange' : 'hover:text-orange'
+              }`}
+            >
+              Trang chủ
+            </Link>
             </li>
             <li>
-              <Link href="/flights" className="leading-normal no-underline text-lg hover:text-orange">
-                Chuyến bay
-              </Link>
+            <Link
+              href="/flights"
+              className={`leading-normal no-underline text-lg ${
+                router.pathname === '/flights' ? 'text-orange' : 'hover:text-orange'
+              }`}
+            >
+              Chuyến bay
+            </Link>
             </li>
             <li>
-              <Link href="/news" className="leading-normal no-underline text-lg hover:text-orange">
-                Tin tức
-              </Link>
+            <Link
+              href="/news"
+              className={`leading-normal no-underline text-lg ${
+                router.pathname === '/news' ? 'text-orange' : 'hover:text-orange'
+              }`}
+            >
+              Tin tức
+            </Link>
             </li>
             <li>
-              <Link href="/contact" className="leading-normal no-underline text-lg hover:text-orange">
-                Liên hệ
-              </Link>
+            <Link
+              href="/contact"
+              className={`leading-normal no-underline text-lg ${
+                router.pathname === '/contact' ? 'text-orange' : 'hover:text-orange'
+              }`}
+            >
+              Liên hệ
+            </Link>
             </li>
           </ul>
 

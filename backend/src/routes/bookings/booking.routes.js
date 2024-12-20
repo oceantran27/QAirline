@@ -6,6 +6,7 @@ import {
   updateBooking,
   deleteBooking,
   cancelBooking,
+  getBookings,
 } from "../../controllers/bookings/booking.controller";
 import {
   authenticateToken,
@@ -18,6 +19,7 @@ router.get("/all", authenticateToken, checkAdminRole, getAllBookings);
 router.get("/", authenticateToken, getBooking);
 router.post("/new", authenticateToken, createBooking);
 router.put("/cancel", authenticateToken, cancelBooking);
+router.get("/list", getBookings);
 // router.put("/update", authenticateToken, updateBooking);
 // router.delete("/delete", authenticateToken, deleteBooking);
 

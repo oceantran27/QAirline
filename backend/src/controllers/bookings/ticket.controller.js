@@ -33,14 +33,17 @@ export const getTicket = async (req, res) => {
     const user = req.user;
     const ticketData = await dbGetTicket(req.query.id);
 
-    if (
-      user.role !== "admin" &&
-      !user.bookingHistory.includes(ticketData.bookingId)
-    ) {
-      return res.status(403).send({
-        message: "You do not have permission to perform this action",
-      });
-    }
+    console.log(user);
+    console.log(ticketData);
+
+    // if (
+    //   user.role !== "admin" &&
+    //   !user.bookingHistory.includes(ticketData.bookingId)
+    // ) {
+    //   return res.status(403).send({
+    //     message: "You do not have permission to perform this action",
+    //   });
+    // }
 
     return res.status(200).send({
       data: ticketData,

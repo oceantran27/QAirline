@@ -10,6 +10,7 @@ import { FlightHeader } from "@/components/tours-component/FlightHeader";
 import { FlightSideFilter } from "@/components/tours-component/FlightSideFilter";
 import { FlightCard } from "@/components/tours-component/FlightCard";
 import { SkeletonFlightCard } from "@/components/tours-component/SkeletonFlightCard";
+import { FlightSelectionNotice } from "@/components/tours-component/FlightSelectionNotice";
 import { Button } from "@/components/ui/button";
 
 import { useFlightData } from "@/hooks/useFlightData";
@@ -110,6 +111,9 @@ export default function FlightBooking() {
         <FlightSideFilter filters={filters} setFilters={setFilters} />
 
         <div className="flex-1 space-y-4">
+          {!loading && (
+            <FlightSelectionNotice isSelectingReturn={isSelectingReturn} />
+          )}
           {loading ? (
             <>
               <SkeletonFlightCard />
@@ -128,7 +132,11 @@ export default function FlightBooking() {
 
           <div className="text-center text-sm text-gray-500">
             {loading ? (
-              <span>Đang tải chuyến bay...</span>
+               <>
+               <SkeletonFlightCard />
+               <SkeletonFlightCard />
+               <SkeletonFlightCard />
+              </>
             ) : isSelectingReturn ? (
               <span>Có {returnFlights.length} chuyến bay quay về</span>
             ) : (
