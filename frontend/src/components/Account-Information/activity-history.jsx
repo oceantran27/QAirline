@@ -9,13 +9,61 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format, isWithinInterval } from "date-fns";
 
-export default function ActivityHistory({ activityData = [] }) {
+export default function ActivityHistory({ personalInfo }) {
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  const [filteredData, setFilteredData] = useState(activityData);
+  const [activityData, setActivityData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+
+  useEffect(() => {
+    const fetchBookingHistory = async () => {
+      if (!personalInfo || !personalInfo.bookingHistory) return;
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Token is missing. Please log in.");
+        return;
+      }
+
+      const bookings = await Promise.all(
+        personalInfo.bookingHistory.map(async (bookingId) => {
+          try {
+            const response = await fetch(
+              `http://localhost:3030/api/booking/?id=${bookingId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error("Failed to fetch booking.");
+            }
+
+            const { data } = await response.json();
+            return {
+              date: new Date(data.createdAt.seconds * 1000),
+              type: "Đặt vé máy bay",
+              bookingId: data.bookingId,
+              details: `${data.departureCity} → ${data.arrivalCity}`,
+            };
+          } catch (error) {
+            console.error(`Error fetching booking ${bookingId}:`, error);
+            return null;
+          }
+        })
+      );
+
+      setActivityData(bookings.filter(Boolean));
+      setFilteredData(bookings.filter(Boolean));
+    };
+
+    fetchBookingHistory();
+  }, [personalInfo]);
 
   const handleSearch = () => {
     if (!fromDate || !toDate) {
@@ -24,11 +72,16 @@ export default function ActivityHistory({ activityData = [] }) {
     }
 
     const filtered = activityData.filter((activity) => {
-      const activityDate = new Date(activity.date);
-      return isWithinInterval(activityDate, { start: fromDate, end: toDate });
+      return isWithinInterval(activity.date, { start: fromDate, end: toDate });
     });
 
     setFilteredData(filtered);
+  };
+
+  const handleReset = () => {
+    setFromDate(null);
+    setToDate(null);
+    setFilteredData(activityData);
   };
 
   return (
@@ -44,7 +97,7 @@ export default function ActivityHistory({ activityData = [] }) {
           <Popover>
             <PopoverTrigger asChild>
               <button className="text-sm font-bold w-full justify-start text-left pl-0 border-b border-gray-400 py-1">
-                {fromDate ? format(fromDate, "PPP") : "Chọn ngày"}
+                {fromDate ? format(fromDate, "dd/MM/yyyy") : "Chọn ngày"}
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0 border shadow-lg">
@@ -64,7 +117,7 @@ export default function ActivityHistory({ activityData = [] }) {
           <Popover>
             <PopoverTrigger asChild>
               <button className="text-sm font-bold w-full justify-start text-left pl-0 border-b border-gray-400 py-1">
-                {toDate ? format(toDate, "PPP") : "Chọn ngày"}
+                {toDate ? format(toDate, "dd/MM/yyyy") : "Chọn ngày"}
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0 border shadow-lg">
@@ -85,6 +138,14 @@ export default function ActivityHistory({ activityData = [] }) {
         >
           TÌM KIẾM
         </Button>
+
+        {/* Nút reset */}
+        <Button
+          onClick={handleReset}
+          className="h-10 px-6 bg-gray-300 text-black hover:bg-gray-400 transition-all"
+        >
+          RESET
+        </Button>
       </div>
 
       {/* Bảng lịch sử hoạt động */}
@@ -101,10 +162,10 @@ export default function ActivityHistory({ activityData = [] }) {
           {filteredData.length > 0 ? (
             filteredData.map((activity, index) => (
               <TableRow key={index}>
-                <TableCell>{format(new Date(activity.date), "dd/MM/yyyy")}</TableCell>
+                <TableCell>{format(activity.date, "dd/MM/yyyy")}</TableCell>
                 <TableCell>{activity.type}</TableCell>
-                <TableCell>{activity.bookingCode}</TableCell>
-                <TableCell>{activity.details || "-"}</TableCell>
+                <TableCell>{activity.bookingId}</TableCell>
+                <TableCell>{activity.details}</TableCell>
               </TableRow>
             ))
           ) : (
