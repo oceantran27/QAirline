@@ -1,4 +1,4 @@
-import { Check, Printer, Download, Mail, ArrowLeft, Home } from "lucide-react";
+import { Check, Printer, Download, Mail, ArrowLeft, Home } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -135,7 +135,7 @@ export function ConfirmationStep({
                 <p className="text-lg font-semibold">{passenger.seat || "Chưa chọn"}</p>
               </div>
             </div>
-            <div className="mt-4">
+            <div className="mt-4 flex gap-2">
               <Button
                 variant="outline"
                 size="sm"
@@ -147,6 +147,18 @@ export function ConfirmationStep({
               >
                 <Printer className="w-4 h-4" />
                 Xem vé
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setCurrentTicket({ passenger, flight });
+                  handleDownload();
+                }}
+                className="gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Tải về
               </Button>
             </div>
           </CardContent>
@@ -216,8 +228,19 @@ export function ConfirmationStep({
               />
             )}
           </div>
+          <div className="mt-4 flex justify-end gap-2">
+            <Button variant="outline" size="sm" onClick={handleDownload} className="gap-2">
+              <Download className="w-4 h-4" />
+              Tải về
+            </Button>
+            <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
+              <Printer className="w-4 h-4" />
+              In vé
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
+
