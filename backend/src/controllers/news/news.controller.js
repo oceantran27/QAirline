@@ -40,14 +40,13 @@ export const getAllNews = async (req, res) => {
 export const getNews = async (req, res) => {
   try {
     const newsId = req.query.id;
-
-    const newsCache = getCache(newsCache, newsId);
-    if (newsCache) {
+    const cachedNews = getCache(newsCache, newsId);
+    if (cachedNews) {
       return res.status(200).send({
-        data: newsCache,
+        data: cachedNews,
       });
     }
-
+    console.log("news");
     const news = await dbGetNews(newsId);
 
     if (!news) {
@@ -79,10 +78,10 @@ export const createNews = async (req, res) => {
 
     await dbCreateSingleNews(news);
 
-    const newsCache = getCache(newsCache, "news");
-    if (newsCache) {
-      newsCache.push(news);
-      setCache(newsCache, "news", newsCache);
+    const cachedNews = getCache(newsCache, "news");
+    if (cachedNews) {
+      cachedNews.push(news);
+      setCache(newsCache, "news", cachedNews);
     }
 
     res.status(201).send({
@@ -121,8 +120,8 @@ export const updateNews = async (req, res) => {
     const updateData = req.body;
     await dbUpdateNews(newsId, updateData);
 
-    const newsCache = getCache(newsCache, newsId);
-    if (newsCache) {
+    const cachedNews = getCache(newsCache, newsId);
+    if (cachedNews) {
       deleteCache(newsCache, newsId);
     }
 
@@ -141,8 +140,8 @@ export const deleteNews = async (req, res) => {
     const newsId = req.query.id;
     await dbDeleteNews(newsId);
 
-    const newsCache = getCache(newsCache, newsId);
-    if (newsCache) {
+    const cachedNews = getCache(newsCache, newsId);
+    if (cachedNews) {
       deleteCache(newsCache, newsId);
     }
 
