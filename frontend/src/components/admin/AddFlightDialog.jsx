@@ -22,8 +22,8 @@ export function AddFlightDialog() {
     flightId: '',
     flightNumber: '',
     aircraftType: '',
-    departureAirport: '',
-    arrivalAirport: '',
+    departureCity: '',
+    arrivalCity: '',
     departureTime: '',
     arrivalTime: '',
     basePrice: '',
@@ -37,7 +37,7 @@ export function AddFlightDialog() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const createFlightApi = "http://localhost:3030/api/flight/new"
+    const createFlightApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/flight/new`
   
     try {
         const response = await fetch(createFlightApi, {
@@ -66,6 +66,8 @@ export function AddFlightDialog() {
       flightId: '',
       flightNumber: '',
       aircraftType: '',
+      departureCity: '',
+      arrivalCity: '',
       departureAirport: '',
       arrivalAirport: '',
       departureTime: '',
@@ -91,7 +93,7 @@ export function AddFlightDialog() {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="flightId" className="text-right">
                 ID chuyến bay
@@ -132,8 +134,34 @@ export function AddFlightDialog() {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="departureAirport" className="text-right">
+              <Label htmlFor="departureCity" className="text-right">
                 Điểm cất cánh
+              </Label>
+              <Input
+                id="departureCity"
+                name="departureCity"
+                value={flightData.departureCity}
+                onChange={handleInputChange}
+                className="col-span-3"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="arrivalCity" className="text-right">
+              Điểm hạ cánh
+              </Label>
+              <Input
+                id="arrivalCity"
+                name="arrivalCity"
+                value={flightData.arrivalCity}
+                onChange={handleInputChange}
+                className="col-span-3"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="departureAirport" className="text-right">
+                Sân bay cất cánh
               </Label>
               <Input
                 id="departureAirport"
@@ -146,7 +174,7 @@ export function AddFlightDialog() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="arrivalAirport" className="text-right">
-              Điểm hạ cánh
+                Sân bay hạ cánh
               </Label>
               <Input
                 id="arrivalAirport"
@@ -195,19 +223,6 @@ export function AddFlightDialog() {
                 type="number"
                 step="0.01"
                 value={flightData.basePrice}
-                onChange={handleInputChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="status" className="text-right">
-                Trạng thái
-              </Label>
-              <Input
-                id="status"
-                name="status"
-                value={flightData.status}
                 onChange={handleInputChange}
                 className="col-span-3"
                 required

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
 import { Button } from "@/components/ui/button"
@@ -6,8 +6,22 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
+import { useRouter } from 'next/router';
 
 export default function NewsPostingPage() {
+  const router = useRouter()
+  const id = router.query.id
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      router.push('/admin')
+    }
+    if(id) {
+      getNewsById()
+    }
+  }, [id])
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
@@ -39,7 +53,7 @@ export default function NewsPostingPage() {
     formData.append("title", title)
     formData.append("content", content)
     formData.append("authorId", "test")
-    const createNewsApi = "http://localhost:3030/api/news/create"
+    const createNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/create`
   
     try {
         const response = await fetch(createNewsApi, {
@@ -65,9 +79,35 @@ export default function NewsPostingPage() {
     setImage(null);
   };
 
+  const getNewsById = async () => {
+    const getNewsByIdApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news?id=${id}`
+
+    try {
+        const response = await fetch(getNewsByIdApi, {
+            method: "GET",
+            headers: {
+                "admin": "true",
+                "authorization": "Bearer " + localStorage.getItem("token")
+            }, 
+        })
+        if (!response.ok) {
+            throw new Error("Send request failed")
+        }
+
+        const res = await response.json()
+        setTitle(res.data.title)
+        setDescription(res.data.description)
+        setContent(res.data.content)
+        setPreviewImage(res.data.image)
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+        console.log(error)
+    }
+  };
+
   return (
     <div className="container mx-auto pt-10 pl-64">
-      <h1 className="text-2xl font-semibold mb-4">Tạo Bài Viết Mới</h1>
+      {id ? <h1 className="text-2xl font-semibold mb-4">Chỉnh sửa bài viết</h1> : <h1 className="text-2xl font-semibold mb-4">Tạo Bài Viết Mới</h1>}
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <form onSubmit={handleSubmit} className="space-y-4">

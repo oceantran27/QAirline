@@ -11,6 +11,7 @@ import { toast } from "@/hooks/use-toast"
 import { useRouter } from "next/router"
 
 import { AddFlightDialog } from "@/components/admin/AddFlightDialog"
+import { EditFlightDialog } from "@/components/admin/EditFlightDialog"
 
 export default function ScheduledFlights() {
   const router = useRouter()
@@ -26,6 +27,7 @@ export default function ScheduledFlights() {
 
   const [flights, setFlights] = useState([])
   const [searchQuery, setSearchQuery] = useState("")
+  const [editingFlight, setEditingFlight] = useState(null)
 
   const filteredFlights = flights.filter(flight => 
     flight.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -33,7 +35,7 @@ export default function ScheduledFlights() {
   )
 
   const getAllFlights = async () => {
-    const getAllFlightsApi = "http://localhost:3030/api/flight/all" 
+    const getAllFlightsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/flight/all`
 
     try { 
         const response = await fetch(getAllFlightsApi, {
@@ -49,6 +51,7 @@ export default function ScheduledFlights() {
 
         const res = await response.json()
         setFlights(res.data.map(a => {return {
+            "flightId": a.flightId,
             "id": a.flightNumber,
             "aircraft": a.aircraftType, 
             "src": a.arrivalCity, 
@@ -68,7 +71,7 @@ export default function ScheduledFlights() {
 
   const handleRemove = async (id) => {
     setFlights(flights.filter(flight => flight.id !== id))
-    const deleteFlightApi = "http://localhost:3030/api/flight/delete/?" 
+    const deleteFlightApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/flight/delete/?`
 
     try {
         const response = await fetch(deleteFlightApi + 
@@ -95,21 +98,33 @@ export default function ScheduledFlights() {
     })
   }
 
+  const handleEditComplete = (updatedFlight) => {
+    setFlights(flights.map(f => f.id === updatedFlight.id ? updatedFlight : f))
+    setEditingFlight(null)
+    toast({
+      title: "Thông báo",
+      description: "Thông tin chuyến bay đã được cập nhật thành công.",
+    })
+  }
+
   const getStatusBadge = (flight) => {
     switch(flight.status) {
       case 'OnTime':
-        return <Badge className="bg-yellow-400 hover:bg-yellow-400 text-black">Đang Bay</Badge>
-      // default:
-      //   return (
-      //     <div className="flex gap-2">
-      //       <Button 
-      //         size="sm"
-      //         className="bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1 h-7"
-      //       >
-      //         Sửa
-      //       </Button>
-      //     </div>
-      //   )
+        return <Badge className="bg-green-400 hover:bg-green-400 text-black">Đang Bay</Badge>
+      case 'Landed':
+        return <Badge className="bg-yellow-400 hover:bg-yellow-400 text-black">Đã Hạ Cánh</Badge>
+      default:
+        return (
+          <div className="flex gap-2">
+            <Button 
+              size="sm"
+              className="bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1 h-7"
+              onClick={() => setEditingFlight(flight)}
+            >
+              Sửa
+            </Button>
+          </div>
+        )
     }
   }
 
@@ -124,7 +139,7 @@ export default function ScheduledFlights() {
       <div className="relative mb-6">
         <Input
           type="text"
-          placeholder="Tìm kiếm chuyến bay sử dụng tên tàu bay hoặc ID"
+          placeholder="Tìm kiếm chuyến bay sử dụng tên tàu bay hoặc số hiệu chuyến"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-4 pr-10 h-10 border rounded"
@@ -141,7 +156,7 @@ export default function ScheduledFlights() {
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-100">
-              <TableHead className="w-[80px] text-center">ID</TableHead>
+              <TableHead className="w-[80px] text-center">SỐ HIỆU</TableHead>
               <TableHead className="text-center">LOẠI MÁY BAY</TableHead>
               <TableHead className="text-center">CẤT CÁNH</TableHead>
               <TableHead className="text-center">HẠ CÁNH</TableHead>
@@ -164,12 +179,6 @@ export default function ScheduledFlights() {
                     {getStatusBadge(flight)}
                     <Button 
                       size="sm"
-                      className="bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1 h-7"
-                    >
-                      Sửa
-                    </Button>
-                    <Button 
-                      size="sm"
                       variant="destructive" 
                       onClick={() => handleRemove(flight.id)}
                       className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 h-7"
@@ -184,6 +193,13 @@ export default function ScheduledFlights() {
         </Table>
         
       </div>
+      {editingFlight && (
+        <EditFlightDialog
+          flight={editingFlight}
+          onClose={() => setEditingFlight(null)}
+          onSave={handleEditComplete}
+        />
+      )}
     </div>
   )
 }
