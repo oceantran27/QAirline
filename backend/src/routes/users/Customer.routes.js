@@ -15,7 +15,8 @@ import {
 
 const router = express.Router();
 
-router.get("/", authenticateTokenWithoutCache, getCustomer);
+router.get("/", authenticateToken, getCustomer);
+router.get("/profile", authenticateToken, getCustomer);
 router.get("/all", authenticateToken, checkAdminRole, getAllCustomers);
 router.post("/new", createCustomer);
 router.put("/update", authenticateToken, updateCustomer);

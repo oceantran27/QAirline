@@ -12,13 +12,11 @@ import firebase from "../../database/firebase";
 import Customer from "../../models/users/customer.model";
 import admin from "../../database/firebaseAdmin";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import NodeCache from "node-cache";
 
 const db = getFirestore(firebase);
 const adminAuth = admin.auth();
 const CUSTOMER_COLLECTION_NAME = "customers";
 const firebaseAuth = getAuth(firebase);
-const customerCache = new NodeCache({ stdTTL: 300 });
 
 export const dbCreateCustomer = async ({
   email,
@@ -45,19 +43,11 @@ export const dbCreateCustomer = async ({
 
 export const dbGetCustomerById = async (uid) => {
   try {
-    const cachedCustomer = customerCache.get(uid);
-    if (cachedCustomer) {
-      console.log("cache");
-      return cachedCustomer;
-    }
-
     const docRef = doc(db, CUSTOMER_COLLECTION_NAME, uid);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      // console.log("none cache");
       const customer = new Customer({ ...docSnap.data() });
-      customerCache.set(uid, customer);
       return customer;
     }
 
@@ -94,8 +84,6 @@ export const dbUpdateCustomer = async (uid, updateData) => {
     }
 
     await updateDoc(docRef, updateData);
-
-    customerCache.del(uid);
   } catch (error) {
     throw new Error(`Error updating customer: ${error.message}`);
   }

@@ -6,11 +6,28 @@ import {
   dbDeleteCustomer,
   dbChangePassword,
 } from "../../services/users/customer.service";
+import {
+  userCache,
+  setCache,
+  getCache,
+  deleteCache,
+} from "../../cache/cacheManager";
 
 export const createCustomer = async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body;
-    await dbCreateCustomer({ email, password, firstName, lastName });
+    const newCustomer = await dbCreateCustomer({
+      email,
+      password,
+      firstName,
+      lastName,
+    });
+    const cachedCustomers = getCache(userCache, "customers");
+
+    if (cachedCustomers) {
+      cachedCustomers.push(newCustomer);
+      setCache(userCache, "customers", cachedCustomers);
+    }
     res.status(201).send({
       message: "Customer created successfully",
     });
@@ -23,7 +40,18 @@ export const createCustomer = async (req, res) => {
 
 export const getAllCustomers = async (req, res) => {
   try {
+    const cachedCustomers = getCache(userCache, "customers");
+    if (cachedCustomers) {
+      return res.status(200).send({
+        message: "Customers fetched successfully",
+        data: cachedCustomers,
+      });
+    }
+
     const customers = await dbGetAllCustomers();
+
+    setCache(userCache, "customers", customers);
+
     res.status(200).send({
       message: "Customers fetched successfully",
       data: customers,
@@ -41,6 +69,12 @@ export const getCustomer = async (req, res) => {
     var customer;
 
     if (user.role === "admin") {
+      const cachedUser = getCache(userCache, req.query.id);
+      if (cachedUser) {
+        return res.status(200).send({
+          data: cachedUser,
+        });
+      }
       customer = await dbGetCustomerById(req.query.id);
     }
 
@@ -66,10 +100,18 @@ export const updateCustomer = async (req, res) => {
 
     if (user.role === "admin") {
       await dbUpdateCustomer(req.query.id, updateData);
+      const cachedUser = getCache(userCache, req.query.id);
+      if (cachedUser) {
+        deleteCache(userCache, req.query.id);
+      }
     }
 
     if (user.role === "customer") {
       await dbUpdateCustomer(user.uid, updateData);
+      const cachedUser = getCache(userCache, user.uid);
+      if (cachedUser) {
+        deleteCache(userCache, user.uid);
+      }
     }
 
     res.status(200).send({
@@ -88,10 +130,20 @@ export const deleteCustomer = async (req, res) => {
 
     if (user.role === "admin") {
       await dbDeleteCustomer(req.query.id);
+
+      const cachedUser = getCache(userCache, req.query.id);
+      if (cachedUser) {
+        deleteCache(userCache, req.query.id);
+      }
     }
 
     if (user.role === "customer") {
       await dbDeleteCustomer(user.uid);
+
+      const cachedUser = getCache(userCache, user.uid);
+      if (cachedUser) {
+        deleteCache(userCache, user.uid);
+      }
     }
 
     res.status(200).send({
