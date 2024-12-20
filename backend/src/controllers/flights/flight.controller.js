@@ -113,6 +113,13 @@ export const createFlight = async (req, res) => {
     const flight = new Flight(flightData);
 
     await dbCreateFlight(flight);
+
+    const cachedFlights = getCache(flightCache, "flights");
+    if (cachedFlights) {
+      cachedFlights.push(flight);
+      setCache(flightCache, "flights", cachedFlights);
+    }
+
     res.status(201).send({
       message: "Flight created successfully",
     });
@@ -165,8 +172,36 @@ export const deleteFlight = async (req, res) => {
 export const searchFlight = async (req, res) => {
   try {
     const { departureCity, arrivalCity, flightDate } = req.query;
+
+    const cachedFlights = getCache(
+      flightSuggestionsCache,
+      `${departureCity}-${arrivalCity}-${flightDate}`
+    );
+    if (cachedFlights) {
+      const currentTime = new Date();
+      const validFlights = cachedFlights.filter((flight) => {
+        return new Date(flight.departureTime) > currentTime;
+      });
+
+      setCache(
+        flightSuggestionsCache,
+        `${departureCity}-${arrivalCity}-${flightDate}`,
+        validFlights
+      );
+      return res.status(200).send({
+        message: "Flights fetched successfully ",
+        data: validFlights,
+      });
+    }
+
     const flights = generateMockFlights(departureCity, arrivalCity, flightDate);
     await dbCreateFlights(flights);
+
+    setCache(
+      flightSuggestionsCache,
+      `${departureCity}-${arrivalCity}-${flightDate}`,
+      flights
+    );
     res.status(200).send({
       message: "Flights fetched successfully",
       data: flights,
@@ -193,7 +228,7 @@ export const getFlightSuggestions = async (req, res) => {
 
       return res.status(200).send({
         message: "Flights fetched successfully ",
-        data: cachedFlights,
+        data: validFlights,
       });
     }
 
