@@ -75,7 +75,7 @@ const FlightBookingTabs = () => {
               className="flex items-center gap-2 py-4 text-textColor data-[state=active]:bg-orange data-[state=active]:text-white"
             >
               <TicketIcon className="h-5 w-5" />
-              QUẢN LÝ ĐẶT CHỖ
+              QUẢN LÝ ĐẶT VÉ
             </TabsTrigger>
             <TabsTrigger
               value="checkin"

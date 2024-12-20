@@ -24,7 +24,7 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const { formData, loading, errorMessage, handleInputChange, handleSubmit } =
-    useLogin(() => router.push("/my-account"));
+    useLogin(() => router.push("/"));
 
   return (
     <div
