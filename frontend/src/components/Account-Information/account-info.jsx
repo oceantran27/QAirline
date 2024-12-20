@@ -1,86 +1,13 @@
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import { useAccountInfo } from "@/hooks/useAccountInfo";
-import { Skeleton } from "@/components/ui/skeleton";
 
-export default function AccountInfo() {
-  const {
-    personalInfo,
-    setPersonalInfo,
-    isEditing,
-    setIsEditing,
-    loading,
-    errorMessage,
-    handleUpdate,
-  } = useAccountInfo();
-
-  if (loading) {
-    return (
-      <div className="p-4 sm:p-6">
-        <h2 className="text-xl font-medium mb-4 sm:mb-6">Thông tin cá nhân</h2>
-        <div className="flex flex-col lg:flex-row lg:space-x-8 space-y-6 lg:space-y-0">
-          <div className="w-full lg:w-1/3">
-            <Card className="p-0 bg-gradient-to-r from-sky-100 to-sky-200 shadow-lg rounded-lg relative h-48 sm:h-64">
-              <Skeleton className="w-full h-full rounded-lg" />
-            </Card>
-          </div>
-
-          <div className="w-full lg:w-2/3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Mã thẻ hội viên */}
-              <div className="space-y-1">
-                <Skeleton className="h-5 w-1/2" />
-                <Skeleton className="h-6 w-full" />
-              </div>
-              {/* Họ và tên */}
-              <div className="space-y-1">
-                <Skeleton className="h-5 w-1/2" />
-                <Skeleton className="h-6 w-full" />
-              </div>
-              {/* Email */}
-              <div className="space-y-1">
-                <Skeleton className="h-5 w-1/2" />
-                <Skeleton className="h-6 w-full" />
-              </div>
-              {/* Địa chỉ */}
-              <div className="space-y-1">
-                <Skeleton className="h-5 w-1/2" />
-                <Skeleton className="h-6 w-full" />
-              </div>
-              {/* Số điện thoại */}
-              <div className="space-y-1">
-                <Skeleton className="h-5 w-1/2" />
-                <Skeleton className="h-6 w-full" />
-              </div>
-              {/* Giới tính */}
-              <div className="space-y-1">
-                <Skeleton className="h-5 w-1/2" />
-                <Skeleton className="h-6 w-full" />
-              </div>
-              {/* Ngày sinh */}
-              <div className="space-y-1">
-                <Skeleton className="h-5 w-1/2" />
-                <Skeleton className="h-6 w-full" />
-              </div>
-              {/* Số hộ chiếu */}
-              <div className="space-y-1">
-                <Skeleton className="h-5 w-1/2" />
-                <Skeleton className="h-6 w-full" />
-              </div>
-
-              {/* Nút chỉnh sửa */}
-              <div className="md:col-span-2 pt-2 flex space-x-4">
-                <Skeleton className="h-10 w-32 rounded-lg" />
-                <Skeleton className="h-10 w-20 rounded-lg" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (errorMessage) return <p className="text-red-600">{errorMessage}</p>;
+export default function AccountInfo({
+  personalInfo,
+  setPersonalInfo,
+  isEditing,
+  setIsEditing,
+  handleUpdate,
+}) {
   if (!personalInfo) return <p>Không tìm thấy thông tin cá nhân.</p>;
 
   const uid = personalInfo.uid || "";
@@ -108,15 +35,7 @@ export default function AccountInfo() {
   let birthDateDisplay = "";
   let birthDateValue = "";
   if (personalInfo.dateOfBirth) {
-    let dateObj;
-    if (typeof personalInfo.dateOfBirth === "string") {
-      dateObj = new Date(personalInfo.dateOfBirth);
-    } else if (
-      typeof personalInfo.dateOfBirth === "object" &&
-      personalInfo.dateOfBirth.seconds
-    ) {
-      dateObj = new Date(personalInfo.dateOfBirth.seconds * 1000);
-    }
+    const dateObj = new Date(personalInfo.dateOfBirth);
 
     if (dateObj) {
       const day = dateObj.getDate().toString().padStart(2, "0");
@@ -129,20 +48,16 @@ export default function AccountInfo() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Tách fullName thành firstName và lastName
     const parts = fullName.split(" ");
     const lastNameUpdate = parts.pop() || "";
     const firstNameUpdate = parts.join(" ");
 
-    // Chuyển birthDateValue thành ISO string
     const isoDate = birthDateValue ? `${birthDateValue}T00:00:00.000Z` : null;
 
     const updatedData = {
       ...personalInfo,
       firstName: firstNameUpdate,
       lastName: lastNameUpdate,
-      email: email,
-      uid: uid,
       address: address,
       phoneNumber: phoneNumber,
       passportNumber: passportNumber,
@@ -210,7 +125,7 @@ export default function AccountInfo() {
                   type="email"
                   className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
                   value={email}
-                  disabled // Không cho chỉnh sửa email
+                  disabled
                 />
               </div>
               <div className="space-y-1">

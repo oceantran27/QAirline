@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAccountInfo } from "@/hooks/useAccountInfo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast"; 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-export default function PasswordChange() {
-  const { personalInfo, loading, errorMessage } = useAccountInfo();
+
+export default function PasswordChange({ personalInfo }) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -76,45 +75,6 @@ export default function PasswordChange() {
       });
     }
   };
-
-  // Áp dụng loading skeleton khi đang tải thông tin người dùng
-  if (loading) {
-    return (
-      <div className="p-6 max-w-2xl mx-auto">
-        <h2 className="text-xl font-medium mb-6">Thông tin mật khẩu</h2>
-        <p className="text-red-500 mb-6 text-sm">
-          Mật khẩu tối thiểu phải có 8 ký tự, không giới hạn độ dài tối đa. Mật khẩu phải bao gồm ít nhất 1 ký tự số, 1 chữ cái hoa, 1 chữ cái thường và 1 ký tự đặc biệt (@ $ ! % * ? &). Ví dụ: Matkhau@123
-        </p>
-
-        {/* Skeleton thay cho form và các trường input */}
-        <div className="space-y-4">
-          <div>
-            <Skeleton className="h-5 w-1/2 mb-1" />
-            <Skeleton className="h-10 w-full" />
-          </div>
-          <div>
-            <Skeleton className="h-5 w-1/3 mb-1" />
-            <Skeleton className="h-10 w-full" />
-          </div>
-          <div>
-            <Skeleton className="h-5 w-2/3 mb-1" />
-            <Skeleton className="h-10 w-full" />
-          </div>
-          <div className="text-right">
-            <Skeleton className="h-10 w-20" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (errorMessage) {
-    toast({
-      title: "Lỗi tải thông tin",
-      description: errorMessage,
-      variant: "destructive",
-    });
-  }
 
   return (
     <div className="p-6 max-w-2xl mx-auto">

@@ -10,11 +10,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
-import { format } from "date-fns";
+import { format, isWithinInterval } from "date-fns";
 
-export default function ActivityHistory() {
+export default function ActivityHistory({ activityData = [] }) {
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
+  const [filteredData, setFilteredData] = useState(activityData);
+
+  const handleSearch = () => {
+    if (!fromDate || !toDate) {
+      setFilteredData(activityData);
+      return;
+    }
+
+    const filtered = activityData.filter((activity) => {
+      const activityDate = new Date(activity.date);
+      return isWithinInterval(activityDate, { start: fromDate, end: toDate });
+    });
+
+    setFilteredData(filtered);
+  };
 
   return (
     <div className="p-6">
@@ -64,7 +79,10 @@ export default function ActivityHistory() {
         </div>
 
         {/* Nút tìm kiếm */}
-        <Button className="h-10 px-6 bg-orange text-white hover:bg-orangeLight transition-all">
+        <Button
+          onClick={handleSearch}
+          className="h-10 px-6 bg-orange text-white hover:bg-orangeLight transition-all"
+        >
           TÌM KIẾM
         </Button>
       </div>
@@ -75,17 +93,27 @@ export default function ActivityHistory() {
           <TableRow>
             <TableHead>Ngày</TableHead>
             <TableHead>Loại giao dịch</TableHead>
-            <TableHead>Điểm thưởng</TableHead>
+            <TableHead>Mã đặt chỗ</TableHead>
             <TableHead>Chi tiết</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell>04/11/2024</TableCell>
-            <TableCell>Customer Attribution</TableCell>
-            <TableCell>1000</TableCell>
-            <TableCell>-</TableCell>
-          </TableRow>
+          {filteredData.length > 0 ? (
+            filteredData.map((activity, index) => (
+              <TableRow key={index}>
+                <TableCell>{format(new Date(activity.date), "dd/MM/yyyy")}</TableCell>
+                <TableCell>{activity.type}</TableCell>
+                <TableCell>{activity.bookingCode}</TableCell>
+                <TableCell>{activity.details || "-"}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4} className="text-center text-gray-500">
+                Không có dữ liệu phù hợp.
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>
