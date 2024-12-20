@@ -7,11 +7,11 @@ import {
   deleteBooking,
   cancelBooking,
   getBookings,
-} from "../../controllers/bookings/booking.controller";
+} from "../../controllers/bookings/booking.controller.js";
 import {
   authenticateToken,
   checkAdminRole,
-} from "../../middleware/auth.middleware";
+} from "../../middleware/auth.middleware.js";
 
 const router = express.Router();
 

@@ -9,11 +9,11 @@ import {
   createTickets,
   updateSeatCodeTickets,
   getTickets,
-} from "../../controllers/bookings/ticket.controller";
+} from "../../controllers/bookings/ticket.controller.js";
 import {
   authenticateToken,
   checkAdminRole,
-} from "../../middleware/auth.middleware";
+} from "../../middleware/auth.middleware.js";
 
 const router = express.Router();
 

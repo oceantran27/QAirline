@@ -1,4 +1,4 @@
-import firebase from "../../database/firebase";
+import firebase from "../../database/firebase.js";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -7,9 +7,9 @@ import {
 import {
   dbCreateCustomer,
   dbGetCustomerById,
-} from "../../services/users/customer.service";
+} from "../../services/users/customer.service.js";
 
-import { dbGetAdminById } from "../../services/users/admin.service";
+import { dbGetAdminById } from "../../services/users/admin.service.js";
 
 const firebaseAuth = getAuth(firebase);
 

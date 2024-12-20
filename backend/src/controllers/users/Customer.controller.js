@@ -5,13 +5,13 @@ import {
   dbUpdateCustomer,
   dbDeleteCustomer,
   dbChangePassword,
-} from "../../services/users/customer.service";
+} from "../../services/users/customer.service.js";
 import {
   userCache,
   setCache,
   getCache,
   deleteCache,
-} from "../../cache/cacheManager";
+} from "../../cache/cacheManager.js";
 
 export const createCustomer = async (req, res) => {
   try {

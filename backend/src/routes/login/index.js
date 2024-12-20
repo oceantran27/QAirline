@@ -3,7 +3,7 @@ import {
   handleAdminLogin,
   handleCustomerLogin,
   handleLogin,
-} from "../../controllers/login";
+} from "../../controllers/login/index.js";
 
 const router = express.Router();
 

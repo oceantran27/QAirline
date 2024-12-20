@@ -1,5 +1,5 @@
-import firebase from "../../database/firebase";
-import admin from "../../database/firebaseAdmin";
+import firebase from "../../database/firebase.js";
+import admin from "../../database/firebaseAdmin.js";
 import {
   getFirestore,
   collection,
@@ -10,8 +10,9 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import Admin from "../../models/users/admin.model";
+import Admin from "../../models/users/admin.model.js";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 const firebaseAuth = getAuth(firebase);
 
 const db = getFirestore(firebase);

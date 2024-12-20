@@ -7,12 +7,12 @@ import {
   updateNews,
   deleteNews,
   getNewsByStatus,
-} from "../../controllers/news/news.controller";
+} from "../../controllers/news/news.controller.js";
 import {
   authenticateToken,
   checkAdminRole,
-} from "../../middleware/auth.middleware";
-import upload from "../../middleware/uploadImage.middleware";
+} from "../../middleware/auth.middleware.js";
+import upload from "../../middleware/uploadImage.middleware.js";
 
 const router = express.Router();
 

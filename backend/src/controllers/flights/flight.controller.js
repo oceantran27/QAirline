@@ -6,19 +6,19 @@ import {
   dbDeleteFlight,
   dbCreateFlights,
   dbUpdateFlights,
-} from "../../services/flights/flight.service";
-import Flight from "../../models/flights/flight.model";
+} from "../../services/flights/flight.service.js";
+import Flight from "../../models/flights/flight.model.js";
 import {
   generateFlightSuggestions,
   generateMockFlights,
-} from "../../services/flights/flightGenerate.service";
+} from "../../services/flights/flightGenerate.service.js";
 import {
   flightSuggestionsCache,
   flightCache,
   getCache,
   setCache,
   deleteCache,
-} from "../../cache/cacheManager";
+} from "../../cache/cacheManager.js";
 
 export const getAllFlights = async (req, res) => {
   try {

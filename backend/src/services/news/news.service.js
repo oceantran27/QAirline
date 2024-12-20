@@ -11,7 +11,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import firebase from "../../database/firebase";
+import firebase from "../../database/firebase.js";
 
 const db = getFirestore(firebase);
 const NEWS_COLLECTION_NAME = "news";

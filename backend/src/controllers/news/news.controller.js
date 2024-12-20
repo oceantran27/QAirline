@@ -3,8 +3,8 @@ import {
   getCache,
   newsCache,
   setCache,
-} from "../../cache/cacheManager";
-import News from "../../models/news/news.model";
+} from "../../cache/cacheManager.js";
+import News from "../../models/news/news.model.js";
 import {
   dbGetAllNews,
   dbGetNews,
@@ -13,7 +13,7 @@ import {
   dbUpdateNews,
   dbDeleteNews,
   dbGetNewsByStatus,
-} from "../../services/news/news.service";
+} from "../../services/news/news.service.js";
 
 export const getAllNews = async (req, res) => {
   try {

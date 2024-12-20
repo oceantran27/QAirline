@@ -8,9 +8,9 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import firebase from "../../database/firebase";
-import Customer from "../../models/users/customer.model";
-import admin from "../../database/firebaseAdmin";
+import firebase from "../../database/firebase.js";
+import Customer from "../../models/users/customer.model.js";
+import admin from "../../database/firebaseAdmin.js";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const db = getFirestore(firebase);

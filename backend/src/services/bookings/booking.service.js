@@ -8,7 +8,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import firebase from "../../database/firebase";
+import firebase from "../../database/firebase.js";
 
 const db = getFirestore(firebase);
 const BOOKING_COLLECTION_NAME = "bookings";

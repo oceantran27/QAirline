@@ -1,7 +1,8 @@
 import NodeCache from "node-cache";
-import admin from "../database/firebaseAdmin";
+import admin from "../database/firebaseAdmin.js";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { getCache, userCache } from "../cache/cacheManager";
+import { getCache, userCache } from "../cache/cacheManager.js";
+
 const auth = admin.auth();
 const CUSTOMER_COLLECTION_NAME = "customers";
 const ADMIN_COLLECTION_NAME = "admins";

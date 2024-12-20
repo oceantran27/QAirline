@@ -1,4 +1,4 @@
-import Ticket from "../../models/bookings/ticket.model";
+import Ticket from "../../models/bookings/ticket.model.js";
 import {
   dbGetAllTickets,
   dbGetTicket,
@@ -8,12 +8,12 @@ import {
   dbCreateTickets,
   dbUpdateSeatCodesForTickets,
   dbGetTicketsByIds,
-} from "../../services/bookings/ticket.service";
-import { dbRemoveFlightTickets } from "../../services/flights/flight.service";
+} from "../../services/bookings/ticket.service.js";
+import { dbRemoveFlightTickets } from "../../services/flights/flight.service.js";
 import {
   dbGetCustomerById,
   dbUpdateCustomer,
-} from "../../services/users/customer.service";
+} from "../../services/users/customer.service.js";
 
 export const getAllTickets = async (req, res) => {
   try {

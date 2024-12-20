@@ -7,11 +7,11 @@ import {
   deleteFlight,
   searchFlight,
   getFlightSuggestions,
-} from "../../controllers/flights/flight.controller";
+} from "../../controllers/flights/flight.controller.js";
 import {
   authenticateToken,
   checkAdminRole,
-} from "../../middleware/auth.middleware";
+} from "../../middleware/auth.middleware.js";
 
 const router = express.Router();
 

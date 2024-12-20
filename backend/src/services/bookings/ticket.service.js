@@ -11,7 +11,7 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
-import firebase from "../../database/firebase";
+import firebase from "../../database/firebase.js";
 
 const db = getFirestore(firebase);
 const TICKET_COLLECTION_NAME = "tickets";
