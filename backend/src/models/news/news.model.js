@@ -4,10 +4,12 @@ class News {
     const randomNumber = Math.floor(Math.random() * (99 - 10 + 1)) + 10;
     return `NW${timestamp}${randomNumber}`;
   }
+
   constructor({
     newsId = null,
     title,
     content,
+    description = "",
     authorId,
     image = null,
     createAt = new Date(),
@@ -17,6 +19,7 @@ class News {
     this.newsId = newsId || this.generateNewsId();
     this.title = title;
     this.content = content;
+    this.description = description;
     this.authorId = authorId;
     this.image = image;
     this.createAt = createAt;
@@ -40,6 +43,7 @@ class News {
       newsId: this.newsId,
       title: this.title,
       content: this.content,
+      description: this.description,
       authorId: this.authorId,
       image: this.image,
       createAt: this.createAt,

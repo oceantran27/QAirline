@@ -1,8 +1,7 @@
 import NodeCache from "node-cache";
 import admin from "../database/firebaseAdmin";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-
-const myCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
+import { getCache, userCache } from "../cache/cacheManager";
 const auth = admin.auth();
 const CUSTOMER_COLLECTION_NAME = "customers";
 const ADMIN_COLLECTION_NAME = "admins";
@@ -21,14 +20,14 @@ export const authenticateToken = async (req, res, next) => {
       ? ADMIN_COLLECTION_NAME
       : CUSTOMER_COLLECTION_NAME;
 
-    const cachedUser = myCache.get(token);
+    const decodedToken = await auth.verifyIdToken(token);
+    const userId = decodedToken.uid;
+
+    const cachedUser = getCache(userCache, userId);
     if (cachedUser) {
       req.user = cachedUser;
       return next();
     }
-
-    const decodedToken = await auth.verifyIdToken(token);
-    const userId = decodedToken.uid;
 
     const userDocRef = doc(getFirestore(), userCollectionName, userId);
     const userDoc = await getDoc(userDocRef);
@@ -40,7 +39,7 @@ export const authenticateToken = async (req, res, next) => {
     }
 
     const userData = { uid: userId, ...userDoc.data() };
-    myCache.set(token, userData);
+    userCache.set(userId, userData);
     req.user = userData;
 
     next();
