@@ -9,7 +9,10 @@ import {
   dbUpdateSeatCodesForTickets,
   dbGetTicketsByIds,
 } from "../../services/bookings/ticket.service.js";
-import { dbRemoveFlightTickets } from "../../services/flights/flight.service.js";
+import {
+  dbGetFlightById,
+  dbRemoveFlightTickets,
+} from "../../services/flights/flight.service.js";
 import {
   dbGetCustomerById,
   dbUpdateCustomer,
@@ -57,8 +60,9 @@ export const getTicket = async (req, res) => {
 
 export const getTickets = async (req, res) => {
   try {
-    const ticketIds = req.body;
-    const tickets = await dbGetTicketsByIds(ticketIds);
+    const flightId = req.query.flightId;
+    const flight = await dbGetFlightById(flightId);
+    const tickets = await dbGetTicketsByIds(flight.ticketList);
     return res.status(200).send({
       data: tickets,
     });
