@@ -1,7 +1,14 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { Download} from 'lucide-react';
 import { FlightSection } from '@/components/BookingManagement/flight-section';
 import axios from 'axios';
+import { Button } from '@/components/ui/button';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import ModernFlightTicket from '@/components/checkin/flight-ticket';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export default function FlightBookingPage() {
   const router = useRouter();
@@ -11,7 +18,10 @@ export default function FlightBookingPage() {
   const [returnTicketData, setReturnTicketData] = useState([]);
   const [departureFlightData, setDepartureFlightData] = useState(null);
   const [returnFlightData, setReturnFlightData] = useState(null);
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [error, setError] = useState(null);
+  const ticketRef = useRef(null);
 
   useEffect(() => {
     if (bookingID) {
@@ -24,7 +34,7 @@ export default function FlightBookingPage() {
 
       // Fetch booking data
       axios
-        .get(`http://localhost:3030/api/booking/?id=${bookingID}`, {
+        .get(`${API_BASE_URL}/api/booking/?id=${bookingID}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -37,7 +47,7 @@ export default function FlightBookingPage() {
           if (booking.departureIdTickets && booking.departureIdTickets.length > 0) {
             Promise.all(
               booking.departureIdTickets.map((ticketID) =>
-                axios.get(`http://localhost:3030/api/ticket/?id=${ticketID}`, {
+                axios.get(`${API_BASE_URL}/api/ticket/?id=${ticketID}`, {
                   headers: {
                     Authorization: `Bearer ${token}`,
                   },
@@ -57,7 +67,7 @@ export default function FlightBookingPage() {
           if (booking.returnIdTickets && booking.returnIdTickets.length > 0) {
             Promise.all(
               booking.returnIdTickets.map((ticketID) =>
-                axios.get(`http://localhost:3030/api/ticket/?id=${ticketID}`, {
+                axios.get(`${API_BASE_URL}/api/ticket/?id=${ticketID}`, {
                   headers: {
                     Authorization: `Bearer ${token}`,
                   },
@@ -76,7 +86,7 @@ export default function FlightBookingPage() {
           // Fetch departure flight data
           if (booking.departureFlightId) {
             axios
-              .get(`http://localhost:3030/api/flight/?id=${booking.departureFlightId}`, {
+              .get(`${API_BASE_URL}/api/flight/?id=${booking.departureFlightId}`, {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
@@ -93,7 +103,7 @@ export default function FlightBookingPage() {
           // Fetch return flight data
           if (booking.returnFlightId) {
             axios
-              .get(`http://localhost:3030/api/flight/?id=${booking.returnFlightId}`, {
+              .get(`${API_BASE_URL}/api/flight/?id=${booking.returnFlightId}`, {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
@@ -114,6 +124,35 @@ export default function FlightBookingPage() {
     }
   }, [bookingID]);
 
+  const handleViewTicket = (ticket) => {
+    const translatedClass = ticket.flightClass === 'economy' ? 'Phổ thông' : ticket.flightClass === 'business' ? 'Thương gia' : 'N/A';
+    setSelectedTicket({ ...ticket, flightClass: translatedClass, gate: 6 });
+    setDialogOpen(true);
+  };
+
+  const handleDownload = async (ticketElement) => {
+    try {
+      if (!ticketElement) {
+        console.error("Ticket element not found!");
+        return;
+      }
+  
+      const canvas = await html2canvas(ticketElement);
+      const imgData = canvas.toDataURL("image/png");
+  
+      const pdf = new jsPDF();
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("boarding-pass.pdf");
+    } catch (error) {
+      console.error("Error during download:", error);
+    }
+  };
+  
+  
+
   if (error) {
     return (
       <div className="container mx-auto py-8 max-w-2xl">
@@ -131,7 +170,7 @@ export default function FlightBookingPage() {
     );
   }
 
-    return (
+  return (
     <div className="container mx-auto py-8 max-w-2xl">
       <h1 className="text-3xl font-bold text-primary mb-6">Chi tiết chuyến bay</h1>
       <FlightSection
@@ -146,30 +185,74 @@ export default function FlightBookingPage() {
         passengers={departureTicketData.length}
         paymentMethod="Thẻ tín dụng"
         passengerDetails={departureTicketData.map((ticket) => ({
-            firstName: ticket.ownerData.firstName,
-            lastName: ticket.ownerData.lastName,
-            seatCode: ticket.seatCode,
+          firstName: ticket.ownerData.firstName,
+          lastName: ticket.ownerData.lastName,
+          seatCode: ticket.seatCode,
+          flightClass: ticket.flightClass,
+          onView: () => handleViewTicket(ticket),
+          onDownload: () => handleDownload(ticketRef.current),
         }))}
-        />
+        ticketRef={ticketRef}
+      />
       {returnFlightData && (
         <FlightSection
-            type="return"
-            flightNumber={returnFlightData.flightNumber}
-            departureTime={new Date(returnFlightData.departureTime.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            arrivalTime={new Date(returnFlightData.arrivalTime.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            departureCity={returnFlightData.departureCity}
-            arrivalCity={returnFlightData.arrivalCity}
-            date={new Date(returnFlightData.departureTime.seconds * 1000).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-            duration={`${Math.round((returnFlightData.arrivalTime.seconds - returnFlightData.departureTime.seconds) / 60)} phút`}
-            passengers={returnTicketData.length}
-            paymentMethod="Thẻ tín dụng"
-            passengerDetails={returnTicketData.map((ticket) => ({
+          type="return"
+          flightNumber={returnFlightData.flightNumber}
+          departureTime={new Date(returnFlightData.departureTime.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          arrivalTime={new Date(returnFlightData.arrivalTime.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          departureCity={returnFlightData.departureCity}
+          arrivalCity={returnFlightData.arrivalCity}
+          date={new Date(returnFlightData.departureTime.seconds * 1000).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+          duration={`${Math.round((returnFlightData.arrivalTime.seconds - returnFlightData.departureTime.seconds) / 60)} phút`}
+          passengers={returnTicketData.length}
+          paymentMethod="Thẻ tín dụng"
+          passengerDetails={returnTicketData.map((ticket) => ({
             firstName: ticket.ownerData.firstName,
             lastName: ticket.ownerData.lastName,
             seatCode: ticket.seatCode,
-            }))}
+            flightClass: ticket.flightClass,
+            onView: () => handleViewTicket(ticket),
+            onDownload: () => handleDownload(ticketRef.current),
+          }))}
+          ticketRef={ticketRef}
         />
-        )}
+      )}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogOverlay />
+        <DialogContent>
+          {selectedTicket && (
+            <div ref={ticketRef}>
+              <ModernFlightTicket
+                passengerName={`${selectedTicket.ownerData.firstName} ${selectedTicket.ownerData.lastName}`}
+                flightNumber={departureFlightData.flightNumber}
+                flightDate={new Date(departureFlightData.departureTime.seconds * 1000).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                departureTime={new Date(departureFlightData.departureTime.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                from={departureFlightData.departureCity}
+                to={departureFlightData.arrivalCity}
+                flightClass={selectedTicket.flightClass}
+                boardingTime={new Date(departureFlightData.departureTime.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                gate={6}
+                seat={selectedTicket.seatCode || 'N/A'}
+              />
+            </div>
+          )}
+          <div className="mt-4 flex justify-end gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleDownload(ticketRef.current)} // Truyền đúng tham chiếu
+              className="gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Tải về
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <div className="flex justify-center mt-8">
+        <Button variant="outline" onClick={() => router.push('/')}>Quay trở lại trang chủ</Button>
+      </div>
     </div>
   );
 }

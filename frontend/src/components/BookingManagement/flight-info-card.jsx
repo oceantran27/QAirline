@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Eye, Download } from 'lucide-react'
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Eye, Download } from "lucide-react";
 
-export function FlightInfoCard({ type, passengerName, seatNumber }) {
+export function FlightInfoCard({ passengerName, seatNumber, onView, onDownload }) {
   return (
     <Card className="w-full border-primary/20 shadow-sm hover:shadow-md transition-shadow">
       <CardContent className="p-4">
@@ -17,17 +17,17 @@ export function FlightInfoCard({ type, passengerName, seatNumber }) {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary transition-colors">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-orange transition-colors"
+            onClick={onView} // Kích hoạt sự kiện Xem vé
+          >
             <Eye className="h-4 w-4" />
             <span>Xem vé</span>
-          </Button>
-          <Button variant="outline" size="sm" className="flex items-center gap-2 text-primary hover:text-primary-foreground hover:bg-primary transition-colors">
-            <Download className="h-4 w-4" />
-            <span>Tải vé</span>
           </Button>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-

@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
-import { FlightInfoCard } from './flight-info-card'
-import { FlightDetailCard } from './flight-detail-card'
-import { Button } from '@/components/ui/button'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { useState } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { FlightInfoCard } from './flight-info-card';
+import { FlightDetailCard } from './flight-detail-card';
+import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 export function FlightSection({
   type,
@@ -19,8 +19,9 @@ export function FlightSection({
   passengers,
   paymentMethod,
   passengerDetails,
+  ticketRef,
 }) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="mb-8">
@@ -39,18 +40,14 @@ export function FlightSection({
       
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
-          <Button 
-            variant="outline" 
-            className="w-full flex items-center justify-between py-2 px-4 mt-2 text-primary hover:text-primary-foreground hover:bg-primary transition-colors"
+          <Button
+            variant="outline"
+            className="w-full flex items-center justify-between py-2 px-4 mt-2 text-primary hover:text-primary-foreground hover:bg-orange transition-colors"
           >
             <span className="text-sm font-medium">
               {isOpen ? 'Ẩn thông tin vé' : 'Hiện thông tin vé'}
             </span>
-            {isOpen ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
+            {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="transition-all duration-300 ease-in-out">
@@ -61,11 +58,14 @@ export function FlightSection({
                 type={type}
                 passengerName={`${detail.firstName} ${detail.lastName}`}
                 seatNumber={detail.seatCode || 'Chưa xác định'}
+                onView={detail.onView} 
+                onDownload={detail.onDownload} // Sử dụng hàm đã truyền
+                ticketRef={ticketRef}  // Truyền hàm onDownload vào FlightInfoCard
               />
             ))}
           </div>
         </CollapsibleContent>
       </Collapsible>
     </div>
-  )
+  );
 }
