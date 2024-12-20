@@ -29,16 +29,23 @@ const getRandomInRange = (min, max) =>
 
 const flightDurations = [60, 75, 90, 105, 120, 135, 150];
 
-const generateRandomTimeInDay = (date) => {
-  const randomHours = getRandomInRange(6, 21);
-  const randomMinutes = [0, 15, 30, 45][getRandomInRange(0, 3)];
+const generateRandomTimeInDayAfterNow = (date) => {
+  const now = new Date();
+  let randomHours, randomMinutes;
 
-  const randomTime = new Date(date);
-  randomTime.setHours(randomHours);
-  randomTime.setMinutes(randomMinutes);
-  randomTime.setSeconds(0);
+  do {
+    randomHours = getRandomInRange(6, 21);
+    randomMinutes = [0, 15, 30, 45][getRandomInRange(0, 3)];
 
-  return randomTime;
+    const randomTime = new Date(date);
+    randomTime.setHours(randomHours);
+    randomTime.setMinutes(randomMinutes);
+    randomTime.setSeconds(0);
+
+    if (randomTime > now) {
+      return randomTime;
+    }
+  } while (true);
 };
 
 const generateMockFlight = (departureCity, arrivalCity, flightDate) => {
@@ -54,7 +61,7 @@ const generateMockFlight = (departureCity, arrivalCity, flightDate) => {
   const aircraftType =
     aircraftTypes[getRandomInRange(0, aircraftTypes.length - 1)];
 
-  const departureTime = generateRandomTimeInDay(flightDate);
+  const departureTime = generateRandomTimeInDayAfterNow(flightDate);
 
   const flightDurationInMinutes =
     flightDurations[getRandomInRange(0, flightDurations.length - 1)];

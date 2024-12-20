@@ -67,6 +67,27 @@ export const dbUpdateFlight = async (flightId, updateData) => {
   }
 };
 
+export const dbUpdateFlights = async (flights) => {
+  try {
+    const batch = writeBatch(db);
+
+    flights.forEach((flight) => {
+      const flightRef = doc(db, "flights", flight.flightId);
+      const updatedFlightData = {
+        ...flight,
+        updatedAt: new Date(),
+      };
+
+      batch.update(flightRef, updatedFlightData);
+    });
+
+    await batch.commit();
+    console.log("Flights updated successfully");
+  } catch (error) {
+    throw new Error(`Error updating flights: ${error.message}`);
+  }
+};
+
 export const dbDeleteFlight = async (flightId) => {
   try {
     const docRef = doc(db, FLIGHT_COLLECTION_NAME, flightId);
