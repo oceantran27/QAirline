@@ -15,6 +15,8 @@ export const handleLogin = async (req, res) => {
   try {
     const { email, password, provider } = req.body;
 
+    console.log("ress URL:", req.originalUrl);
+
     let user;
     if (provider === "google") {
       const googleProvider = new GoogleAuthProvider();
