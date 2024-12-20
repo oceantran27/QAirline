@@ -12,58 +12,14 @@ import {
 import { useState, useEffect } from "react";
 import { format, isWithinInterval } from "date-fns";
 
-export default function ActivityHistory({ personalInfo }) {
+export default function ActivityHistory({ activityData }) {
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  const [activityData, setActivityData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState(activityData);
 
   useEffect(() => {
-    const fetchBookingHistory = async () => {
-      if (!personalInfo || !personalInfo.bookingHistory) return;
-
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("Token is missing. Please log in.");
-        return;
-      }
-
-      const bookings = await Promise.all(
-        personalInfo.bookingHistory.map(async (bookingId) => {
-          try {
-            const response = await fetch(
-              `http://localhost:3030/api/booking/?id=${bookingId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-
-            if (!response.ok) {
-              throw new Error("Failed to fetch booking.");
-            }
-
-            const { data } = await response.json();
-            return {
-              date: new Date(data.createdAt.seconds * 1000),
-              type: "Đặt vé máy bay",
-              bookingId: data.bookingId,
-              details: `${data.departureCity} → ${data.arrivalCity}`,
-            };
-          } catch (error) {
-            console.error(`Error fetching booking ${bookingId}:`, error);
-            return null;
-          }
-        })
-      );
-
-      setActivityData(bookings.filter(Boolean));
-      setFilteredData(bookings.filter(Boolean));
-    };
-
-    fetchBookingHistory();
-  }, [personalInfo]);
+    setFilteredData(activityData);
+  }, [activityData]);
 
   const handleSearch = () => {
     if (!fromDate || !toDate) {
@@ -71,9 +27,9 @@ export default function ActivityHistory({ personalInfo }) {
       return;
     }
 
-    const filtered = activityData.filter((activity) => {
-      return isWithinInterval(activity.date, { start: fromDate, end: toDate });
-    });
+    const filtered = activityData.filter((activity) =>
+      isWithinInterval(activity.date, { start: fromDate, end: toDate })
+    );
 
     setFilteredData(filtered);
   };
@@ -86,12 +42,9 @@ export default function ActivityHistory({ personalInfo }) {
 
   return (
     <div className="p-6">
-      {/* Tiêu đề */}
       <h2 className="text-xl font-medium mb-6">Lịch sử hoạt động</h2>
 
-      {/* Bộ lọc ngày và nút tìm kiếm */}
       <div className="flex gap-4 mb-6 items-end">
-        {/* Từ ngày */}
         <div className="flex-1">
           <label className="block text-sm mb-1">Từ ngày:</label>
           <Popover>
@@ -111,7 +64,6 @@ export default function ActivityHistory({ personalInfo }) {
           </Popover>
         </div>
 
-        {/* Đến ngày */}
         <div className="flex-1">
           <label className="block text-sm mb-1">Đến ngày:</label>
           <Popover>
@@ -131,7 +83,6 @@ export default function ActivityHistory({ personalInfo }) {
           </Popover>
         </div>
 
-        {/* Nút tìm kiếm */}
         <Button
           onClick={handleSearch}
           className="h-10 px-6 bg-orange text-white hover:bg-orangeLight transition-all"
@@ -139,7 +90,6 @@ export default function ActivityHistory({ personalInfo }) {
           TÌM KIẾM
         </Button>
 
-        {/* Nút reset */}
         <Button
           onClick={handleReset}
           className="h-10 px-6 bg-gray-300 text-black hover:bg-gray-400 transition-all"
@@ -148,7 +98,6 @@ export default function ActivityHistory({ personalInfo }) {
         </Button>
       </div>
 
-      {/* Bảng lịch sử hoạt động */}
       <Table>
         <TableHeader>
           <TableRow>

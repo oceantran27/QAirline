@@ -5,6 +5,7 @@ import PasswordChange from "@/components/Account-Information/password-change";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { useAccountInfo } from "@/hooks/useAccountInfo";
+import { useEffect, useState } from "react";
 
 export default function AccountPage() {
   const {
@@ -16,6 +17,54 @@ export default function AccountPage() {
     errorMessage,
     handleUpdate,
   } = useAccountInfo();
+
+  const [activityData, setActivityData] = useState([]);
+
+  useEffect(() => {
+    const fetchBookingHistory = async () => {
+      if (!personalInfo || !personalInfo.bookingHistory) return;
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Token is missing. Please log in.");
+        return;
+      }
+
+      const bookings = await Promise.all(
+        personalInfo.bookingHistory.map(async (bookingId) => {
+          try {
+            const response = await fetch(
+              `http://localhost:3030/api/booking/?id=${bookingId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error("Failed to fetch booking.");
+            }
+
+            const { data } = await response.json();
+            return {
+              date: new Date(data.createdAt.seconds * 1000),
+              type: "Đặt vé máy bay",
+              bookingId: data.bookingId,
+              details: `${data.departureCity} → ${data.arrivalCity}`,
+            };
+          } catch (error) {
+            console.error(`Error fetching booking ${bookingId}:`, error);
+            return null;
+          }
+        })
+      );
+
+      setActivityData(bookings.filter(Boolean));
+    };
+
+    fetchBookingHistory();
+  }, [personalInfo]);
 
   if (loading) {
     return (
@@ -119,7 +168,7 @@ export default function AccountPage() {
 
             {/* Tab Lịch sử hoạt động */}
             <TabsContent value="history">
-              <ActivityHistory personalInfo={personalInfo} />
+              <ActivityHistory activityData={activityData} />
             </TabsContent>
 
             {/* Tab Thay đổi mật khẩu */}
