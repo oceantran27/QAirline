@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import SeatSelector from "@/components/checkin/seat-selector";
 import { ArrowLeftRight } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast"; // Import useToast
 
 export function SeatSelectionStep({
   seats,
@@ -12,6 +13,22 @@ export function SeatSelectionStep({
   onSwitchTrip,
   currentTrip,
 }) {
+  const { toast } = useToast(); // Sử dụng useToast
+
+  const handleContinue = () => {
+    const allSelected = passengers.every((customer) => customer.seat);
+    if (!allSelected) {
+      // Thay alert bằng toast
+      toast({
+        title: "Chưa chọn đủ ghế",
+        description: "Vui lòng chọn ghế cho tất cả hành khách trước khi tiếp tục.",
+        variant: "destructive",
+      });
+    } else {
+      onContinue();
+    }
+  };
+
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardContent className="p-6">
@@ -42,14 +59,7 @@ export function SeatSelectionStep({
           </Button>
           <Button
             variant="orange"
-            onClick={() => {
-              const allSelected = passengers.every((customer) => customer.seat);
-              if (!allSelected) {
-                alert("Vui lòng chọn ghế cho tất cả hành khách trước khi tiếp tục.");
-              } else {
-                onContinue();
-              }
-            }}
+            onClick={handleContinue}
           >
             Tiếp Tục
           </Button>
@@ -58,4 +68,3 @@ export function SeatSelectionStep({
     </Card>
   );
 }
-

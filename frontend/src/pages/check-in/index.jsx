@@ -8,6 +8,7 @@ import { PassengerListStep } from "@/components/checkin/passenger-list";
 import { SeatSelectionStep } from "@/components/checkin/seat-selection";
 import { ConfirmationStep } from "@/components/checkin/confirmation-step";
 import LoadingSkeleton from "@/components/checkin/loading-skeleton";
+import { useToast } from "@/hooks/use-toast"; // Thêm import
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const steps = [
@@ -31,9 +32,8 @@ export default function CheckInPage() {
   const [error, setError] = useState(null);
   const router = useRouter();
   const [currentTrip, setCurrentTrip] = useState("departure"); // "departure" hoặc "return"
-  
+  const { toast } = useToast(); // Sử dụng hook useToast
 
-  // Lấy thông tin từ query string
   useEffect(() => {
     if (router.query.bookingID) {
       setBookingID(router.query.bookingID);
@@ -43,7 +43,6 @@ export default function CheckInPage() {
     }
   }, [router.query]);
 
-  // Lấy thông tin booking và các dữ liệu liên quan
   useEffect(() => {
     const fetchBooking = async () => {
       if (!bookingID) return;
@@ -53,13 +52,9 @@ export default function CheckInPage() {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Token không tồn tại.");
 
-        // Fetch booking data
-        const response = await fetch(
-          `${API_BASE_URL}/api/booking/?id=${bookingID}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}/api/booking/?id=${bookingID}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (!response.ok) throw new Error(`Error fetching booking: ${response.statusText}`);
 
         const result = await response.json();
@@ -73,11 +68,12 @@ export default function CheckInPage() {
           await fetchFlightDetails(result.data.departureFlightId, "departure");
         }
 
-        // Fetch passengers for both departure and return tickets
+        // Fetch passengers
         const departurePassengers = await fetchTickets(result.data.departureIdTickets);
-        const returnPassengers = result.data.tripType === "roundTrip"
-          ? await fetchTickets(result.data.returnIdTickets)
-          : [];
+        const returnPassengers =
+          result.data.tripType === "roundTrip"
+            ? await fetchTickets(result.data.returnIdTickets)
+            : [];
 
         setPassengerList({ departure: departurePassengers, return: returnPassengers });
         setSeatData(generateSeatData());
@@ -95,7 +91,7 @@ export default function CheckInPage() {
   const generateSeatData = () => {
     const columns = ["A", "B", "C", "D", "E", "G"];
     const rows = Array.from({ length: 44 }, (_, i) => i + 1);
-  
+
     return rows.flatMap((row) =>
       columns.map((col) => ({
         id: `${row}${col}`,
@@ -108,9 +104,10 @@ export default function CheckInPage() {
       }))
     );
   };
-  
+
   const [departureSeats, setDepartureSeats] = useState(generateSeatData());
   const [returnSeats, setReturnSeats] = useState(generateSeatData());
+
   const fetchFlightDetails = async (flightId, type) => {
     try {
       const token = localStorage.getItem("token");
@@ -161,9 +158,9 @@ export default function CheckInPage() {
         return {
           id: ticketId,
           title: ownerData.gender === "Female" ? "Bà" : "Ông",
-          name: `${ownerData.firstName} ${ownerData.lastName}`,
+          name: `${ownerData.lastName} ${ownerData.firstName} `, 
           type: result.data.flightClass || "Economy",
-          flightId: result.data.flightId, // Để phân biệt chuyến đi và chuyến về
+          flightId: result.data.flightId, 
         };
       });
 
@@ -179,8 +176,7 @@ export default function CheckInPage() {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token không tồn tại.");
-  
-      // Tạo payload từ danh sách hành khách
+
       const payload = [
         ...passengerList.departure.map((passenger) => ({
           ticketId: passenger.id,
@@ -190,14 +186,17 @@ export default function CheckInPage() {
           ticketId: passenger.id,
           seatCode: passenger.seat,
         })),
-      ].filter((entry) => entry.seatCode); // Chỉ lấy ghế đã chọn
-  
+      ].filter((entry) => entry.seatCode);
+
       if (payload.length === 0) {
-        alert("Không có ghế nào được chọn để lưu.");
+        toast({
+          title: "Không có ghế nào được chọn",
+          description: "Vui lòng chọn ghế trước khi lưu.",
+          variant: "destructive"
+        });
         return;
       }
-  
-      // Gọi API PUT
+
       const response = await fetch(`${API_BASE_URL}/api/ticket/update-seats`, {
         method: "PUT",
         headers: {
@@ -206,16 +205,24 @@ export default function CheckInPage() {
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         throw new Error(`API error: ${response.statusText}`);
       }
-  
+
       const result = await response.json();
-      alert("Ghế đã được cập nhật thành công!");
+      toast({
+        title: "Thành công",
+        description: "Ghế đã được cập nhật thành công!",
+        variant: "default"
+      });
     } catch (error) {
       console.error("Error updating seats:", error);
-      alert("Cập nhật ghế thất bại, vui lòng thử lại.");
+      toast({
+        title: "Cập nhật thất bại",
+        description: "Cập nhật ghế thất bại, vui lòng thử lại.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -225,15 +232,14 @@ export default function CheckInPage() {
     const minutes = durationInMinutes % 60;
     return `${hours}h ${minutes}m`;
   };
-  
-  
-  const generateGate = () => `Gate ${Math.floor(Math.random() * 9) + 1}`;
+
+  const generateGate = () => `6`;
 
   const updateSeatsApi = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token không tồn tại.");
-  
+
       const payload = [
         ...passengerList.departure.map((passenger) => ({
           ticketId: passenger.id,
@@ -243,13 +249,17 @@ export default function CheckInPage() {
           ticketId: passenger.id,
           seatCode: passenger.seat,
         })),
-      ].filter((entry) => entry.seatCode); // Chỉ lấy ghế đã chọn
-  
+      ].filter((entry) => entry.seatCode); 
+
       if (payload.length === 0) {
-        alert("Không có ghế nào được chọn để lưu.");
+        toast({
+          title: "Không có ghế",
+          description: "Không có ghế nào được chọn để lưu.",
+          variant: "destructive"
+        });
         return false;
       }
-  
+
       const response = await fetch(`${API_BASE_URL}/api/ticket/update-seats`, {
         method: "PUT",
         headers: {
@@ -258,26 +268,33 @@ export default function CheckInPage() {
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         throw new Error(`API error: ${response.statusText}`);
       }
-  
+
       const result = await response.json();
-      alert("Ghế đã được cập nhật thành công!");
+      toast({
+        title: "Thành công",
+        description: "Ghế đã được cập nhật thành công!",
+        variant: "default"
+      });
       return true;
     } catch (error) {
       console.error("Error updating seats:", error);
-      alert("Cập nhật ghế thất bại, vui lòng thử lại.");
+      toast({
+        title: "Cập nhật thất bại",
+        description: "Cập nhật ghế thất bại, vui lòng thử lại.",
+        variant: "destructive"
+      });
       return false;
     }
   };
 
-  
   const handleContinue = async () => {
     if (currentStep === 2) {
       const isUpdated = await updateSeatsApi();
-      if (!isUpdated) return; // Dừng nếu cập nhật thất bại
+      if (!isUpdated) return; 
     }
     if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
   };
@@ -293,7 +310,7 @@ export default function CheckInPage() {
         passenger.id === customerId ? { ...passenger, seat: seatId } : passenger
       ),
     }));
-  
+
     const updateSeats = (seats) =>
       seats.map((seat) =>
         seat.id === seatId
@@ -303,14 +320,13 @@ export default function CheckInPage() {
           ? { ...seat, type: "available" }
           : seat
       );
-  
+
     if (tripType === "departure") {
       setDepartureSeats((prev) => updateSeats(prev));
     } else {
       setReturnSeats((prev) => updateSeats(prev));
     }
-  };  
-  
+  };
 
   if (loading) {
     return <LoadingSkeleton />;
@@ -351,19 +367,19 @@ export default function CheckInPage() {
         />
       )}
 
-        {currentStep === 3 && (
-          <ConfirmationStep
-            bookingReference={bookingData?.bookingId || "Không rõ"}
-            departurePassengers={passengerList.departure || []}
-            returnPassengers={passengerList.return || []}
-            departureFlight={{
-              flightNumber: departureFlight?.flightNumber || "N/A",
-              date: departureFlight?.date || "N/A",
-              departureTime: departureFlight?.departureTime || "N/A",
-              from: departureFlight?.from || "N/A",
-              to: departureFlight?.to || "N/A",
-              gate: generateGate(),
-            }}
+      {currentStep === 3 && (
+        <ConfirmationStep
+          bookingReference={bookingData?.bookingId || "Không rõ"}
+          departurePassengers={passengerList.departure || []}
+          returnPassengers={passengerList.return || []}
+          departureFlight={{
+            flightNumber: departureFlight?.flightNumber || "N/A",
+            date: departureFlight?.date || "N/A",
+            departureTime: departureFlight?.departureTime || "N/A",
+            from: departureFlight?.from || "N/A",
+            to: departureFlight?.to || "N/A",
+            gate: generateGate(),
+          }}
           returnFlight={
             bookingData?.tripType === "roundTrip"
               ? {
@@ -379,8 +395,7 @@ export default function CheckInPage() {
           onBack={handleBack}
           onHome={() => router.push("/")}
         />
-        )}
-
+      )}
     </div>
   );
 }

@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useState } from "react"; 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 
+/**
+ * Component Filter: Dùng để chọn khoảng ngân sách và giờ khởi hành.
+ * Nhận vào `filters` (state từ useFlightData) và `setFilters` (để cập nhật filters).
+ */
 export function FlightSideFilter({ filters, setFilters }) {
+  // Sử dụng state cục bộ để người dùng điều chỉnh trước khi áp dụng chính thức
   const [localBudget, setLocalBudget] = useState(filters.budget); // Giá vé
   const [localDepartureTime, setLocalDepartureTime] = useState(filters.departureTime); // Giờ khởi hành
 
-  // Hàm cập nhật bộ lọc cục bộ
+  // Hàm áp dụng bộ lọc (khi click "Áp dụng")
   const handleApplyFilters = () => {
     setFilters((prev) => ({
       ...prev,
@@ -18,12 +23,15 @@ export function FlightSideFilter({ filters, setFilters }) {
     }));
   };
 
+  // Hàm thiết lập lại filter về giá trị mặc định
   const handleResetFilters = () => {
-    setLocalBudget([1929000, 6400000]);
-    setLocalDepartureTime("all");
+    const defaultBudget = [1929000, 6400000];
+    const defaultDepartureTime = "all";
+    setLocalBudget(defaultBudget);
+    setLocalDepartureTime(defaultDepartureTime);
     setFilters({
-      budget: [1929000, 6400000],
-      departureTime: "all",
+      budget: defaultBudget,
+      departureTime: defaultDepartureTime,
     });
   };
 
@@ -42,8 +50,8 @@ export function FlightSideFilter({ filters, setFilters }) {
             <span>{localBudget[1].toLocaleString()} VND</span>
           </div>
           <Slider
-            min={1929000}
-            max={6400000}
+            min={100000}
+            max={4000000}
             step={1000}
             value={localBudget}
             onValueChange={setLocalBudget}

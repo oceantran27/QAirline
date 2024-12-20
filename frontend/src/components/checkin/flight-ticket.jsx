@@ -102,11 +102,11 @@ export default function ModernFlightTicket({
       {/* Footer */}
       <div className="bg-white text-zinc-800 p-6 flex justify-between items-center">
         <div>
-          <p className="text-xs uppercase tracking-wide text-zinc-500">Gate</p>
+          <p className="text-xs uppercase tracking-wide text-zinc-500">Cổng</p>
           <p className="text-2xl font-bold mt-1">{gate}</p>
         </div>
         <div>
-          <p className="text-xs uppercase tracking-wide text-zinc-500">Seat</p>
+          <p className="text-xs uppercase tracking-wide text-zinc-500">Chỗ Ngồi</p>
           <p className="text-2xl font-bold mt-1">{seat}</p>
         </div>
         <Barcode className="w-24 h-24 text-zinc-800" />

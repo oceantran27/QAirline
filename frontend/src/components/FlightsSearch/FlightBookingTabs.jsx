@@ -27,6 +27,21 @@ const FlightBookingTabs = () => {
     });
   };
 
+  const handleBookingManagement = () => {
+    if (!bookingID || !email) {
+      alert('Vui lòng nhập mã đặt chỗ và email!');
+      return;
+    }
+
+    router.push({
+      pathname: '/booking-management',
+      query: {
+        bookingID: bookingID,
+        email: email,
+      },
+    });
+  };
+
   const handleCheckIn = () => {
     if (!bookingID || !email) {
       alert('Vui lòng nhập mã đặt chỗ và email!');
@@ -60,7 +75,7 @@ const FlightBookingTabs = () => {
               className="flex items-center gap-2 py-4 text-textColor data-[state=active]:bg-orange data-[state=active]:text-white"
             >
               <TicketIcon className="h-5 w-5" />
-              QUẢN LÝ ĐẶT CHỖ
+              QUẢN LÝ ĐẶT VÉ
             </TabsTrigger>
             <TabsTrigger
               value="checkin"
@@ -79,9 +94,22 @@ const FlightBookingTabs = () => {
           {/* Quản Lý Đặt Chỗ Tab */}
           <TabsContent value="manage" className="mt-2">
             <div className="flex flex-col gap-2">
-              <Input placeholder="Mã đặt chỗ/Số vé điện tử" />
-              <Input placeholder="Hòm thư điện tử" />
-              <Button className="w-full bg-orange">TÌM KIẾM</Button>
+              <Input
+                placeholder="Mã đặt chỗ/Số vé điện tử"
+                value={bookingID}
+                onChange={(e) => setBookingID(e.target.value)}
+              />
+              <Input
+                placeholder="Hòm thư điện tử"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Button
+                className="w-full bg-orange"
+                onClick={handleBookingManagement}
+              >
+                TÌM KIẾM
+              </Button>
             </div>
           </TabsContent>
 
