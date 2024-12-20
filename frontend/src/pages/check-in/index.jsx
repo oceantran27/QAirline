@@ -173,6 +173,50 @@ export default function CheckInPage() {
     }
   };
 
+  const saveSelectedSeats = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token không tồn tại.");
+  
+      // Tạo payload từ danh sách hành khách
+      const payload = [
+        ...passengerList.departure.map((passenger) => ({
+          ticketId: passenger.id,
+          seatCode: passenger.seat,
+        })),
+        ...passengerList.return.map((passenger) => ({
+          ticketId: passenger.id,
+          seatCode: passenger.seat,
+        })),
+      ].filter((entry) => entry.seatCode); // Chỉ lấy ghế đã chọn
+  
+      if (payload.length === 0) {
+        alert("Không có ghế nào được chọn để lưu.");
+        return;
+      }
+  
+      // Gọi API PUT
+      const response = await fetch("http://localhost:3030/api/ticket/update-seats", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+      alert("Ghế đã được cập nhật thành công!");
+    } catch (error) {
+      console.error("Error updating seats:", error);
+      alert("Cập nhật ghế thất bại, vui lòng thử lại.");
+    }
+  };
+
   const calculateDuration = (departure, arrival) => {
     const durationInMinutes = (arrival - departure) / 60;
     const hours = Math.floor(durationInMinutes / 60);
@@ -180,7 +224,72 @@ export default function CheckInPage() {
     return `${hours}h ${minutes}m`;
   };
 
-  const handleContinue = () => {
+  const calculateBoardingTime = (departureTime) => {
+    if (!departureTime) return "N/A"; // Trả về giá trị mặc định nếu không có thời gian
+    try {
+      const departureDate = new Date(departureTime); // Tạo đối tượng Date
+      if (isNaN(departureDate.getTime())) return "N/A"; // Kiểm tra nếu thời gian không hợp lệ
+      departureDate.setMinutes(departureDate.getMinutes() - 30); // Trừ đi 30 phút
+      return departureDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); // Định dạng HH:mm
+    } catch (error) {
+      console.error("Error calculating boarding time:", error);
+      return "N/A";
+    }
+  };
+  
+  
+  const generateGate = () => `Gate ${Math.floor(Math.random() * 9) + 1}`;
+
+  const updateSeatsApi = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token không tồn tại.");
+  
+      const payload = [
+        ...passengerList.departure.map((passenger) => ({
+          ticketId: passenger.id,
+          seatCode: passenger.seat,
+        })),
+        ...passengerList.return.map((passenger) => ({
+          ticketId: passenger.id,
+          seatCode: passenger.seat,
+        })),
+      ].filter((entry) => entry.seatCode); // Chỉ lấy ghế đã chọn
+  
+      if (payload.length === 0) {
+        alert("Không có ghế nào được chọn để lưu.");
+        return false;
+      }
+  
+      const response = await fetch("http://localhost:3030/api/ticket/update-seats", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+      alert("Ghế đã được cập nhật thành công!");
+      return true;
+    } catch (error) {
+      console.error("Error updating seats:", error);
+      alert("Cập nhật ghế thất bại, vui lòng thử lại.");
+      return false;
+    }
+  };
+
+  
+  const handleContinue = async () => {
+    if (currentStep === 2) {
+      const isUpdated = await updateSeatsApi();
+      if (!isUpdated) return; // Dừng nếu cập nhật thất bại
+    }
     if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
   };
 
@@ -254,11 +363,36 @@ export default function CheckInPage() {
       {currentStep === 3 && (
         <ConfirmationStep
           bookingReference={bookingData?.bookingId || "Không rõ"}
-          passenger={passengerList.departure[0]?.name || "Không rõ"}
-          email={email || "Không rõ"}
+          departurePassengers={passengerList.departure || []}
+          returnPassengers={passengerList.return || []}
+          departureFlight={{
+            flightNumber: departureFlight?.flightNumber || "N/A",
+            date: departureFlight?.date || "N/A",
+            departureTime: departureFlight?.departureTime || "N/A",
+            from: departureFlight?.from || "N/A",
+            to: departureFlight?.to || "N/A",
+            boardingTime: calculateBoardingTime(departureFlight?.departureTime), // Không cần || "N/A", đã xử lý trong hàm
+            gate: generateGate(),
+          }}
+          returnFlight={
+            bookingData?.tripType === "roundTrip"
+              ? {
+                  flightNumber: returnFlight?.flightNumber || "N/A",
+                  date: returnFlight?.date || "N/A",
+                  departureTime: returnFlight?.departureTime || "N/A",
+                  from: returnFlight?.from || "N/A",
+                  to: returnFlight?.to || "N/A",
+                  boardingTime: calculateBoardingTime(returnFlight?.departureTime), // Sửa lại thành returnFlight
+                  gate: generateGate(),
+                }
+              : null
+          }
           onBack={handleBack}
+          onHome={() => router.push("/")}
         />
       )}
+
+
     </div>
   );
 }
