@@ -14,6 +14,7 @@ const initWebRoutes = (app) => {
   app.use("/api/booking", bookingRoutes);
   app.use("/api/ticket", ticketRoutes);
   app.use("/api/news", newsRoutes);
+  app.use("/", (req, res) => res.send("Hello World!"));
   return app;
 };
 

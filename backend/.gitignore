@@ -34,3 +34,5 @@ npm-debug.log
 .env
 
 private
+
+serviceAccountKey.json
