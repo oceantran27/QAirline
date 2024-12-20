@@ -27,7 +27,7 @@ export default function LoginForm() {
   
     const handleSubmit = async (e) => {
         e.preventDefault()
-        const loginApi = "http://localhost:3030/api/login/"
+        const loginApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/login/admin`
   
         try {
             const response = await fetch(loginApi, {

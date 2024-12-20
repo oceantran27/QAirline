@@ -31,7 +31,7 @@ export default function PostManagementPage() {
   )
 
   const getAllNews = async () => {
-    const getAllNewsApi = "http://localhost:3030/api/news/all" 
+    const getAllNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/all`
 
     try {
         const response = await fetch(getAllNewsApi, {
@@ -55,7 +55,7 @@ export default function PostManagementPage() {
 
   const handleDeletePost = async (id) => {
     setPosts(posts.filter(post => post.id !== id))
-    const deleteNewsApi = "http://localhost:3030/api/news/delete?" 
+    const deleteNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/delete?`
 
     try {
         const response = await fetch(deleteNewsApi + 

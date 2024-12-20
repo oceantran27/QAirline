@@ -33,7 +33,7 @@ export default function AdminProfilePage() {
   }, [router])
 
   const getAdmin = async () => {
-    const getAdminApi = "http://localhost:3030/api/admin" 
+    const getAdminApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin`
 
     try {
         const response = await fetch(getAdminApi, {
@@ -56,7 +56,7 @@ export default function AdminProfilePage() {
 
   const handleUpdateAdmin = async (e) => {
     e.preventDefault()
-    const updateAdminApi = "http://localhost:3030/api/admin/update" 
+    const updateAdminApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/update`
 
     try {
         const response = await fetch(updateAdminApi, {
@@ -78,7 +78,7 @@ export default function AdminProfilePage() {
   }
 
   const handleDeleteAccount = async () => {
-    const deleteAdminApi = "http://localhost:3030/api/admin/delete" 
+    const deleteAdminApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/delete`
 
     try {
         const response = await fetch(deleteAdminApi, {
@@ -101,7 +101,7 @@ export default function AdminProfilePage() {
 
   const handlePasswordReset = async (e) => {
     e.preventDefault()
-    const changePasswordApi = "http://localhost:3030/api/customer/change-password?" 
+    const changePasswordApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/customer/change-password?`
 
     if (newPassword !== confirmPassword) {
       alert("Error: Passwords do not match.")

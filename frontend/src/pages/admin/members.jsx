@@ -33,7 +33,7 @@ export default function AdminManagementPage() {
   })
 
   const registerAdmin = async () => {
-    const registerAdminApi = "http://localhost:3030/api/admin/new" 
+    const registerAdminApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/new`
 
     try {
         const response = await fetch(registerAdminApi, {
@@ -56,7 +56,7 @@ export default function AdminManagementPage() {
   }
 
   const getAllAdmins = async () => {
-    const getAllAdminsApi = "http://localhost:3030/api/admin/all" 
+    const getAllAdminsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/all`
 
     try {
         const response = await fetch(getAllAdminsApi, {
