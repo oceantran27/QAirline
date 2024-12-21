@@ -5,6 +5,7 @@ import { FeaturedNewsCard, NewsCard } from '@/components/NewsCards';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { useRouter } from 'next/router';
+import { toast } from '@/hooks/use-toast';
 
 // Định nghĩa responsive
 const responsive = {
@@ -61,7 +62,11 @@ const NewsPage = () => {
       }}))
 
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Lỗi",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
   return (

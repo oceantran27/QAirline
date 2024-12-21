@@ -54,7 +54,11 @@ export default function PostManagementPage() {
         "createdAt": a.createAt.seconds ? new Date(a.createAt.seconds*1000).toISOString().split('T')[0] : a.createAt.split('T')[0]
       }}))
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Lỗi",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 
@@ -77,7 +81,11 @@ export default function PostManagementPage() {
             throw new Error("Send request failed")
         }
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Xóa bài viết không thành công",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
 
     toast({

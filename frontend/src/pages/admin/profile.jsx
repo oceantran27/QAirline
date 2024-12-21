@@ -8,6 +8,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useRouter } from 'next/router'
+import { toast } from '@/hooks/use-toast'
 
 export default function AdminProfilePage() {
   const router = useRouter()
@@ -50,7 +51,11 @@ export default function AdminProfilePage() {
         const res = await response.json()
         setAdmin({"uid": res.data.uid, "firstName": res.data.firstName, "lastName": res.data.lastName, "email": res.data.email})
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Lỗi",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 
@@ -73,7 +78,11 @@ export default function AdminProfilePage() {
         }
         getAdmin()
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Cập nhật thông tin thất bại",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 
@@ -92,7 +101,11 @@ export default function AdminProfilePage() {
             throw new Error("Send request failed")
         }
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Xóa tài khoản thất bại",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
 
     localStorage.removeItem('token')
@@ -104,7 +117,11 @@ export default function AdminProfilePage() {
     const changePasswordApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/customer/change-password?`
 
     if (newPassword !== confirmPassword) {
-      alert("Error: Passwords do not match.")
+      toast({
+        title: "Lỗi",
+        description: "Mật khẩu được gõ lại không chính xác!",
+        variant: "destructive"
+      })
       return
     }
 
@@ -125,10 +142,17 @@ export default function AdminProfilePage() {
         if (!response.ok) {
             throw new Error("Send request failed")
         }
-        alert("Đổi mật khẩu thành công. Vui lòng đăng nhập lại")
+        toast({
+          title: "Thành công",
+          description: "Đổi mật khẩu thành công. Vui lòng đăng nhập lại",
+        })
         router.push("/admin")
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Đổi mật khẩu thất bại",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 

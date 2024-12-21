@@ -20,6 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useRouter } from "next/router"
+import { toast } from "@/hooks/use-toast"
 
 export default function CustomerManagement() {
     const router = useRouter()
@@ -74,8 +75,11 @@ export default function CustomerManagement() {
                 "createdAt": a.createdAt.seconds ? new Date(a.createdAt.seconds*1000).toISOString().split('T')[0] : a.createdAt.split('T')[0],
               }}))
         } catch (error) {
-            alert("Đã xảy ra lối, vui lòng thử lại")
-            console.log(error)
+          toast({
+            title: "Lỗi",
+            description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+            variant: "destructive"
+          })
         }
       }
 

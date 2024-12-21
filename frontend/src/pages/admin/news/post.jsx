@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { useRouter } from 'next/router';
+import { toast } from '@/hooks/use-toast';
 
 export default function NewsPostingPage() {
   const router = useRouter()
@@ -21,7 +22,7 @@ export default function NewsPostingPage() {
       getNewsById()
     }
     getAuthor()
-  })
+  }, [router])
 
   const [author, setAuthor] = useState('test');
   const [title, setTitle] = useState('');
@@ -32,6 +33,7 @@ export default function NewsPostingPage() {
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
+    console.log(file)
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -66,7 +68,11 @@ export default function NewsPostingPage() {
         const res = await response.json()
         setAuthor(`${res.data.firstName} ${res.data.lastName}`)
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Lỗi",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 
@@ -78,9 +84,9 @@ export default function NewsPostingPage() {
     formData.append("description", description)
     formData.append("content", content)
     formData.append("authorId", author)
-    const createNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/create`
-  
-    try {
+    if(!id){
+      const createNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/create`
+      try {
         const response = await fetch(createNewsApi, {
             method: "POST",
             headers: {
@@ -92,11 +98,45 @@ export default function NewsPostingPage() {
         if (!response.ok) {
             throw new Error("failed")
         }
-        alert("success")
-    } catch (error) {
-        alert("Đã xảy ra lỗi, vui lòng thử lại")
-        console.log(error)
+        toast({
+          title: "Thành công",
+          description: "Bài viết đã được đăng",
+        })
+        } catch (error) {
+          toast({
+            title: "Đăng bài viết thất bại",
+            description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+            variant: "destructive"
+          })
+        } 
     }
+    else {
+      const updateNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/update?id=${id}`
+      try {
+        const response = await fetch(updateNewsApi, {
+          method: "PUT",
+          headers: {
+              "admin": "true",
+              "authorization": "Bearer " + localStorage.getItem("token")
+          }, 
+          body: formData
+      })
+      if (!response.ok) {
+          throw new Error("failed")
+      }
+      toast({
+        title: "Thành công",
+        description: "Bài viết đã được chỉnh sửa",
+      })
+      } catch (error) {
+        toast({
+          title: "Chỉnh sửa bài viết thất bại",
+          description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+          variant: "destructive"
+        })
+      } 
+    }
+
     setTitle('');
     setDescription('');
     setContent('');
@@ -124,11 +164,29 @@ export default function NewsPostingPage() {
         setDescription(res.data.description)
         setContent(res.data.content)
         setPreviewImage(res.data.image)
+        getFileFromUrl(res.data.image, 'image.jpg').then(file => {
+          // console.log('File:', file);
+          setImage(file)
+        }).catch(error => {
+          console.error('Error:', error);
+        });
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
-        console.log(error)
+      toast({
+        title: "Lỗi",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   };
+
+  async function getFileFromUrl(url, fileName) {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
+    }
+    const blob = await response.blob(); 
+    return new File([blob], fileName, { type: blob.type }); 
+  }
 
   return (
     <div className="container mx-auto pt-10 pl-64">
