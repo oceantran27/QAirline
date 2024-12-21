@@ -76,6 +76,10 @@ export default function AdminProfilePage() {
         if (!response.ok) {
             throw new Error("Send request failed")
         }
+        toast({
+          title: "Thành công",
+          description: "Thông tin của bạn đã được cập nhật",
+        })
         getAdmin()
     } catch (error) {
       toast({
