@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Calendar, Clock, Plane, CreditCard, Users } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { PassengerInfoDialog } from "./PassengerInfoDialog";
+import { PassengerInfoDialog } from "@/components/PassengerInfoDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFlightConfirmation } from "@/hooks/useFlightConfirmation";
 
