@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -26,7 +26,10 @@ export default function CheckInPage() {
   const [bookingData, setBookingData] = useState(null);
   const [departureFlight, setDepartureFlight] = useState(null);
   const [returnFlight, setReturnFlight] = useState(null);
-  const [passengerList, setPassengerList] = useState({ departure: [], return: [] });
+  const [passengerList, setPassengerList] = useState({
+    departure: [],
+    return: [],
+  });
   const [seatData, setSeatData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -52,10 +55,14 @@ export default function CheckInPage() {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Token không tồn tại.");
 
-        const response = await fetch(`${API_BASE_URL}/api/booking/?id=${bookingID}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!response.ok) throw new Error(`Error fetching booking: ${response.statusText}`);
+        const response = await fetch(
+          `${API_BASE_URL}/api/booking/?id=${bookingID}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (!response.ok)
+          throw new Error(`Error fetching booking: ${response.statusText}`);
 
         const result = await response.json();
         setBookingData(result.data);
@@ -69,13 +76,18 @@ export default function CheckInPage() {
         }
 
         // Fetch passengers
-        const departurePassengers = await fetchTickets(result.data.departureIdTickets);
+        const departurePassengers = await fetchTickets(
+          result.data.departureIdTickets
+        );
         const returnPassengers =
           result.data.tripType === "roundTrip"
             ? await fetchTickets(result.data.returnIdTickets)
             : [];
 
-        setPassengerList({ departure: departurePassengers, return: returnPassengers });
+        setPassengerList({
+          departure: departurePassengers,
+          return: returnPassengers,
+        });
         setSeatData(generateSeatData());
       } catch (err) {
         console.error(err);
@@ -111,10 +123,14 @@ export default function CheckInPage() {
   const fetchFlightDetails = async (flightId, type) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/flight/?id=${flightId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) throw new Error(`Error fetching flight: ${response.statusText}`);
+      const response = await fetch(
+        `${API_BASE_URL}/api/flight/?id=${flightId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!response.ok)
+        throw new Error(`Error fetching flight: ${response.statusText}`);
 
       const result = await response.json();
       const flightData = result.data;
@@ -122,17 +138,26 @@ export default function CheckInPage() {
       const formattedFlight = {
         from: flightData.departureCity,
         to: flightData.arrivalCity,
-        departureTime: new Date(flightData.departureTime.seconds * 1000).toLocaleTimeString([], {
+        departureTime: new Date(
+          flightData.departureTime.seconds * 1000
+        ).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
-        arrivalTime: new Date(flightData.arrivalTime.seconds * 1000).toLocaleTimeString([], {
+        arrivalTime: new Date(
+          flightData.arrivalTime.seconds * 1000
+        ).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
-        duration: calculateDuration(flightData.departureTime.seconds, flightData.arrivalTime.seconds),
+        duration: calculateDuration(
+          flightData.departureTime.seconds,
+          flightData.arrivalTime.seconds
+        ),
         flightNumber: flightData.flightNumber,
-        date: new Date(flightData.departureTime.seconds * 1000).toLocaleDateString("vi-VN"),
+        date: new Date(
+          flightData.departureTime.seconds * 1000
+        ).toLocaleDateString("vi-VN"),
       };
 
       if (type === "departure") setDepartureFlight(formattedFlight);
@@ -147,10 +172,16 @@ export default function CheckInPage() {
     try {
       const token = localStorage.getItem("token");
       const ticketPromises = ticketIds.map(async (ticketId) => {
-        const response = await fetch(`${API_BASE_URL}/api/ticket/?id=${ticketId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!response.ok) throw new Error(`Error fetching ticket ${ticketId}: ${response.statusText}`);
+        const response = await fetch(
+          `${API_BASE_URL}/api/ticket/?id=${ticketId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (!response.ok)
+          throw new Error(
+            `Error fetching ticket ${ticketId}: ${response.statusText}`
+          );
 
         const result = await response.json();
         const ownerData = result.data.ownerData;
@@ -158,9 +189,9 @@ export default function CheckInPage() {
         return {
           id: ticketId,
           title: ownerData.gender === "Female" ? "Bà" : "Ông",
-          name: `${ownerData.lastName} ${ownerData.firstName} `, 
+          name: `${ownerData.lastName} ${ownerData.firstName} `,
           type: result.data.flightClass || "Economy",
-          flightId: result.data.flightId, 
+          flightId: result.data.flightId,
         };
       });
 
@@ -192,7 +223,7 @@ export default function CheckInPage() {
         toast({
           title: "Không có ghế nào được chọn",
           description: "Vui lòng chọn ghế trước khi lưu.",
-          variant: "destructive"
+          variant: "destructive",
         });
         return;
       }
@@ -214,14 +245,14 @@ export default function CheckInPage() {
       toast({
         title: "Thành công",
         description: "Ghế đã được cập nhật thành công!",
-        variant: "default"
+        variant: "default",
       });
     } catch (error) {
       console.error("Error updating seats:", error);
       toast({
         title: "Cập nhật thất bại",
         description: "Cập nhật ghế thất bại, vui lòng thử lại.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -249,13 +280,13 @@ export default function CheckInPage() {
           ticketId: passenger.id,
           seatCode: passenger.seat,
         })),
-      ].filter((entry) => entry.seatCode); 
+      ].filter((entry) => entry.seatCode);
 
       if (payload.length === 0) {
         toast({
           title: "Không có ghế",
           description: "Không có ghế nào được chọn để lưu.",
-          variant: "destructive"
+          variant: "destructive",
         });
         return false;
       }
@@ -277,7 +308,7 @@ export default function CheckInPage() {
       toast({
         title: "Thành công",
         description: "Ghế đã được cập nhật thành công!",
-        variant: "default"
+        variant: "default",
       });
       return true;
     } catch (error) {
@@ -285,7 +316,7 @@ export default function CheckInPage() {
       toast({
         title: "Cập nhật thất bại",
         description: "Cập nhật ghế thất bại, vui lòng thử lại.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return false;
     }
@@ -294,7 +325,7 @@ export default function CheckInPage() {
   const handleContinue = async () => {
     if (currentStep === 2) {
       const isUpdated = await updateSeatsApi();
-      if (!isUpdated) return; 
+      if (!isUpdated) return;
     }
     if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
   };
@@ -331,7 +362,10 @@ export default function CheckInPage() {
   if (loading) {
     return <LoadingSkeleton />;
   }
-  if (error) return <div className="container mx-auto p-6 text-red-600">Lỗi: {error}</div>;
+  if (error)
+    return (
+      <div className="container mx-auto p-6 text-red-600">Lỗi: {error}</div>
+    );
 
   return (
     <div className="container mx-auto p-6">
@@ -340,7 +374,9 @@ export default function CheckInPage() {
       {currentStep === 0 && (
         <FlightDetailsStep
           flightDetails={departureFlight}
-          returnFlightDetails={bookingData?.tripType === "roundTrip" ? returnFlight : null}
+          returnFlightDetails={
+            bookingData?.tripType === "roundTrip" ? returnFlight : null
+          }
           passengerCount={passengerList.departure.length}
           onContinue={handleContinue}
           onCancel={() => window.history.back()}
@@ -357,12 +393,20 @@ export default function CheckInPage() {
 
       {currentStep === 2 && (
         <SeatSelectionStep
-          passengers={currentTrip === "departure" ? passengerList.departure : passengerList.return}
+          passengers={
+            currentTrip === "departure"
+              ? passengerList.departure
+              : passengerList.return
+          }
           seats={currentTrip === "departure" ? departureSeats : returnSeats}
-          onSeatSelect={(seatId, customerId) => handleSeatSelect(seatId, customerId, currentTrip)}
+          onSeatSelect={(seatId, customerId) =>
+            handleSeatSelect(seatId, customerId, currentTrip)
+          }
           onContinue={handleContinue}
           onBack={handleBack}
-          onSwitchTrip={() => setCurrentTrip(currentTrip === "departure" ? "return" : "departure")}
+          onSwitchTrip={() =>
+            setCurrentTrip(currentTrip === "departure" ? "return" : "departure")
+          }
           currentTrip={currentTrip}
         />
       )}

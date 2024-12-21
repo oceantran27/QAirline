@@ -1,9 +1,9 @@
 // pages/index.js
 import React from "react";
-import Hero from "../components/Hero";
+import Hero from "../components/hero";
 import Destination from "../components/destination";
 import About from "../components/about";
-import Review from "../components/Rrview";
+import Review from "../components/review";
 import Benefit from "../components/benefit";
 import AOS from "aos";
 import "aos/dist/aos.css";

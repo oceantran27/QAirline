@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import SeatSelector from "@components/checkin/Seat-selector";
+import SeatSelector from "@components/checkin/seat-selector";
 import { ArrowLeftRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast"; // Import useToast
 
