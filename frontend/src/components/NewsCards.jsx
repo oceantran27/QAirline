@@ -97,7 +97,7 @@ NewsCard.displayName = "NewsCard";
 // FeaturedNewsCard Component
 const FeaturedNewsCard = React.forwardRef(
   (
-    { slug, image, title, description, date, category, buttonText, className, ...props },
+    { slug, image, title, description, date, buttonText, className, ...props },
     ref
   ) => (
     <div
@@ -117,9 +117,6 @@ const FeaturedNewsCard = React.forwardRef(
       </Link>
       <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
       <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-        <span className="inline-block bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold mb-2">
-          {category}
-        </span>
         <Link href={`/news/${slug}`}>
           <h3 className="text-2xl md:text-4xl font-bold mb-2 leading-tight">
             {title}

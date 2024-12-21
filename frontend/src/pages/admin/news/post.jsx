@@ -22,6 +22,11 @@ export default function NewsPostingPage() {
     }
   }, [id])
 
+  useEffect(() => {
+    getAuthor()
+  }, [router])
+
+  const [author, setAuthor] = useState('test');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
@@ -46,13 +51,36 @@ export default function NewsPostingPage() {
     multiple: false
   });
 
+  const getAuthor = async () => {
+    const getAdminApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin`
+
+    try {
+        const response = await fetch(getAdminApi, {
+            method: "GET",
+            headers: {
+                "admin": "true",
+                "authorization": "Bearer " + localStorage.getItem("token")
+            }, 
+        })
+        if (!response.ok) {
+            throw new Error("Send request failed")
+        }
+
+        const res = await response.json()
+        setAuthor(`${res.data.firstName} ${res.data.lastName}`)
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData  = new FormData();
-    formData.append("news-image", image)
+    if(image) formData.append("news-image", image)
     formData.append("title", title)
+    formData.append("description", description)
     formData.append("content", content)
-    formData.append("authorId", "test")
+    formData.append("authorId", author)
     const createNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/create`
   
     try {
@@ -72,11 +100,11 @@ export default function NewsPostingPage() {
         alert("Đã xảy ra lỗi, vui lòng thử lại")
         console.log(error)
     }
-    // console.log({ title, description, content, image });
     setTitle('');
     setDescription('');
     setContent('');
     setImage(null);
+    router.push("/admin/news")
   };
 
   const getNewsById = async () => {
@@ -155,7 +183,7 @@ export default function NewsPostingPage() {
             >
               <input {...getInputProps()} />
               {isDragActive ? (
-                <p>Drop the image here ...</p>
+                <p>Thả hình ảnh tại đây ...</p>
               ) : (
                 <p>Kéo và thả hình ảnh vào đây hoặc click để chọn ảnh</p>
               )}
@@ -170,7 +198,7 @@ export default function NewsPostingPage() {
             <CardTitle>Xem Trước</CardTitle>
           </CardHeader>
           <CardContent>
-            {image && (
+            {previewImage && (
               <div className="mb-4">
                 <Image
                   src={previewImage}

@@ -4,7 +4,7 @@ import { Plane, Users, RefreshCw } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const flightStatusData = [
   { name: 'Chưa Cất Cánh', value: 3 },
@@ -23,13 +23,37 @@ const COLORS = ['#3b82f6', '#ef4444', '#84cc16', '#06b6d4']
 
 export default function Dashboard() {
   const router = useRouter()
+  const [data, setData] = useState({
+    "flights": 0,
+    "tickets": 0,
+    "revenue": 0
+  })
 
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) {
       router.push('/admin')
     }
+    getStatistic()
   }, [router])
+
+  const getStatistic = async () => {
+    const getStatisticApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/statistic`
+
+    try {
+        const response = await fetch(getStatisticApi, {
+            method: "GET",
+        })
+        if (!response.ok) {
+            throw new Error("Send request failed")
+        }
+
+        const res = await response.json()
+        setData(res.data)
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+    }
+  }
 
   return (
     <div className="container mx-auto pt-10 pl-64 space-y-6">
@@ -42,8 +66,8 @@ export default function Dashboard() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-muted-foreground">Tổng số máy bay</p>
-              <h3 className="text-2xl font-bold">4</h3>
-              <p className="text-sm text-green-600 mt-1">Lorem ipsum dolor sit</p>
+              <h3 className="text-2xl font-bold">42</h3>
+              <p className="text-sm text-green-600 mt-1">Hiện có trong đội bay</p>
             </div>
           </CardContent>
         </Card>
@@ -56,8 +80,8 @@ export default function Dashboard() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-muted-foreground">Tổng số chuyến bay</p>
-              <h3 className="text-2xl font-bold">8</h3>
-              <p className="text-sm text-muted-foreground mt-1">Lorem ipsum dolor sit</p>
+              <h3 className="text-2xl font-bold">{data.flights}</h3>
+              <p className="text-sm text-muted-foreground mt-1">Hoàn thành trong tuần này</p>
             </div>
           </CardContent>
         </Card>
@@ -70,8 +94,8 @@ export default function Dashboard() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-muted-foreground">Số vé đã được đặt</p>
-              <h3 className="text-2xl font-bold">40</h3>
-              <p className="text-sm text-muted-foreground mt-1">Lorem ipsum dolor sit</p>
+              <h3 className="text-2xl font-bold">{data.tickets}</h3>
+              <p className="text-sm text-muted-foreground mt-1">Trong tuần này</p>
             </div>
           </CardContent>
         </Card>
@@ -84,8 +108,8 @@ export default function Dashboard() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-muted-foreground">Tổng doanh thu</p>
-              <h3 className="text-2xl font-bold">236.968$</h3>
-              <p className="text-sm text-green-600 mt-1">Lorem ipsum dolor sit</p>
+              <h3 className="text-2xl font-bold">{`${(data.revenue/25454).toFixed(2)} $`}</h3>
+              <p className="text-sm text-green-600 mt-1">Từ vé máy bay trong tháng</p>
             </div>
           </CardContent>
         </Card>
