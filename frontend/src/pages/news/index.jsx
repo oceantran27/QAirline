@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FeaturedNewsCard, NewsCard } from '@/components/NewsCards';
-import latestNews from '../../data/latestNews.json';
-import featuredArticles from '../../data/featuredArticles.json';
+// import latestNews from '../../data/latestNews.json';
+// import featuredArticles from '../../data/featuredArticles.json';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
+import { useRouter } from 'next/router';
 
 // Định nghĩa responsive
 const responsive = {
@@ -26,49 +27,86 @@ const responsive = {
 };
 
 const NewsPage = () => {
-    return (
-      <main className="container mx-auto px-4 py-8">
-        {/* Phần Bài Viết Nổi Bật */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
-            Bài viết nổi bật
-          </h2>
-          <Carousel
-            swipeable
-            draggable={false}
-            showDots
-            responsive={responsive}
-            ssr={true}
-            infinite
-            autoPlay
-            autoPlaySpeed={5000}
-            keyBoardControl
-            customTransition="all .5s"
-            transitionDuration={500}
-            containerClass="carousel-container"
-            removeArrowOnDeviceType={['tablet', 'mobile']}
-            dotListClass="custom-dot-list-style"
-            itemClass="carousel-item-padding-40-px"
-          >
-            {featuredArticles.map((article, index) => (
-              <FeaturedNewsCard key={index} {...article} />
-            ))}
-          </Carousel>
-        </section>
+  const router = useRouter();
+  const [featuredArticles, setFeaturedArticles] = useState([])
+
+  useEffect(() => {
+    getAllNews()
+  }, [router]);
+
+  const getAllNews = async () => {
+    const getAllNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/all`
+
+    try {
+      const response = await fetch(getAllNewsApi, {
+          method: "GET",
+      })
+      if (!response.ok) {
+          throw new Error("Send request failed")
+      }
+
+      const res = await response.json()
+
+      setFeaturedArticles(res.data.map(a => {return {
+        "slug": a.newsId, 
+        "image": a.image,
+        "title": a.title, 
+        "description": a.description, 
+        "author": a.authorId, 
+        "content": a.content,
+        "date": a.createAt.seconds ? new Date(a.createAt.seconds*1000).toISOString().split('T')[0] : a.createAt.split('T')[0],
+        "buttonText": "Đọc thêm",
+        "authorTitle": "Nhà báo",
+        "authorImage": "/AvatarUser/no_avatar.jpg",
+      }}))
+
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+    }
+  }
+  return (
+    <main className="container mx-auto px-4 py-8">
+      {/* Phần Bài Viết Nổi Bật */}
+      <section className="mb-12">
+        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
+          Bài viết nổi bật
+        </h2>
+        <Carousel
+          swipeable
+          draggable={false}
+          showDots
+          responsive={responsive}
+          ssr={true}
+          infinite
+          autoPlay
+          autoPlaySpeed={5000}
+          keyBoardControl
+          customTransition="all .5s"
+          transitionDuration={500}
+          containerClass="carousel-container"
+          removeArrowOnDeviceType={['tablet', 'mobile']}
+          dotListClass="custom-dot-list-style"
+          itemClass="carousel-item-padding-40-px"
+        >
+          {featuredArticles.map((article, index) => (
+            <FeaturedNewsCard key={index} {...article} />
+          ))}
+        </Carousel>
+      </section>
+
+      {/* Phần Tin Tức Mới Nhất */}
+      <section>
+        <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
+          Tin tức mới nhất
+        </h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {featuredArticles.map((article, index) => (
+            <NewsCard key={index} {...article} />
+          ))}
+        </div>
+      </section>
+    </main>
+  );
+};
   
-        {/* Phần Tin Tức Mới Nhất */}
-        <section>
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
-            Tin tức mới nhất
-          </h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {latestNews.map((article, index) => (
-              <NewsCard key={index} {...article} />
-            ))}
-          </div>
-        </section>
-      </main>
-    );
-  };
-  
-  export default NewsPage;
+export default NewsPage;

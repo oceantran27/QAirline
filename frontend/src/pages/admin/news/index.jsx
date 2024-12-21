@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { toast } from "@/hooks/use-toast"
-import { Search, Plus, Edit, Trash2 } from 'lucide-react'
+import { Search, Plus, Edit, Trash2, Eye } from 'lucide-react'
 import { useRouter } from 'next/router'
 
 export default function PostManagementPage() {
@@ -34,22 +34,27 @@ export default function PostManagementPage() {
     const getAllNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/all`
 
     try {
-        const response = await fetch(getAllNewsApi, {
-            method: "GET",
-            headers: {
-                "admin": "true",
-                "authorization": "Bearer " + localStorage.getItem("token")
-            }, 
-        })
-        if (!response.ok) {
-            throw new Error("Send request failed")
-        }
+      const response = await fetch(getAllNewsApi, {
+          method: "GET",
+          headers: {
+              "admin": "true",
+              "authorization": "Bearer " + localStorage.getItem("token")
+          }, 
+      })
+      if (!response.ok) {
+          throw new Error("Send request failed")
+      }
 
-        const res = await response.json()
-        setPosts(res.data.map(a => {return {"id": a.newsId, "title": a.title, "author": a.authorId, "createdAt": new Date(a.createAt.seconds*1000).toISOString().split('T')[0]}}))
+      const res = await response.json()
+      setPosts(res.data.map(a => {return {
+        "id": a.newsId, 
+        "title": a.title, 
+        "author": a.authorId, 
+        "description": a.description, 
+        "createdAt": a.createAt.seconds ? new Date(a.createAt.seconds*1000).toISOString().split('T')[0] : a.createAt.split('T')[0]
+      }}))
     } catch (error) {
         alert("Đã xảy ra lối, vui lòng thử lại")
-        console.log(error)
     }
   }
 
@@ -128,23 +133,26 @@ export default function PostManagementPage() {
                     </Button>
                   </Link>
 
+                  <Button variant="outline" size="icon" as="a">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="outline" size="icon">
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" color="#ff0000"/>
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure you want to delete this post?</AlertDialogTitle>
+                        <AlertDialogTitle>Bạn có chắc chắn muốn xóa bài viết này không?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete the post
-                          and remove it from our servers.
+                            Sẽ không thể khôi phục bài viết một khi đã được xóa. Tất cả những dữ liệu liên quan tới bài viết đều sẽ không được lưu lại.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDeletePost(post.id)}>Delete</AlertDialogAction>
+                        <AlertDialogCancel>Thoát</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDeletePost(post.id)} className="bg-red-600 hover:bg-red-500">Xóa</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
