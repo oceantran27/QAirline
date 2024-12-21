@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 // import latestNews from '../../data/latestNews.json';
 // import featuredArticles from '../../data/featuredArticles.json';
 import Head from 'next/head';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   ArrowLeftIcon,
@@ -36,7 +36,7 @@ const NewsDetail = () => {
         .slice(0, 3);
       setRelatedArticles(related);
     }
-  }, [featuredArticles]);
+  }, [featuredArticles, slug]);
 
   const getAllNews = async () => {
     const getAllNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/all`
@@ -112,9 +112,11 @@ const NewsDetail = () => {
           </header>
 
           {/* Ảnh */}
-          <img
+          <Image
             src={article.image}
             alt={article.title}
+            width={800}
+            height={400}
             className="w-full h-[300px] md:h-[400px] object-cover rounded-lg mb-8"
           />
 
