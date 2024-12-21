@@ -1,14 +1,10 @@
 class Admin {
-  generateAdminId() {
-    const timestamp = Date.now();
-    return `AD#${timestamp}`;
-  }
   constructor({
     uid = null,
     firstName,
     lastName,
     email,
-    phoneNumber = null || this.generateAdminId(),
+    phoneNumber = null,
     dateOfBirth = new Date("1990-01-01"),
     gender = "male",
     address = null,
@@ -16,7 +12,6 @@ class Admin {
     createdAt = null,
     updatedAt = null,
   }) {
-    // Public attributes
     this.uid = uid;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -28,6 +23,22 @@ class Admin {
     this.role = role;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+  }
+
+  toObject() {
+    return {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      email: this.email,
+      uid: this.uid,
+      phoneNumber: this.phoneNumber,
+      dateOfBirth: this.dateOfBirth,
+      gender: this.gender,
+      address: this.address,
+      role: this.role,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
   }
 }
 

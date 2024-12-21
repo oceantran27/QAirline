@@ -27,18 +27,12 @@ export const dbCreateAdmin = async ({
 }) => {
   try {
     const userPromise = auth.createUser({ email, password });
-    const newAdmin = {
-      firstName,
-      lastName,
-      email,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
 
     const user = await userPromise;
+    const newAdmin = new Admin({ email, firstName, lastName });
     newAdmin.uid = user.uid;
     const adminRef = doc(db, ADMIN_COLLECTION_NAME, user.uid);
-    await setDoc(adminRef, newAdmin);
+    await setDoc(adminRef, newAdmin.toObject());
 
     return newAdmin;
   } catch (error) {

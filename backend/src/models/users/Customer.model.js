@@ -16,12 +16,12 @@ class Customer {
     createdAt = null,
     updatedAt = null,
   }) {
-    //private
+    // Private
     this.passportNumber = passportNumber;
     this.loyaltyPoints = loyaltyPoints;
-    this.bookingHistory = bookingHistory; // elementType: bookingID;
+    this.bookingHistory = bookingHistory; // elementType: bookingID
 
-    //public
+    // Public
     this.uid = uid;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -34,6 +34,26 @@ class Customer {
     this.role = role;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+  }
+
+  toObject() {
+    return {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      email: this.email,
+      identificationNumber: this.identificationNumber,
+      uid: this.uid,
+      phoneNumber: this.phoneNumber,
+      dateOfBirth: this.dateOfBirth,
+      gender: this.gender,
+      address: this.address,
+      role: this.role,
+      passportNumber: this.passportNumber,
+      loyaltyPoints: this.loyaltyPoints,
+      bookingHistory: this.bookingHistory,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
   }
 }
 
