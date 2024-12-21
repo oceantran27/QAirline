@@ -1,10 +1,23 @@
 import React from "react";
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Calendar, Clock, Plane, CreditCard, Users } from 'lucide-react';
+import {
+  CheckCircle,
+  Calendar,
+  Clock,
+  Plane,
+  CreditCard,
+  Users,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { PassengerInfoDialog } from "./PassengerInfoDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import PassengerInfoDialog from "./PassengerInfoDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFlightConfirmation } from "@/hooks/useFlightConfirmation";
 
@@ -106,7 +119,7 @@ function LoadingSkeleton() {
           <Skeleton className="h-6 w-2/3" />
         </div>
       </div>
-      
+
       <div className="max-w-4xl mx-auto">
         <Card className="shadow-lg border-orange">
           <CardContent className="p-4 sm:p-6">
@@ -127,7 +140,7 @@ function LoadingSkeleton() {
                 <Skeleton className="h-6 w-24" />
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8">
               <div className="flex items-center space-x-3">
                 <Skeleton className="h-5 w-5 rounded-full" />
@@ -183,16 +196,39 @@ function HeroSection() {
   return (
     <div className="relative h-[200px] w-full bg-orange">
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4 text-center">
-        <h1 className="text-2xl md:text-3xl font-bold mb-2">Lựa chọn của quý hành khách</h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">
+          Lựa chọn của quý hành khách
+        </h1>
       </div>
     </div>
   );
 }
 
-function FlightDetails({ tripType, departureFlightData, returnFlightData, departureOption, returnOption, formatTime, calculateFlightDuration, passengerCount }) {
+function FlightDetails({
+  tripType,
+  departureFlightData,
+  returnFlightData,
+  departureOption,
+  returnOption,
+  formatTime,
+  calculateFlightDuration,
+  passengerCount,
+}) {
   const flightCards = [
-    { flightData: departureFlightData, option: departureOption, title: "Chi tiết chuyến bay đi" },
-    ...(tripType === "roundTrip" ? [{ flightData: returnFlightData, option: returnOption, title: "Chi tiết chuyến bay về" }] : []),
+    {
+      flightData: departureFlightData,
+      option: departureOption,
+      title: "Chi tiết chuyến bay đi",
+    },
+    ...(tripType === "roundTrip"
+      ? [
+          {
+            flightData: returnFlightData,
+            option: returnOption,
+            title: "Chi tiết chuyến bay về",
+          },
+        ]
+      : []),
   ].filter(Boolean);
 
   return (
@@ -210,13 +246,24 @@ function FlightDetails({ tripType, departureFlightData, returnFlightData, depart
   );
 }
 
-function FlightCard({ flightData, option, title, formatTime, calculateFlightDuration, passengerCount }) {
+function FlightCard({
+  flightData,
+  option,
+  title,
+  formatTime,
+  calculateFlightDuration,
+  passengerCount,
+}) {
   return (
     <Card className="shadow-lg border-orange mb-4">
       <CardContent className="p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2 sm:mb-0">{title}</h2>
-          <span className="text-sm text-gray-500">{flightData.flightNumber}</span>
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2 sm:mb-0">
+            {title}
+          </h2>
+          <span className="text-sm text-gray-500">
+            {flightData.flightNumber}
+          </span>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
@@ -242,8 +289,12 @@ function FlightCard({ flightData, option, title, formatTime, calculateFlightDura
             </div>
           </div>
           <div className="text-right">
-            <div className="text-sm font-medium text-gray-500">{option.name}</div>
-            <div className="text-xl sm:text-2xl font-bold text-orange">{option.price.toLocaleString()} VND</div>
+            <div className="text-sm font-medium text-gray-500">
+              {option.name}
+            </div>
+            <div className="text-xl sm:text-2xl font-bold text-orange">
+              {option.price.toLocaleString()} VND
+            </div>
           </div>
         </div>
 
@@ -253,7 +304,9 @@ function FlightCard({ flightData, option, title, formatTime, calculateFlightDura
             <div>
               <div className="text-sm text-gray-500">Ngày khởi hành</div>
               <div className="font-medium">
-                {new Date(flightData.departureTime.seconds * 1000).toLocaleDateString("vi-VN")}
+                {new Date(
+                  flightData.departureTime.seconds * 1000
+                ).toLocaleDateString("vi-VN")}
               </div>
             </div>
           </div>
@@ -262,7 +315,10 @@ function FlightCard({ flightData, option, title, formatTime, calculateFlightDura
             <div>
               <div className="text-sm text-gray-500">Thời gian bay</div>
               <div className="font-medium">
-                {calculateFlightDuration(flightData.departureTime.seconds, flightData.arrivalTime.seconds)}
+                {calculateFlightDuration(
+                  flightData.departureTime.seconds,
+                  flightData.arrivalTime.seconds
+                )}
               </div>
             </div>
           </div>
@@ -270,13 +326,17 @@ function FlightCard({ flightData, option, title, formatTime, calculateFlightDura
             <Users className="text-orange flex-shrink-0" />
             <div>
               <div className="text-sm text-gray-500">Hành khách</div>
-              <div className="font-medium">{passengerCount} Người lớn/ Trẻ em</div>
+              <div className="font-medium">
+                {passengerCount} Người lớn/ Trẻ em
+              </div>
             </div>
           </div>
           <div className="flex items-center space-x-3">
             <CreditCard className="text-orange flex-shrink-0" />
             <div>
-              <div className="text-sm text-gray-500">Phương thức thanh toán</div>
+              <div className="text-sm text-gray-500">
+                Phương thức thanh toán
+              </div>
               <div className="font-medium">Thẻ tín dụng</div>
             </div>
           </div>
@@ -286,7 +346,12 @@ function FlightCard({ flightData, option, title, formatTime, calculateFlightDura
   );
 }
 
-function TotalAndActions({ totalAmount, isPassengerInfoFilled, handleOpenPassengerInfo, handleConfirmPayment }) {
+function TotalAndActions({
+  totalAmount,
+  isPassengerInfoFilled,
+  handleOpenPassengerInfo,
+  handleConfirmPayment,
+}) {
   return (
     <div className="border-t border-gray-200 pt-6 pb-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -309,7 +374,9 @@ function TotalAndActions({ totalAmount, isPassengerInfoFilled, handleOpenPasseng
           </Button>
           <Button
             variant="orange"
-            className={`w-full sm:w-auto text-white ${!isPassengerInfoFilled && "opacity-50 cursor-not-allowed"}`}
+            className={`w-full sm:w-auto text-white ${
+              !isPassengerInfoFilled && "opacity-50 cursor-not-allowed"
+            }`}
             onClick={handleConfirmPayment}
             disabled={!isPassengerInfoFilled}
           >
@@ -321,7 +388,12 @@ function TotalAndActions({ totalAmount, isPassengerInfoFilled, handleOpenPasseng
   );
 }
 
-function ConfirmationDialog({ isOpen, onOpenChange, bookingId, handleReturnHome }) {
+function ConfirmationDialog({
+  isOpen,
+  onOpenChange,
+  bookingId,
+  handleReturnHome,
+}) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -334,7 +406,9 @@ function ConfirmationDialog({ isOpen, onOpenChange, bookingId, handleReturnHome 
           >
             <CheckCircle className="w-16 h-16 text-green-500" />
           </motion.div>
-          <DialogTitle className="text-2xl font-bold text-center">Thanh toán thành công</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-center">
+            Thanh toán thành công
+          </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center space-y-4 text-center">
           <DialogDescription className="text-lg">
@@ -347,7 +421,7 @@ function ConfirmationDialog({ isOpen, onOpenChange, bookingId, handleReturnHome 
             Cảm ơn quý khách đã đặt vé. Chúc quý khách có chuyến bay vui vẻ!
           </DialogDescription>
         </div>
-        <Button 
+        <Button
           onClick={handleReturnHome}
           variant="orange"
           className="w-full mt-6 text-white transition-colors duration-200"
@@ -358,4 +432,3 @@ function ConfirmationDialog({ isOpen, onOpenChange, bookingId, handleReturnHome 
     </Dialog>
   );
 }
-
