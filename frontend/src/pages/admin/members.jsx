@@ -76,8 +76,13 @@ export default function AdminManagementPage() {
         }
 
         const res = await response.json()
-        setAdmins(res.data.map(a => {return {"name": `${a.firstName} ${a.lastName}`, "email": a.email, "createdAt": new Date(a.createdAt.seconds*1000).toISOString().split('T')[0]}}))
+        setAdmins(res.data.map(a => {return {
+          "name": `${a.firstName} ${a.lastName}`, 
+          "email": a.email, 
+          "createdAt": a.createdAt ? new Date(a.createdAt.seconds*1000).toISOString().split('T')[0] : '2024-12-21'
+        }}))
     } catch (error) {
+      console.log(error)
       toast({
         title: "Lỗi",
         description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
