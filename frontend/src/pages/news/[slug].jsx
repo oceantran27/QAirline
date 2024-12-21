@@ -11,6 +11,7 @@ import {
   ArrowLeftIcon,
   CalendarIcon,
 } from "lucide-react";
+import { toast } from '@/hooks/use-toast';
 
 const NewsDetail = () => {
   const router = useRouter();
@@ -65,7 +66,11 @@ const NewsDetail = () => {
       }}))
 
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Lỗi",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 

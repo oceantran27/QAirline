@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { useRouter } from 'next/router'
+import { toast } from '@/hooks/use-toast'
 
 export default function FlightManagement() {
   const router = useRouter()
@@ -53,14 +54,23 @@ export default function FlightManagement() {
             "ticketList": a.ticketList,
           }}))
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Lỗi",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 
   const getTickets = async (flight) => {
     const getTicketsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ticket/list?flightId=${flight.id}`
 
-    try { 
+    if(flight.ticketList.length === 0){
+      setTickets([])
+      setIsDialogOpen(true)
+    }
+    else {
+      try { 
         const response = await fetch(getTicketsApi, {
             method: "GET",
             headers: {
@@ -86,9 +96,13 @@ export default function FlightManagement() {
           "createdAt": a.createdAt
         }}))
         setIsDialogOpen(true)
-    } catch (error) {
-        setTickets([])
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      } catch (error) {
+        toast({
+          title: "Tải thông tin vé không thành công",
+          description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+          variant: "destructive"
+        })
+      }
     }
   }
 
@@ -108,10 +122,17 @@ export default function FlightManagement() {
         }
 
         const res = await response.json()
-        alert("Xóa thành công")
+        toast({
+          title: "Thành công",
+          description: "Vé đã được hủy thành công",
+        })
         setIsDialogOpen(false)
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Hủy vé Không thành công",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { toast } from '@/hooks/use-toast'
 
 const flightStatusData = [
   { name: 'Chưa Cất Cánh', value: 3 },
@@ -51,7 +52,11 @@ export default function Dashboard() {
         const res = await response.json()
         setData(res.data)
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Lỗi",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 

@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Plus } from 'lucide-react'
+import { toast } from '@/hooks/use-toast'
 
 export default function AdminManagementPage() {
   const router = useRouter()
@@ -51,7 +52,11 @@ export default function AdminManagementPage() {
 
         getAllAdmins()
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Lỗi",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 
@@ -73,7 +78,11 @@ export default function AdminManagementPage() {
         const res = await response.json()
         setAdmins(res.data.map(a => {return {"name": `${a.firstName} ${a.lastName}`, "email": a.email, "createdAt": new Date(a.createdAt.seconds*1000).toISOString().split('T')[0]}}))
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Lỗi",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 
@@ -125,7 +134,10 @@ export default function AdminManagementPage() {
       })
 
       setIsDialogOpen(false)
-      alert("success")
+      toast({
+        title: "Thành công",
+        description: "Quản trị viên mới đã được thêm vào danh sách",
+      })
     }
   }
 

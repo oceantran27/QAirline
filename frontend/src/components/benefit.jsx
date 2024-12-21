@@ -11,6 +11,7 @@ import Link from "next/link";
 import { HomeNewsCard } from "./NewsCards";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 // Import `Carousel` với dynamic import để tắt SSR
 const Carousel = dynamic(() => import("react-multi-carousel"), { ssr: false });
 
@@ -34,11 +35,12 @@ const responsive = {
 };
 
 export default function Benefit() {
+  const router = useRouter()
   const [featuredArticles, setFeaturedArticles] = useState([])
 
   useEffect(() => {
     getAllNews()
-  });
+  }, [router]);
 
   const getAllNews = async () => {
     const getAllNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/all`

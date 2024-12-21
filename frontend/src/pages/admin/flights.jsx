@@ -65,7 +65,11 @@ export default function ScheduledFlights() {
             "status": a.status
           }}))
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Lỗi",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
   }
 
@@ -88,7 +92,11 @@ export default function ScheduledFlights() {
             throw new Error("Send request failed")
         }
     } catch (error) {
-        alert("Đã xảy ra lối, vui lòng thử lại")
+      toast({
+        title: "Hủy chuyến không thành công",
+        description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
+        variant: "destructive"
+      })
     }
 
     toast({
