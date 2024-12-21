@@ -20,11 +20,8 @@ export default function NewsPostingPage() {
     if(id) {
       getNewsById()
     }
-  }, [id])
-
-  useEffect(() => {
     getAuthor()
-  }, [router])
+  })
 
   const [author, setAuthor] = useState('test');
   const [title, setTitle] = useState('');
