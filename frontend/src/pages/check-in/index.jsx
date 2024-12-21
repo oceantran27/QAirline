@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { StepIndicator } from "@/components/checkin/step-indicator";
 import { FlightDetailsStep } from "@/components/checkin/flight-details";
@@ -98,7 +98,7 @@ export default function CheckInPage() {
     };
 
     fetchBooking();
-  }, [bookingID]);
+  }, [bookingID, fetchFlightDetails]);
 
   const generateSeatData = () => {
     const columns = ["A", "B", "C", "D", "E", "G"];
@@ -120,7 +120,7 @@ export default function CheckInPage() {
   const [departureSeats, setDepartureSeats] = useState(generateSeatData());
   const [returnSeats, setReturnSeats] = useState(generateSeatData());
 
-  const fetchFlightDetails = async (flightId, type) => {
+  const fetchFlightDetails = useCallback(async (flightId, type) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
@@ -166,7 +166,7 @@ export default function CheckInPage() {
       console.error(err);
       setError(`Error fetching ${type} flight: ${err.message}`);
     }
-  };
+  }, []);
 
   const fetchTickets = async (ticketIds) => {
     try {

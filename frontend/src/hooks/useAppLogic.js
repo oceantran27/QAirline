@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export const useAppLogic = (router) => {
   const [showScrollTopButton, setShowScrollTopButton] = useState(false);
@@ -27,19 +27,24 @@ export const useAppLogic = (router) => {
     requestAnimationFrame(animation);
   };
 
-  const handleScrollToClick = (event) => {
-    if (event.target.tagName === "A" || event.target.tagName === "BUTTON") return;
+  // Sử dụng useCallback để đảm bảo handleScrollToClick không bị tái tạo lại mỗi lần re-render
+  const handleScrollToClick = useCallback(
+    (event) => {
+      if (event.target.tagName === "A" || event.target.tagName === "BUTTON")
+        return;
 
-    const mouseY = event.clientY;
-    const threshold = 200;
+      const mouseY = event.clientY;
+      const threshold = 200;
 
-    if (Math.abs(mouseY - lastClickY) < threshold) return;
+      if (Math.abs(mouseY - lastClickY) < threshold) return;
 
-    setLastClickY(mouseY);
+      setLastClickY(mouseY);
 
-    const targetPosition = window.scrollY + mouseY - window.innerHeight / 2;
-    smoothScroll(targetPosition, 800);
-  };
+      const targetPosition = window.scrollY + mouseY - window.innerHeight / 2;
+      smoothScroll(targetPosition, 800);
+    },
+    [lastClickY] // Đưa `lastClickY` vào dependencies của useCallback
+  );
 
   const handleScrollToTop = () => {
     smoothScroll(0, 800);
@@ -64,7 +69,7 @@ export const useAppLogic = (router) => {
       document.removeEventListener("click", handleScrollToClick);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastClickY, router.events]);
+  }, [handleScrollToClick, router.events]); // Đưa handleScrollToClick vào dependencies của useEffect
 
   return {
     showScrollTopButton,

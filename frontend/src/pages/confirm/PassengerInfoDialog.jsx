@@ -1,12 +1,28 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { format, parse, isValid, isAfter, isBefore } from "date-fns";
 
-export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFilled }) {
+export default function PassengerInfoDialog({
+  isOpen,
+  onClose,
+  passengerCount,
+  onInfoFilled,
+}) {
   // State để lưu thông tin hành khách
   const [passengers, setPassengers] = useState(
     Array.from({ length: passengerCount }, () => ({
@@ -57,26 +73,31 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
   // Hàm xử lý khi nhấn submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const newErrors = passengers.map((passenger) => {
       const passengerErrors = {};
-      if (!passenger.idNumber) passengerErrors.idNumber = "Vui lòng nhập số CCCD.";
+      if (!passenger.idNumber)
+        passengerErrors.idNumber = "Vui lòng nhập số CCCD.";
       if (!passenger.lastName) passengerErrors.lastName = "Vui lòng nhập họ.";
-      if (!passenger.firstName) passengerErrors.firstName = "Vui lòng nhập tên.";
-      if (!passenger.phoneNumber) passengerErrors.phoneNumber = "Vui lòng nhập số điện thoại.";
+      if (!passenger.firstName)
+        passengerErrors.firstName = "Vui lòng nhập tên.";
+      if (!passenger.phoneNumber)
+        passengerErrors.phoneNumber = "Vui lòng nhập số điện thoại.";
       if (!passenger.birthDate) {
         passengerErrors.birthDate = "Vui lòng nhập ngày sinh.";
       } else {
         const birthDateError = validateBirthDate(passenger.birthDate);
         if (birthDateError) passengerErrors.birthDate = birthDateError;
       }
-      if (!passenger.gender) passengerErrors.gender = "Vui lòng chọn giới tính.";
-      if (!passenger.address) passengerErrors.address = "Vui lòng nhập địa chỉ.";
+      if (!passenger.gender)
+        passengerErrors.gender = "Vui lòng chọn giới tính.";
+      if (!passenger.address)
+        passengerErrors.address = "Vui lòng nhập địa chỉ.";
       return passengerErrors;
     });
-  
+
     setErrors(newErrors);
-  
+
     // Kiểm tra nếu không có lỗi
     if (newErrors.every((error) => Object.keys(error).length === 0)) {
       try {
@@ -88,7 +109,6 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
       }
     }
   };
-  
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -98,8 +118,13 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           {passengers.map((passenger, index) => (
-            <div key={index} className="mb-6 p-4 border border-gray-200 rounded-lg">
-              <h3 className="text-lg font-semibold mb-4">Hành khách {index + 1}</h3>
+            <div
+              key={index}
+              className="mb-6 p-4 border border-gray-200 rounded-lg"
+            >
+              <h3 className="text-lg font-semibold mb-4">
+                Hành khách {index + 1}
+              </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Số CCCD */}
@@ -108,10 +133,16 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
                   <Input
                     id={`idNumber-${index}`}
                     value={passenger.idNumber}
-                    onChange={(e) => handleInputChange(index, "idNumber", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange(index, "idNumber", e.target.value)
+                    }
                     placeholder="123456789012"
                   />
-                  {errors[index]?.idNumber && <p className="text-red-500 text-sm">{errors[index].idNumber}</p>}
+                  {errors[index]?.idNumber && (
+                    <p className="text-red-500 text-sm">
+                      {errors[index].idNumber}
+                    </p>
+                  )}
                 </div>
 
                 {/* Họ */}
@@ -120,10 +151,16 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
                   <Input
                     id={`lastName-${index}`}
                     value={passenger.lastName}
-                    onChange={(e) => handleInputChange(index, "lastName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange(index, "lastName", e.target.value)
+                    }
                     placeholder="Nguyen"
                   />
-                  {errors[index]?.lastName && <p className="text-red-500 text-sm">{errors[index].lastName}</p>}
+                  {errors[index]?.lastName && (
+                    <p className="text-red-500 text-sm">
+                      {errors[index].lastName}
+                    </p>
+                  )}
                 </div>
 
                 {/* Tên */}
@@ -132,10 +169,16 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
                   <Input
                     id={`firstName-${index}`}
                     value={passenger.firstName}
-                    onChange={(e) => handleInputChange(index, "firstName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange(index, "firstName", e.target.value)
+                    }
                     placeholder="Van A"
                   />
-                  {errors[index]?.firstName && <p className="text-red-500 text-sm">{errors[index].firstName}</p>}
+                  {errors[index]?.firstName && (
+                    <p className="text-red-500 text-sm">
+                      {errors[index].firstName}
+                    </p>
+                  )}
                 </div>
 
                 {/* Số điện thoại */}
@@ -144,22 +187,36 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
                   <Input
                     id={`phoneNumber-${index}`}
                     value={passenger.phoneNumber}
-                    onChange={(e) => handleInputChange(index, "phoneNumber", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange(index, "phoneNumber", e.target.value)
+                    }
                     placeholder="0987654321"
                   />
-                  {errors[index]?.phoneNumber && <p className="text-red-500 text-sm">{errors[index].phoneNumber}</p>}
+                  {errors[index]?.phoneNumber && (
+                    <p className="text-red-500 text-sm">
+                      {errors[index].phoneNumber}
+                    </p>
+                  )}
                 </div>
 
                 {/* Ngày sinh */}
                 <div>
-                  <Label htmlFor={`birthDate-${index}`}>Ngày sinh (dd/MM/yyyy)</Label>
+                  <Label htmlFor={`birthDate-${index}`}>
+                    Ngày sinh (dd/MM/yyyy)
+                  </Label>
                   <Input
                     id={`birthDate-${index}`}
                     value={passenger.birthDate}
-                    onChange={(e) => handleInputChange(index, "birthDate", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange(index, "birthDate", e.target.value)
+                    }
                     placeholder="01/01/1990"
                   />
-                  {errors[index]?.birthDate && <p className="text-red-500 text-sm">{errors[index].birthDate}</p>}
+                  {errors[index]?.birthDate && (
+                    <p className="text-red-500 text-sm">
+                      {errors[index].birthDate}
+                    </p>
+                  )}
                 </div>
 
                 {/* Giới tính */}
@@ -167,7 +224,9 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
                   <Label htmlFor={`gender-${index}`}>Giới tính</Label>
                   <Select
                     value={passenger.gender}
-                    onValueChange={(value) => handleInputChange(index, "gender", value)}
+                    onValueChange={(value) =>
+                      handleInputChange(index, "gender", value)
+                    }
                   >
                     <SelectTrigger id={`gender-${index}`}>
                       <SelectValue placeholder="Chọn giới tính" />
@@ -178,7 +237,11 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
                       <SelectItem value="Other">Khác</SelectItem>
                     </SelectContent>
                   </Select>
-                  {errors[index]?.gender && <p className="text-red-500 text-sm">{errors[index].gender}</p>}
+                  {errors[index]?.gender && (
+                    <p className="text-red-500 text-sm">
+                      {errors[index].gender}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -188,10 +251,16 @@ export function PassengerInfoDialog({ isOpen, onClose, passengerCount, onInfoFil
                 <Input
                   id={`address-${index}`}
                   value={passenger.address}
-                  onChange={(e) => handleInputChange(index, "address", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange(index, "address", e.target.value)
+                  }
                   placeholder="123 Nguyen Trai, Ha Noi"
                 />
-                {errors[index]?.address && <p className="text-red-500 text-sm">{errors[index].address}</p>}
+                {errors[index]?.address && (
+                  <p className="text-red-500 text-sm">
+                    {errors[index].address}
+                  </p>
+                )}
               </div>
             </div>
           ))}

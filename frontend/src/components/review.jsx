@@ -63,16 +63,18 @@ const Card = ({ image, name, position, review, rating }) => (
   </div>
 );
 
-
-
 export default function Review() {
   return (
     <div>
       <div data-aos="fade-up">
         <div className="bg-[url(/bg-plane-bird.png)] bg-contain bg-bottom bg-no-repeat relative z-10">
           <div className="max-w-[1200px] xl:px-0 px-6 mx-auto text-center pt-16">
-            <p className="text-orange text-xl pb-2">Đánh giá từ những người đã trải nghiệm</p>
-            <h4 className="lg:text-[50px] text-[30px] font-bold">Họ đã nói những gì về chúng tôi?</h4>
+            <p className="text-orange text-xl pb-2">
+              Đánh giá từ những người đã trải nghiệm
+            </p>
+            <h4 className="lg:text-[50px] text-[30px] font-bold">
+              Họ đã nói những gì về chúng tôi?
+            </h4>
             <div className="pt-10">
               <Carousel
                 partialVisible={false}
@@ -123,7 +125,6 @@ export default function Review() {
                   review="I have leg pain, so I often need to choose a comfortable seat. Your service is excellent! You booked me a ticket on a large, wide-body plane, and I’m very satisfied!"
                   rating={5}
                 />
-                
               </Carousel>
             </div>
           </div>
@@ -144,19 +145,39 @@ export default function Review() {
             itemClass="carouselItem"
           >
             <div className="h-[298px] relative overflow-hidden">
-              <img src="/post-1.jpg" className="rounded-lg h-full hoverImg" />
+              <img
+                src="/post-1.jpg"
+                alt="Post 1"
+                className="rounded-lg h-full hoverImg"
+              />
             </div>
             <div className="h-[298px] relative overflow-hidden">
-              <img src="/post-2.jpg" className="rounded-lg h-full hoverImg" />
+              <img
+                src="/post-2.jpg"
+                alt="Post 2"
+                className="rounded-lg h-full hoverImg"
+              />
             </div>
             <div className="h-[298px] relative overflow-hidden">
-              <img src="/post-3.jpg" className="rounded-lg h-full hoverImg" />
+              <img
+                src="/post-3.jpg"
+                alt="Post 3"
+                className="rounded-lg h-full hoverImg"
+              />
             </div>
             <div className="h-[298px] relative overflow-hidden">
-              <img src="/post-4.jpg" className="rounded-lg h-full hoverImg" />
+              <img
+                src="/post-4.jpg"
+                alt="Post 4"
+                className="rounded-lg h-full hoverImg"
+              />
             </div>
             <div className="h-[298px] relative overflow-hidden">
-              <img src="/post-5.jpg" className="rounded-lg h-full hoverImg" />
+              <img
+                src="/post-5.jpg"
+                alt="Post 5"
+                className="rounded-lg h-full hoverImg"
+              />
             </div>
           </Carousel>
         </div>
