@@ -26,7 +26,13 @@ router.post(
   createNews
 );
 router.post("/bulk-create", authenticateToken, checkAdminRole, createBulkNews);
-router.put("/update", authenticateToken, checkAdminRole, updateNews);
+router.put(
+  "/update",
+  authenticateToken,
+  checkAdminRole,
+  upload.single("news-image"),
+  updateNews
+);
 router.delete("/delete", authenticateToken, checkAdminRole, deleteNews);
 router.get("/status", getNewsByStatus);
 
