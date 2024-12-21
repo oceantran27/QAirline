@@ -41,6 +41,8 @@ export default function Benefit() {
         <Image 
           src="/bg-2.jpg" 
           alt="Background" 
+          width={1000}
+          height={900}
           className="h-full" 
         />
         </div>

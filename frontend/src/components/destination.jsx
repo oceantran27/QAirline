@@ -81,7 +81,14 @@ const FlightCard = ({ flight }) => (
 
 const Places = ({ image, country, tours, column }) => (
   <div className={`relative overflow-hidden h-[270px] lg:col-span-${column}`}>
-    <img src={image} alt="" className="h-full w-full rounded-lg object-cover hoverImg" />
+    <Image 
+      src={image} 
+      alt="" 
+      className="h-full w-full rounded-lg object-cover hoverImg" 
+      layout="responsive" 
+      width={500} 
+      height={500} 
+    />
     <p className="text-3xl text-white font-semibold absolute left-6 bottom-6">{country}</p>
     <button className="bg-orange text-white rounded-lg px-4 py-2 text-xs font-semibold absolute top-4 right-4">
       {tours} TOURS
@@ -92,7 +99,14 @@ const Places = ({ image, country, tours, column }) => (
 const Tours = ({ image, name }) => (
   <div>
     <div className="relative overflow-hidden rounded-t-lg">
-      <img src={image} alt="" className="rounded-t-lg hoverImg" />
+    <Image 
+      src={image} 
+      alt="" 
+      className="rounded-t-lg hoverImg" 
+      layout="intrinsic" 
+      width={500} 
+      height={300} 
+    />
       <div className="absolute flex justify-between top-4 left-4 right-4">
         <p className="bg-[#14B0C3] rounded-md px-4 py-1 text-white text-sm">FEATURED</p>
         <button className="bg-[#00000066] p-1 rounded-md">
@@ -185,7 +199,13 @@ export default function Destination() {
       <div className="bg-[url(/bg-line-bird.png)] bg-no-repeat py-16">
         <div className="lg:flex max-w-[1200px] px-6 mx-auto gap-8">
           <div className="relative lg:w-1/2" data-aos="fade-down">
-            <img src="/image-6.jpg" alt="" />
+          <Image 
+            src="/image-6.jpg" 
+            alt="Descriptive text" 
+            width={500} 
+            height={500} 
+            priority 
+          />
             <div className="absolute top-4 right-4">
               <p className="text-orange font-semibold text-[80px]">10%</p>
               <p className="text-[50px] font-semibold -mt-8">Giảm giá</p>
