@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const useFlightSearch = () => {
   const [fromAirport, setFromAirport] = useState('');
@@ -15,22 +15,20 @@ const useFlightSearch = () => {
     setToAirport(fromAirport);
   };
 
-  const validateInputs = () => {
+  // Bọc validateInputs trong useCallback
+  const validateInputs = useCallback(() => {
     const newErrors = {};
 
-    // Kiểm tra các trường bắt buộc
     if (!fromAirport) newErrors.fromAirport = 'Vui lòng chọn sân bay đi';
     if (!toAirport) newErrors.toAirport = 'Vui lòng chọn sân bay đến';
     if (!departureDate) newErrors.departureDate = 'Vui lòng chọn ngày đi';
     if (tripType === 'roundTrip' && !returnDate)
       newErrors.returnDate = 'Vui lòng chọn ngày về';
 
-    // Kiểm tra số lượng hành khách
     if (!Number.isInteger(passengerCount) || passengerCount < 1) {
       newErrors.passengerCount = 'Số lượng hành khách không hợp lệ';
     }
 
-    // Kiểm tra logic ngày tháng
     if (departureDate && returnDate) {
       if (new Date(returnDate) <= new Date(departureDate)) {
         newErrors.returnDate = 'Ngày về phải sau ngày đi';
@@ -39,10 +37,6 @@ const useFlightSearch = () => {
 
     setErrors(newErrors);
     setIsValid(Object.keys(newErrors).length === 0);
-  };
-
-  useEffect(() => {
-    validateInputs();
   }, [
     fromAirport,
     toAirport,
@@ -50,7 +44,14 @@ const useFlightSearch = () => {
     returnDate,
     passengerCount,
     tripType,
+    setErrors,
+    setIsValid,
   ]);
+
+  // Gọi hàm validateInputs bên trong useEffect
+  useEffect(() => {
+    validateInputs();
+  }, [validateInputs]);
 
   return {
     fromAirport,

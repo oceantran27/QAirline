@@ -125,28 +125,6 @@ const NewsDetail = () => {
             {article.content}
           </div>
 
-          {/* Hành động */}
-          {/* <div className="flex flex-wrap items-center justify-between mb-8">
-            <div className="flex flex-wrap items-center space-x-0 space-y-2 md:space-x-4 md:space-y-0 mb-4 md:mb-0">
-              <Button variant="outline" size="sm" className="w-full md:w-auto">
-                <ThumbsUpIcon className="h-4 w-4 mr-2" />
-                Thích
-              </Button>
-              <Button variant="outline" size="sm" className="w-full md:w-auto">
-                <MessageSquareIcon className="h-4 w-4 mr-2" />
-                Bình luận
-              </Button>
-              <Button variant="outline" size="sm" className="w-full md:w-auto">
-                <ShareIcon className="h-4 w-4 mr-2" />
-                Chia sẻ
-              </Button>
-            </div>
-            <Button variant="orange" size="sm" className="w-full md:w-auto">
-              <BookmarkIcon className="h-4 w-4 mr-2" />
-              Lưu
-            </Button>
-          </div> */}
-
           {/* Bài viết liên quan */}
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8">
             <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Bài viết liên quan</h3>
@@ -154,10 +132,12 @@ const NewsDetail = () => {
               {relatedArticles.map((item) => (
                 <li key={item.slug} className="flex space-x-4">
                   <Link href={`/news/${item.slug}`} className="flex space-x-4">
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.title}
-                      className="w-24 h-16 object-cover rounded"
+                      width={70} 
+                      height={50}
+                      className="object-cover rounded"
                     />
                     <div>
                       <h4 className="font-semibold text-gray-900 dark:text-white">{item.title}</h4>
@@ -168,31 +148,6 @@ const NewsDetail = () => {
               ))}
             </ul>
           </div>
-
-          {/* Phần bình luận */}
-          {/* <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Bình luận</h3>
-            <div className="space-y-4">
-              {[1, 2].map((item) => (
-                <div key={item} className="flex space-x-4">
-                  <Avatar>
-                    <AvatarImage src={`/placeholder.svg?height=40&width=40`} alt={`Commenter ${item}`} />
-                    <AvatarFallback>U{item}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">User {item}</p>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Đây là một bình luận mẫu. Bài viết thật tuyệt!
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4">
-              <Input placeholder="Viết gì đó..." />
-              <Button variant="orange" className="mt-2">Đăng bình luận</Button>
-            </div>
-          </div> */}
         </article>
       </main>
     </div>
