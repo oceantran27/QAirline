@@ -14,67 +14,73 @@ export default function PasswordChange({ personalInfo }) {
     e.preventDefault();
 
     if (!personalInfo) {
-      toast({
-        title: "Lỗi",
-        description: "Không thể tải thông tin người dùng. Vui lòng thử lại.",
-        variant: "destructive",
-      });
-      return;
+        toast({
+            title: "Lỗi",
+            description: "Không thể tải thông tin người dùng. Vui lòng thử lại.",
+            variant: "destructive",
+        });
+        return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast({
-        title: "Lỗi",
-        description: "Mật khẩu mới và nhắc lại mật khẩu không khớp.",
-        variant: "destructive",
-      });
-      return;
+        toast({
+            title: "Lỗi",
+            description: "Mật khẩu mới và nhắc lại mật khẩu không khớp.",
+            variant: "destructive",
+        });
+        return;
     }
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast({
-          title: "Lỗi xác thực",
-          description: "Bạn cần đăng nhập để thực hiện thao tác này.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const response = await fetch(
-        `${API_BASE_URL}/api/customer/change-password?id=${personalInfo.uid}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            email: personalInfo.email,
-            oldPassword: currentPassword,
-            newPassword: newPassword,
-          }),
+        const token = localStorage.getItem("token");
+        if (!token) {
+            toast({
+                title: "Lỗi xác thực",
+                description: "Bạn cần đăng nhập để thực hiện thao tác này.",
+                variant: "destructive",
+            });
+            return;
         }
-      );
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Có lỗi xảy ra, vui lòng thử lại.");
-      }
+        const response = await fetch(
+            `${API_BASE_URL}/api/customer/change-password?id=${personalInfo.uid}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    email: personalInfo.email,
+                    oldPassword: currentPassword,
+                    newPassword: newPassword,
+                }),
+            }
+        );
 
-      toast({
-        title: "Thành công",
-        description: "Mật khẩu đã được thay đổi thành công.",
-      });
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.message || "Có lỗi xảy ra, vui lòng thử lại.");
+        }
+
+        toast({
+            title: "Thành công",
+            description: "Mật khẩu đã được thay đổi thành công.",
+        });
+
+        // Reset các input về trạng thái rỗng
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
     } catch (err) {
-      toast({
-        title: "Lỗi",
-        description: err.message,
-        variant: "destructive",
-      });
+        toast({
+            title: "Lỗi",
+            description: err.message,
+            variant: "destructive",
+        });
     }
-  };
+};
+
 
   return (
     <div className="p-6 max-w-2xl mx-auto">

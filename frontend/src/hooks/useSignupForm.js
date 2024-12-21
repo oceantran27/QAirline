@@ -1,5 +1,6 @@
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const useSignup = (onSuccess) => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -30,7 +31,7 @@ export const useSignup = (onSuccess) => {
     setLoading(true);
 
     try {
-      const response = await fetch('${API_BASE_URL}/api/customer/new', {
+      const response = await fetch(`${API_BASE_URL}/api/customer/new`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
