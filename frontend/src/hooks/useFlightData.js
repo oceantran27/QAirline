@@ -10,8 +10,8 @@ const SUGGESTED_MIN_SEATS = 10;
 const SUGGESTED_MAX_SEATS = 100;
 
 export const useFlightData = (departureCity, arrivalCity, flightDate) => {
-  const [flights, setFlights] = useState([]); 
-  const [returnFlights, setReturnFlights] = useState([]); 
+  const [flights, setFlights] = useState([]);
+  const [returnFlights, setReturnFlights] = useState([]);
   const [filteredFlights, setFilteredFlights] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -68,7 +68,9 @@ export const useFlightData = (departureCity, arrivalCity, flightDate) => {
         const transformed = transformFlights(result.data);
         setState(transformed);
       } else {
-        throw new Error(result.message || "Dữ liệu không hợp lệ từ API suggest");
+        throw new Error(
+          result.message || "Dữ liệu không hợp lệ từ API suggest"
+        );
       }
     } catch (err) {
       setError(err.message);
@@ -137,9 +139,9 @@ export const useFlightData = (departureCity, arrivalCity, flightDate) => {
 
   /**
    * Fetch dữ liệu chuyến bay chiều về
-   * @param {string} from 
-   * @param {string} to 
-   * @param {string} date 
+   * @param {string} from
+   * @param {string} to
+   * @param {string} date
    */
   const fetchReturnFlights = async (from, to, date) => {
     setLoading(true);
@@ -169,20 +171,24 @@ export const useFlightData = (departureCity, arrivalCity, flightDate) => {
 
   useEffect(() => {
     setFilteredFlights(applyFilters());
-  }, [flights, filters]);
+  }, [applyFilters]);
 
   /**
    * Sinh ra các option vé dựa trên loại ghế
-   * @param {number} basePrice 
+   * @param {number} basePrice
    * @param {string} type - "economy" hoặc "business"
    */
   const generateTicketOptions = (basePrice, type) => {
-    const changeFee = type === "economy" ? ECONOMY_CHANGE_FEE : BUSINESS_CHANGE_FEE;
-    const refundFee = type === "economy" ? ECONOMY_CHANGE_FEE : BUSINESS_CHANGE_FEE;
+    const changeFee =
+      type === "economy" ? ECONOMY_CHANGE_FEE : BUSINESS_CHANGE_FEE;
+    const refundFee =
+      type === "economy" ? ECONOMY_CHANGE_FEE : BUSINESS_CHANGE_FEE;
     const checkedBaggage = type === "economy" ? "1 x 23 kg" : "2 x 32 kg";
     const carryOn = "Không quá 12kg";
-    const standardName = type === "economy" ? "Phổ Thông Tiêu Chuẩn" : "Thương Gia Tiêu Chuẩn";
-    const flexibleName = type === "economy" ? "Phổ Thông Linh Hoạt" : "Thương Gia Linh Hoạt";
+    const standardName =
+      type === "economy" ? "Phổ Thông Tiêu Chuẩn" : "Thương Gia Tiêu Chuẩn";
+    const flexibleName =
+      type === "economy" ? "Phổ Thông Linh Hoạt" : "Thương Gia Linh Hoạt";
 
     return [
       {
