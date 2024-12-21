@@ -129,7 +129,7 @@ export default function FlightManagement() {
         setIsDialogOpen(false)
     } catch (error) {
       toast({
-        title: "Hủy vé Không thành công",
+        title: "Hủy vé không thành công",
         description: "Đã có lỗi xảy ra khi kết nối với máy chủ, vui lòng tải lại trang hoặc đăng nhập lại",
         variant: "destructive"
       })

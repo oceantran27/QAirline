@@ -29,11 +29,6 @@ export default function ScheduledFlights() {
   const [searchQuery, setSearchQuery] = useState("")
   const [editingFlight, setEditingFlight] = useState(null)
 
-  const filteredFlights = flights.filter(flight => 
-    flight.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    flight.aircraft.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-
   const getAllFlights = async () => {
     const getAllFlightsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/flight/all`
 
@@ -102,7 +97,6 @@ export default function ScheduledFlights() {
     toast({
       title: "Thông báo",
       description: "Chuyến bay đã được xóa thành công.",
-      variant: "destructive",
     })
   }
 
@@ -130,6 +124,14 @@ export default function ScheduledFlights() {
               onClick={() => setEditingFlight(flight)}
             >
               Sửa
+            </Button>
+            <Button 
+              size="sm"
+              variant="destructive" 
+              onClick={() => handleRemove(flight.id)}
+              className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 h-7"
+            >
+              Hủy
             </Button>
           </div>
         )
@@ -174,8 +176,11 @@ export default function ScheduledFlights() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredFlights.map((flight) => (
-              <TableRow key={flight.id} className={flight.id % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+            {flights.filter(
+              flight => flight.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              flight.aircraft.toLowerCase().includes(searchQuery.toLowerCase())
+            ).map((flight) => (
+              <TableRow key={flight.flightId} className={flight.id % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                 <TableCell className="text-center">{flight.id}</TableCell>
                 <TableCell className="text-center">{flight.aircraft}</TableCell>
                 <TableCell className="text-center">{`${flight.src} ${flight.ddt}`}</TableCell>
@@ -185,14 +190,6 @@ export default function ScheduledFlights() {
                 <TableCell>
                   <div className="flex gap-2">
                     {getStatusBadge(flight)}
-                    <Button 
-                      size="sm"
-                      variant="destructive" 
-                      onClick={() => handleRemove(flight.id)}
-                      className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 h-7"
-                    >
-                      Hủy
-                    </Button>
                   </div>
                 </TableCell>
               </TableRow>

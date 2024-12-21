@@ -91,7 +91,6 @@ export default function PostManagementPage() {
     toast({
       title: "Thông báo",
       description: "Bài viết đã được xóa thành công.",
-      variant: "destructive",
     })
   }
 
