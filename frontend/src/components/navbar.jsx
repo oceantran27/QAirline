@@ -12,6 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const [dropdown, setDropdown] = useState(false);

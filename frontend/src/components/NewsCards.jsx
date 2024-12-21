@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from 'lucide-react';
-
+import Image from 'next/image';
 // HomeNewsCard Component
 const HomeNewsCard = React.forwardRef(
   (
@@ -23,7 +23,14 @@ const HomeNewsCard = React.forwardRef(
     <Card ref={ref} className={cn("overflow-hidden", className)} {...props}>
       <div className="relative overflow-hidden rounded-t-lg">
         <Link href={`/news/${slug}`}>
-          <img src={image} alt={title} className="rounded-t-lg hoverImg" />
+        <Image 
+          src={image} 
+          alt={title} 
+          className="rounded-t-lg hoverImg" 
+          layout="intrinsic" 
+          width={500} 
+          height={300} 
+        />
           <p className="font-bold text-white bg-orange flex flex-col w-fit pt-3 pb-7 px-6 absolute right-0 bottom-0 rounded-tl-lg">
             {date.day} <span className="font-normal text-xs">{date.month}</span>
           </p>
@@ -69,7 +76,13 @@ const NewsCard = React.forwardRef(
     <Card ref={ref} className={cn(className)} {...props}>
       <Link href={`/news/${slug}`}>
         {image && (
-          <img src={image} alt={title} className="w-full h-48 object-cover rounded-t-lg" />
+          <Image 
+            src={image} 
+            alt={title} 
+            layout="fill" 
+            objectFit="cover" 
+            className="rounded-t-lg" 
+          />
         )}
         <CardHeader>
           <CardTitle className="text-xl font-semibold">{title}</CardTitle>
@@ -109,11 +122,13 @@ const FeaturedNewsCard = React.forwardRef(
       {...props}
     >
       <Link href={`/news/${slug}`}>
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-full object-cover"
-        />
+      <Image
+        src={image}
+        alt={title}
+        layout="fill"
+        objectFit="cover"
+        className="object-cover"
+      />
       </Link>
       <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
       <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
