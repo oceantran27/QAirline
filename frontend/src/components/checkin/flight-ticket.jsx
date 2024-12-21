@@ -1,6 +1,6 @@
 import React from "react";
 import { Plane, Calendar, Clock, MapPin, User, Barcode, Star, DoorOpen } from "lucide-react";
-
+import Image from "next/image";
 export default function ModernFlightTicket({
   passengerName,
   flightNumber,
@@ -19,7 +19,13 @@ export default function ModernFlightTicket({
       <div className="relative p-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <img src="/logo-white.png" alt="Logo" className="w-36" />
+        <Image 
+          src="/logo-white.png" 
+          alt="Logo" 
+          className="w-36" 
+          width={144} 
+          height={144} 
+        />
           <h2 className="text-2xl font-bold">QAirlines</h2>
         </div>
 
