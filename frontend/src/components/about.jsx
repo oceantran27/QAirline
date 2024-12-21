@@ -7,7 +7,7 @@ import { FaPlaneDeparture } from 'react-icons/fa';
 import { MdFlight } from 'react-icons/md';
 import { GiPriceTag } from 'react-icons/gi';
 import { AiOutlineCheckCircle } from 'react-icons/ai'
-
+import Image from 'next/image';
 export default function About() {
   return (
     <div>
@@ -80,10 +80,10 @@ export default function About() {
             Đối tác của chúng tôi
           </p>
           <div className="flex flex-wrap gap-8 justify-between w-full">
-            <img src="/vietnam_airline.png" alt="vietnam airline logo" width="40%" height="40%" loading="lazy"/>
-            <img src="/vietjet.png" alt="vietjet logo" width="40%" height="40%" loading="lazy"/>
-            <img src="/china_airline.png" alt="china airline logo" width="40%" height="40%" loading="lazy"/>
-            <img src="/hongkong_airline.png" alt="hongkong airline logo" width="40%" height="40%" loading="lazy"/>
+            <Image src="/vietnam_airline.png" alt="vietnam airline logo" width={300} height={300} loading="lazy" />
+            <Image src="/vietjet.png" alt="vietjet logo" width={300} height={300} loading="lazy" />
+            <Image src="/china_airline.png" alt="china airline logo" width={300} height={300} loading="lazy" />
+            <Image src="/hongkong_airline.png" alt="hongkong airline logo" width={300} height={300} loading="lazy" />
           </div>
         </div>
       </div>
