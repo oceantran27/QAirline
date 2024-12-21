@@ -7,6 +7,8 @@ import { Card } from "@/components/ui/card";
 import { useAccountInfo } from "@/hooks/useAccountInfo";
 import { useEffect, useState } from "react";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export default function AccountPage() {
   const {
     personalInfo,
@@ -34,7 +36,7 @@ export default function AccountPage() {
         personalInfo.bookingHistory.map(async (bookingId) => {
           try {
             const response = await fetch(
-              `http://localhost:3030/api/booking/?id=${bookingId}`,
+              `${API_BASE_URL}/api/booking/?id=${bookingId}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -139,17 +141,28 @@ export default function AccountPage() {
   return (
     <div className="min-h-screen bg-[#e6f2f7] bg-opacity-50 py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-center text-2xl font-semibold mb-8 text-gray-800">THÔNG TIN TÀI KHOẢN</h1>
-        
+        <h1 className="text-center text-2xl font-semibold mb-8 text-gray-800">
+          THÔNG TIN TÀI KHOẢN
+        </h1>
+
         <Tabs defaultValue="account" className="w-full">
           <TabsList className="w-full bg-orangeLight h-auto flex flex-wrap shadow-xl">
-            <TabsTrigger value="account" className="flex-1 py-2 transition-all duration-300 ease-in-out">
+            <TabsTrigger
+              value="account"
+              className="flex-1 py-2 transition-all duration-300 ease-in-out"
+            >
               Thông tin tài khoản
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex-1 py-2 transition-all duration-300 ease-in-out">
+            <TabsTrigger
+              value="history"
+              className="flex-1 py-2 transition-all duration-300 ease-in-out"
+            >
               Lịch sử hoạt động
             </TabsTrigger>
-            <TabsTrigger value="password" className="flex-1 py-2 transition-all duration-300 ease-in-out">
+            <TabsTrigger
+              value="password"
+              className="flex-1 py-2 transition-all duration-300 ease-in-out"
+            >
               Thay đổi mật khẩu
             </TabsTrigger>
           </TabsList>
