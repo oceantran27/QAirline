@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { StepIndicator } from "@/components/checkin/step-indicator";
 import { FlightDetailsStep } from "@/components/checkin/flight-details";
@@ -8,9 +8,10 @@ import { PassengerListStep } from "@/components/checkin/passenger-list";
 import { SeatSelectionStep } from "@/components/checkin/seat-selection";
 import { ConfirmationStep } from "@/components/checkin/confirmation-step";
 import LoadingSkeleton from "@/components/checkin/loading-skeleton";
-import { useToast } from "@/hooks/use-toast"; // Thêm import
+import { useToast } from "@/hooks/use-toast";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 const steps = [
   { title: "Chi tiết chuyến bay", description: "Xem lại thông tin chuyến bay" },
   { title: "Hành khách", description: "Chọn hành khách" },
@@ -20,75 +21,29 @@ const steps = [
 
 export default function CheckInPage() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedSeat, setSelectedSeat] = useState(null);
   const [bookingID, setBookingID] = useState(null);
   const [email, setEmail] = useState(null);
+
   const [bookingData, setBookingData] = useState(null);
   const [departureFlight, setDepartureFlight] = useState(null);
   const [returnFlight, setReturnFlight] = useState(null);
   const [passengerList, setPassengerList] = useState({ departure: [], return: [] });
-  const [seatData, setSeatData] = useState([]);
+
+  const [departureSeats, setDepartureSeats] = useState([]);
+  const [returnSeats, setReturnSeats] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const router = useRouter();
+
   const [currentTrip, setCurrentTrip] = useState("departure"); // "departure" hoặc "return"
-  const { toast } = useToast(); // Sử dụng hook useToast
 
-  useEffect(() => {
-    if (router.query.bookingID) {
-      setBookingID(router.query.bookingID);
-    }
-    if (router.query.email) {
-      setEmail(router.query.email);
-    }
-  }, [router.query]);
+  const router = useRouter();
+  const { toast } = useToast(); // Hook toast
 
-  useEffect(() => {
-    const fetchBooking = async () => {
-      if (!bookingID) return;
-
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("token");
-        if (!token) throw new Error("Token không tồn tại.");
-
-        const response = await fetch(`${API_BASE_URL}/api/booking/?id=${bookingID}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!response.ok) throw new Error(`Error fetching booking: ${response.statusText}`);
-
-        const result = await response.json();
-        setBookingData(result.data);
-
-        // Fetch flight details
-        if (result.data.tripType === "roundTrip") {
-          await fetchFlightDetails(result.data.departureFlightId, "departure");
-          await fetchFlightDetails(result.data.returnFlightId, "return");
-        } else if (result.data.tripType === "oneWay") {
-          await fetchFlightDetails(result.data.departureFlightId, "departure");
-        }
-
-        // Fetch passengers
-        const departurePassengers = await fetchTickets(result.data.departureIdTickets);
-        const returnPassengers =
-          result.data.tripType === "roundTrip"
-            ? await fetchTickets(result.data.returnIdTickets)
-            : [];
-
-        setPassengerList({ departure: departurePassengers, return: returnPassengers });
-        setSeatData(generateSeatData());
-      } catch (err) {
-        console.error(err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBooking();
-  }, [bookingID]);
-
-  const generateSeatData = () => {
+  // ------------------------------------
+  // 1. Các hàm generate, tính toán, ...
+  // ------------------------------------
+  const generateSeatData = useCallback(() => {
     const columns = ["A", "B", "C", "D", "E", "G"];
     const rows = Array.from({ length: 44 }, (_, i) => i + 1);
 
@@ -103,214 +58,201 @@ export default function CheckInPage() {
             : "available",
       }))
     );
-  };
+  }, []);
 
-  const [departureSeats, setDepartureSeats] = useState(generateSeatData());
-  const [returnSeats, setReturnSeats] = useState(generateSeatData());
-
-  const fetchFlightDetails = async (flightId, type) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/flight/?id=${flightId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) throw new Error(`Error fetching flight: ${response.statusText}`);
-
-      const result = await response.json();
-      const flightData = result.data;
-
-      const formattedFlight = {
-        from: flightData.departureCity,
-        to: flightData.arrivalCity,
-        departureTime: new Date(flightData.departureTime.seconds * 1000).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        arrivalTime: new Date(flightData.arrivalTime.seconds * 1000).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        duration: calculateDuration(flightData.departureTime.seconds, flightData.arrivalTime.seconds),
-        flightNumber: flightData.flightNumber,
-        date: new Date(flightData.departureTime.seconds * 1000).toLocaleDateString("vi-VN"),
-      };
-
-      if (type === "departure") setDepartureFlight(formattedFlight);
-      if (type === "return") setReturnFlight(formattedFlight);
-    } catch (err) {
-      console.error(err);
-      setError(`Error fetching ${type} flight: ${err.message}`);
-    }
-  };
-
-  const fetchTickets = async (ticketIds) => {
-    try {
-      const token = localStorage.getItem("token");
-      const ticketPromises = ticketIds.map(async (ticketId) => {
-        const response = await fetch(`${API_BASE_URL}/api/ticket/?id=${ticketId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!response.ok) throw new Error(`Error fetching ticket ${ticketId}: ${response.statusText}`);
-
-        const result = await response.json();
-        const ownerData = result.data.ownerData;
-
-        return {
-          id: ticketId,
-          title: ownerData.gender === "Female" ? "Bà" : "Ông",
-          name: `${ownerData.lastName} ${ownerData.firstName} `, 
-          type: result.data.flightClass || "Economy",
-          flightId: result.data.flightId, 
-        };
-      });
-
-      return await Promise.all(ticketPromises);
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-      return [];
-    }
-  };
-
-  const saveSelectedSeats = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("Token không tồn tại.");
-
-      const payload = [
-        ...passengerList.departure.map((passenger) => ({
-          ticketId: passenger.id,
-          seatCode: passenger.seat,
-        })),
-        ...passengerList.return.map((passenger) => ({
-          ticketId: passenger.id,
-          seatCode: passenger.seat,
-        })),
-      ].filter((entry) => entry.seatCode);
-
-      if (payload.length === 0) {
-        toast({
-          title: "Không có ghế nào được chọn",
-          description: "Vui lòng chọn ghế trước khi lưu.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      const response = await fetch(`${API_BASE_URL}/api/ticket/update-seats`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      toast({
-        title: "Thành công",
-        description: "Ghế đã được cập nhật thành công!",
-        variant: "default"
-      });
-    } catch (error) {
-      console.error("Error updating seats:", error);
-      toast({
-        title: "Cập nhật thất bại",
-        description: "Cập nhật ghế thất bại, vui lòng thử lại.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const calculateDuration = (departure, arrival) => {
+  const calculateDuration = useCallback((departure, arrival) => {
     const durationInMinutes = (arrival - departure) / 60;
     const hours = Math.floor(durationInMinutes / 60);
     const minutes = durationInMinutes % 60;
     return `${hours}h ${minutes}m`;
-  };
+  }, []);
 
-  const generateGate = () => `6`;
+  const generateGate = useCallback(() => {
+    return "6";
+  }, []);
 
-  const updateSeatsApi = async () => {
+  // ------------------------------------
+  // 2. Các hàm fetch API
+  // ------------------------------------
+  const fetchFlightDetails = useCallback(
+    async (flightId, type) => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Token không tồn tại.");
+
+        const response = await fetch(`${API_BASE_URL}/api/flight/?id=${flightId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) {
+          throw new Error(`Error fetching flight: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        const flightData = result.data;
+
+        const formattedFlight = {
+          from: flightData.departureCity,
+          to: flightData.arrivalCity,
+          departureTime: new Date(flightData.departureTime.seconds * 1000).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          arrivalTime: new Date(flightData.arrivalTime.seconds * 1000).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          duration: calculateDuration(
+            flightData.departureTime.seconds,
+            flightData.arrivalTime.seconds
+          ),
+          flightNumber: flightData.flightNumber,
+          date: new Date(flightData.departureTime.seconds * 1000).toLocaleDateString("vi-VN"),
+        };
+
+        if (type === "departure") {
+          setDepartureFlight(formattedFlight);
+        } else {
+          setReturnFlight(formattedFlight);
+        }
+      } catch (err) {
+        console.error(err);
+        setError(`Error fetching ${type} flight: ${err.message}`);
+      }
+    },
+    [calculateDuration, setDepartureFlight, setReturnFlight, setError]
+  );
+
+  const fetchTickets = useCallback(
+    async (ticketIds) => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Token không tồn tại.");
+
+        const ticketPromises = ticketIds.map(async (ticketId) => {
+          const response = await fetch(`${API_BASE_URL}/api/ticket/?id=${ticketId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!response.ok) {
+            throw new Error(`Error fetching ticket ${ticketId}: ${response.statusText}`);
+          }
+
+          const result = await response.json();
+          const ownerData = result.data.ownerData;
+
+          return {
+            id: ticketId,
+            title: ownerData.gender === "Female" ? "Bà" : "Ông",
+            name: `${ownerData.lastName} ${ownerData.firstName}`,
+            type: result.data.flightClass || "Economy",
+            flightId: result.data.flightId,
+            // Lúc sau bạn có thể thêm thuộc tính "seat" nếu cần
+          };
+        });
+
+        return await Promise.all(ticketPromises);
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+        return [];
+      }
+    },
+    [setError]
+  );
+
+  const fetchBooking = useCallback(async () => {
+    if (!bookingID) return;
+
     try {
+      setLoading(true);
+
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token không tồn tại.");
 
-      const payload = [
-        ...passengerList.departure.map((passenger) => ({
-          ticketId: passenger.id,
-          seatCode: passenger.seat,
-        })),
-        ...passengerList.return.map((passenger) => ({
-          ticketId: passenger.id,
-          seatCode: passenger.seat,
-        })),
-      ].filter((entry) => entry.seatCode); 
-
-      if (payload.length === 0) {
-        toast({
-          title: "Không có ghế",
-          description: "Không có ghế nào được chọn để lưu.",
-          variant: "destructive"
-        });
-        return false;
-      }
-
-      const response = await fetch(`${API_BASE_URL}/api/ticket/update-seats`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
+      // Fetch booking
+      const response = await fetch(`${API_BASE_URL}/api/booking/?id=${bookingID}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
+        throw new Error(`Error fetching booking: ${response.statusText}`);
       }
 
       const result = await response.json();
-      toast({
-        title: "Thành công",
-        description: "Ghế đã được cập nhật thành công!",
-        variant: "default"
+      setBookingData(result.data);
+
+      // Fetch flight details
+      if (result.data.tripType === "roundTrip") {
+        await fetchFlightDetails(result.data.departureFlightId, "departure");
+        await fetchFlightDetails(result.data.returnFlightId, "return");
+      } else {
+        // oneWay
+        await fetchFlightDetails(result.data.departureFlightId, "departure");
+      }
+
+      // Fetch passengers
+      const departurePassengers = await fetchTickets(result.data.departureIdTickets);
+      const returnPassengers =
+        result.data.tripType === "roundTrip"
+          ? await fetchTickets(result.data.returnIdTickets)
+          : [];
+
+      setPassengerList({
+        departure: departurePassengers,
+        return: returnPassengers,
       });
-      return true;
-    } catch (error) {
-      console.error("Error updating seats:", error);
-      toast({
-        title: "Cập nhật thất bại",
-        description: "Cập nhật ghế thất bại, vui lòng thử lại.",
-        variant: "destructive"
-      });
-      return false;
+
+      // Generate seat data ban đầu
+      setDepartureSeats(generateSeatData());
+      setReturnSeats(generateSeatData());
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [
+    bookingID,
+    fetchFlightDetails,
+    fetchTickets,
+    generateSeatData,
+    setPassengerList,
+    setDepartureSeats,
+    setReturnSeats,
+    setBookingData,
+    setError,
+    setLoading,
+  ]);
 
-  const handleContinue = async () => {
-    if (currentStep === 2) {
-      const isUpdated = await updateSeatsApi();
-      if (!isUpdated) return; 
+  // ------------------------------------
+  // 3. Các useEffect
+  // ------------------------------------
+  // Lấy bookingID, email từ query
+  useEffect(() => {
+    if (router.query.bookingID) {
+      setBookingID(router.query.bookingID);
     }
-    if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
-  };
+    if (router.query.email) {
+      setEmail(router.query.email);
+    }
+  }, [router.query]);
 
-  const handleBack = () => {
-    if (currentStep > 0) setCurrentStep(currentStep - 1);
-  };
+  // Gọi fetchBooking khi bookingID thay đổi
+  useEffect(() => {
+    fetchBooking();
+  }, [fetchBooking]);
 
+  // ------------------------------------
+  // 4. Các hàm xử lý sự kiện
+  // ------------------------------------
   const handleSeatSelect = (seatId, customerId, tripType) => {
+    // Cập nhật seat cho passengerList
     setPassengerList((prev) => ({
       ...prev,
-      [tripType]: prev[tripType].map((passenger) =>
-        passenger.id === customerId ? { ...passenger, seat: seatId } : passenger
+      [tripType]: prev[tripType].map((p) =>
+        p.id === customerId ? { ...p, seat: seatId } : p
       ),
     }));
 
+    // Cập nhật trạng thái ghế
     const updateSeats = (seats) =>
       seats.map((seat) =>
         seat.id === seatId
@@ -328,10 +270,92 @@ export default function CheckInPage() {
     }
   };
 
+  // Hàm gọi API update seat
+  const updateSeatsApi = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token không tồn tại.");
+
+      // Lấy seatCode từ passengerList
+      const payload = [
+        ...passengerList.departure.map((passenger) => ({
+          ticketId: passenger.id,
+          seatCode: passenger.seat,
+        })),
+        ...passengerList.return.map((passenger) => ({
+          ticketId: passenger.id,
+          seatCode: passenger.seat,
+        })),
+      ].filter((entry) => entry.seatCode);
+
+      if (payload.length === 0) {
+        toast({
+          title: "Không có ghế",
+          description: "Không có ghế nào được chọn để lưu.",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/ticket/update-seats`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
+      }
+
+      await response.json();
+      toast({
+        title: "Thành công",
+        description: "Ghế đã được cập nhật thành công!",
+        variant: "default",
+      });
+      return true;
+    } catch (error) {
+      console.error("Error updating seats:", error);
+      toast({
+        title: "Cập nhật thất bại",
+        description: "Cập nhật ghế thất bại, vui lòng thử lại.",
+        variant: "destructive",
+      });
+      return false;
+    }
+  }, [passengerList, toast]);
+
+  // Hàm xử lý điều hướng step
+  const handleContinue = async () => {
+    // Nếu đang ở step Chọn ghế (index = 2) thì gọi updateSeatsApi
+    if (currentStep === 2) {
+      const isUpdated = await updateSeatsApi();
+      if (!isUpdated) return;
+    }
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  // ------------------------------------
+  // 5. Render
+  // ------------------------------------
   if (loading) {
     return <LoadingSkeleton />;
   }
-  if (error) return <div className="container mx-auto p-6 text-red-600">Lỗi: {error}</div>;
+
+  if (error) {
+    return <div className="container mx-auto p-6 text-red-600">Lỗi: {error}</div>;
+  }
 
   return (
     <div className="container mx-auto p-6">
@@ -357,12 +381,18 @@ export default function CheckInPage() {
 
       {currentStep === 2 && (
         <SeatSelectionStep
-          passengers={currentTrip === "departure" ? passengerList.departure : passengerList.return}
+          passengers={
+            currentTrip === "departure" ? passengerList.departure : passengerList.return
+          }
           seats={currentTrip === "departure" ? departureSeats : returnSeats}
-          onSeatSelect={(seatId, customerId) => handleSeatSelect(seatId, customerId, currentTrip)}
+          onSeatSelect={(seatId, customerId) =>
+            handleSeatSelect(seatId, customerId, currentTrip)
+          }
           onContinue={handleContinue}
           onBack={handleBack}
-          onSwitchTrip={() => setCurrentTrip(currentTrip === "departure" ? "return" : "departure")}
+          onSwitchTrip={() =>
+            setCurrentTrip((prev) => (prev === "departure" ? "return" : "departure"))
+          }
           currentTrip={currentTrip}
         />
       )}

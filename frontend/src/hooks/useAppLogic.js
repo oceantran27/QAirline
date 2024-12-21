@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export const useAppLogic = (router) => {
   const [showScrollTopButton, setShowScrollTopButton] = useState(false);
   const [lastClickY, setLastClickY] = useState(0);
 
-  const smoothScroll = (targetPosition, duration) => {
+  const smoothScroll = useCallback((targetPosition, duration) => {
     const startPosition = window.scrollY;
     const distance = targetPosition - startPosition;
     let startTime = null;
@@ -25,25 +25,28 @@ export const useAppLogic = (router) => {
     };
 
     requestAnimationFrame(animation);
-  };
+  }, []);
 
-  const handleScrollToClick = (event) => {
-    if (event.target.tagName === "A" || event.target.tagName === "BUTTON") return;
+  const handleScrollToClick = useCallback(
+    (event) => {
+      if (event.target.tagName === "A" || event.target.tagName === "BUTTON") return;
 
-    const mouseY = event.clientY;
-    const threshold = 200;
+      const mouseY = event.clientY;
+      const threshold = 200;
 
-    if (Math.abs(mouseY - lastClickY) < threshold) return;
+      if (Math.abs(mouseY - lastClickY) < threshold) return;
 
-    setLastClickY(mouseY);
+      setLastClickY(mouseY);
 
-    const targetPosition = window.scrollY + mouseY - window.innerHeight / 2;
-    smoothScroll(targetPosition, 800);
-  };
+      const targetPosition = window.scrollY + mouseY - window.innerHeight / 2;
+      smoothScroll(targetPosition, 800);
+    },
+    [lastClickY, smoothScroll]
+  );
 
-  const handleScrollToTop = () => {
+  const handleScrollToTop = useCallback(() => {
     smoothScroll(0, 800);
-  };
+  }, [smoothScroll]);
 
   useEffect(() => {
     const handleRouteChange = () => {
@@ -64,10 +67,11 @@ export const useAppLogic = (router) => {
       document.removeEventListener("click", handleScrollToClick);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastClickY, router.events]);
+  }, [handleScrollToClick, router.events]);
 
   return {
     showScrollTopButton,
     handleScrollToTop,
+    handleScrollToClick,
   };
 };

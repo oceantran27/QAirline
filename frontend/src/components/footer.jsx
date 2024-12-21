@@ -5,6 +5,7 @@ import {
   MdOutlineLocationOn,
 } from "react-icons/md";
 import { Checkbox } from "@/components/ui/checkbox"
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -13,7 +14,12 @@ export default function Footer() {
         
         {/* Phần thông tin liên hệ */}
         <div className="lg:w-1/3">
-          <img src="/logo-white.png" alt="Logo" width={130} />
+        <Image 
+          src="/logo-white.png" 
+          alt="Logo" 
+          width={130} 
+          height={130} 
+        />
           <p className="my-5">
             Chào mừng đến với QAirline. Chúng tôi cung cấp dịch vụ đặt vé máy bay trực tuyến hàng đầu thế giới.
           </p>

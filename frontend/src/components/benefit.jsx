@@ -9,6 +9,8 @@ import { GiRuleBook } from "react-icons/gi";
 import "react-multi-carousel/lib/styles.css";
 import Link from "next/link";
 import { HomeNewsCard } from "./NewsCards";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 // Import `Carousel` với dynamic import để tắt SSR
 const Carousel = dynamic(() => import("react-multi-carousel"), { ssr: false });
 
@@ -32,12 +34,54 @@ const responsive = {
 };
 
 export default function Benefit() {
+  const [featuredArticles, setFeaturedArticles] = useState([])
+
+  useEffect(() => {
+    getAllNews()
+  });
+
+  const getAllNews = async () => {
+    const getAllNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/all`
+
+    try {
+      const response = await fetch(getAllNewsApi, {
+          method: "GET",
+      })
+      if (!response.ok) {
+          throw new Error("Send request failed")
+      }
+
+      const res = await response.json()
+
+      setFeaturedArticles(res.data.map(a => {return {
+        "slug": a.newsId, 
+        "image": a.image,
+        "title": a.title, 
+        "description": a.description, 
+        "author": a.authorId, 
+        "content": a.content,
+        "date": a.createAt.seconds ? new Date(a.createAt.seconds*1000).toISOString().split('T')[0] : a.createAt.split('T')[0],
+        "buttonText": "Đọc thêm",
+        "authorTitle": "Nhà báo",
+        "authorImage": "/AvatarUser/no_avatar.jpg",
+      }}))
+
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+    }
+  }
   return (
     <div>
       {/* Phần giới thiệu */}
       <section className="lg:flex">
         <div className="lg:w-[45%]" data-aos="fade-down">
-          <img src="/bg-2.jpg" alt="Background" className="h-full" />
+        <Image 
+          src="/bg-2.jpg" 
+          alt="Background" 
+          width={1000}
+          height={900}
+          className="h-full" 
+        />
         </div>
         <div className="relative lg:w-[55%] bg-[url(/bg-map-2.png)] bg-[#313041] bg-right-bottom bg-contain flex flex-col justify-center py-16">
           <div className="absolute lg:w-3 w-0 bg-orange left-0 rounded-r-[10px] top-[120px] bottom-[120px]"></div>
@@ -102,7 +146,10 @@ export default function Benefit() {
               keyBoardControl
               itemClass="carouselItem"
             >
-              <HomeNewsCard
+              {featuredArticles.map((article, index) => (
+                <HomeNewsCard key={index} {...article} />
+              ))}
+              {/* <HomeNewsCard
                 slug="nhung-dieu-can-xem-va-lam-khi-den-tham-nhat-ban"
                 image="/News/home_post-1.jpg"
                 title="Những điều cần xem và làm khi đến thăm Nhật Bản"
@@ -140,7 +187,7 @@ export default function Benefit() {
                 author="Lê Minh Cường"
                 comments={2}
                 description="Những địa danh nổi tiếng mang vẻ đẹp mê hoặc trên thế giới."
-              />
+              /> */}
 
             </Carousel>
           </div>
@@ -172,7 +219,13 @@ export default function Benefit() {
             </div>
           </div>
           <div className="flex justify-center lg:w-1/2 w-full lg:mt-0 mt-14">
-            <img src="/image-app.png" alt="" />
+          <Image 
+            src="/image-app.png" 
+            alt="Image description" 
+            width={500} 
+            height={500} 
+            priority 
+          />
           </div>
         </div>
       </div>

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
@@ -33,7 +34,13 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex items-center ml-4">
             <Link href="/">
-              <img src="/logo.png" alt="Logo" className="w-36" />
+              <Image 
+                src="/logo.png" 
+                alt="Logo" 
+                className="w-36" 
+                width={144} 
+                height={144} 
+              />
             </Link>
           </div>
 

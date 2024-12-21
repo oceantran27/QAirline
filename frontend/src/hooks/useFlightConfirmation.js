@@ -1,9 +1,43 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { format, parse } from "date-fns";
 import { useAccountInfo } from "@/hooks/useAccountInfo";
 import { toast } from "@/hooks/use-toast";
+
+/** Khai báo constant để ngoài cùng, đảm bảo không thay đổi reference */
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+/** 
+ * Hàm tiện ích tách ra ngoài để không bị re-create mỗi lần render.
+ * Không phụ thuộc state/props => có thể định nghĩa ngoài hook 
+ */
+function generateTicketOptions(basePrice, type) {
+  const changeFee = type === "economy" ? 860000 : 360000;
+  const refundFee = type === "economy" ? 860000 : 360000;
+  const checkedBaggage = type === "economy" ? "1 x 23 kg" : "2 x 32 kg";
+  const carryOn = "Không quá 12kg";
+  return [
+    {
+      id: `${type}1`,
+      name: type === "economy" ? "Phổ Thông Tiêu Chuẩn" : "Thương Gia Tiêu Chuẩn",
+      price: basePrice,
+      changeFee,
+      refundFee,
+      checkedBaggage,
+      carryOn,
+    },
+    {
+      id: `${type}2`,
+      name: type === "economy" ? "Phổ Thông Linh Hoạt" : "Thương Gia Linh Hoạt",
+      price: basePrice + 500000,
+      changeFee: changeFee / 2,
+      refundFee: refundFee / 2,
+      checkedBaggage,
+      carryOn,
+    },
+  ];
+}
+
 export function useFlightConfirmation() {
   const router = useRouter();
   const {
@@ -13,7 +47,7 @@ export function useFlightConfirmation() {
     returnOptionId,
     passengerCount,
   } = router.query;
-  
+
   const tripType = returnFlightId && returnOptionId ? "roundTrip" : "oneway";
 
   const [departureFlightData, setDepartureFlightData] = useState(null);
@@ -29,59 +63,45 @@ export function useFlightConfirmation() {
 
   const { personalInfo, loading: accountLoading } = useAccountInfo();
 
-  const generateTicketOptions = (basePrice, type) => {
-    const changeFee = type === "economy" ? 860000 : 360000;
-    const refundFee = type === "economy" ? 860000 : 360000;
-    const checkedBaggage = type === "economy" ? "1 x 23 kg" : "2 x 32 kg";
-    const carryOn = "Không quá 12kg";
-    return [
-      {
-        id: `${type}1`,
-        name: type === "economy" ? "Phổ Thông Tiêu Chuẩn" : "Thương Gia Tiêu Chuẩn",
-        price: basePrice,
-        changeFee,
-        refundFee,
-        checkedBaggage,
-        carryOn,
-      },
-      {
-        id: `${type}2`,
-        name: type === "economy" ? "Phổ Thông Linh Hoạt" : "Thương Gia Linh Hoạt",
-        price: basePrice + 500000,
-        changeFee: changeFee / 2,
-        refundFee: refundFee / 2,
-        checkedBaggage,
-        carryOn,
-      },
-    ];
-  };
+  /**
+   * fetchFlightData cần đưa vào useCallback để "ổn định" reference.
+   * Bổ sung [setError] vào dependency (nếu có thêm phụ thuộc khác, thêm tiếp).
+   */
+  const fetchFlightData = useCallback(
+    async (flightId, optionId, setFlightDataFn, setOptionFn) => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/flight/?id=${flightId}`);
+        if (!response.ok) {
+          throw new Error("Không thể lấy dữ liệu chuyến bay.");
+        }
+        const result = await response.json();
+        const data = result.data;
 
-  const fetchFlightData = async (flightId, optionId, setFlightData, setOption) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/flight/?id=${flightId}`);
-      if (!response.ok) {
-        throw new Error("Không thể lấy dữ liệu chuyến bay.");
-      }
-      const result = await response.json();
-      const data = result.data;
-  
-      const { departureCity, arrivalCity, flightId: flightDataId } = data;
-  
-      const economyOptions = generateTicketOptions(data.basePrice, "economy");
-      const businessOptions = generateTicketOptions(data.basePrice * 1.5, "business");
-      const allOptions = [...economyOptions, ...businessOptions];
-      const option = allOptions.find((opt) => opt.id === optionId);
-      if (!option) {
-        throw new Error("Không tìm thấy thông tin hạng vé.");
-      }
-  
-      setFlightData({ ...data, departureCity, arrivalCity, flightDataId });
-      setOption(option);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+        const { departureCity, arrivalCity, flightId: flightDataId } = data;
 
+        // Gọi hàm tiện ích đã tách ra ngoài
+        const economyOptions = generateTicketOptions(data.basePrice, "economy");
+        const businessOptions = generateTicketOptions(data.basePrice * 1.5, "business");
+        const allOptions = [...economyOptions, ...businessOptions];
+        
+        const option = allOptions.find((opt) => opt.id === optionId);
+        if (!option) {
+          throw new Error("Không tìm thấy thông tin hạng vé.");
+        }
+
+        setFlightDataFn({ ...data, departureCity, arrivalCity, flightDataId });
+        setOptionFn(option);
+      } catch (err) {
+        setError(err.message);
+      }
+    },
+    [setError]
+  );
+
+  /**
+   * useEffect: gọi fetch khi đã có departureFlightId, departureOptionId.
+   * => Thêm fetchFlightData vào dependencies để ESLint không cảnh báo.
+   */
   useEffect(() => {
     if (!departureFlightId || !departureOptionId) return;
 
@@ -105,9 +125,17 @@ export function useFlightConfirmation() {
     };
 
     fetchData();
-  }, [departureFlightId, departureOptionId, returnFlightId, returnOptionId]);
+  }, [
+    departureFlightId,
+    departureOptionId,
+    returnFlightId,
+    returnOptionId,
+    fetchFlightData, // Quan trọng: thêm fetchFlightData ở đây
+  ]);
 
-  const totalAmount = (departureOption?.price + (returnOption?.price || 0)) * parseInt(passengerCount || 1, 10);
+  const totalAmount =
+    (departureOption?.price + (returnOption?.price || 0)) *
+    parseInt(passengerCount || 1, 10);
 
   const handlePassengerInfoFilled = () => {
     setIsPassengerInfoFilled(true);
@@ -152,7 +180,7 @@ export function useFlightConfirmation() {
         address: info.address,
       },
     }));
-  
+
     const returnTicketDataList = passengerData.map((info) => ({
       price: returnOption?.price || 0,
       flightClass: returnOption?.name.includes("Thương Gia") ? "business" : "economy",
@@ -166,7 +194,7 @@ export function useFlightConfirmation() {
         address: info.address,
       },
     }));
-    
+
     const bookingData = {
       bookerId: personalInfo?.uid,
       departureCity: departureFlightData?.departureCity,
@@ -177,26 +205,24 @@ export function useFlightConfirmation() {
       departureTicketDataList,
       returnTicketDataList: tripType === "roundTrip" ? returnTicketDataList : undefined,
     };
-  
+
     try {
-      const response = await fetch(`${API_BASE_URL}/api/booking/new`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(bookingData),
-        }
-      );
-  
+      const response = await fetch(`${API_BASE_URL}/api/booking/new`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(bookingData),
+      });
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Lỗi khi tạo booking.");
       }
       const result = await response.json();
       setBookingId(result.bookingId);
-      
+
       toast({
         title: "Đặt vé thành công",
         description: `Mã đặt vé của bạn là: ${result.bookingId}`,
@@ -234,4 +260,3 @@ export function useFlightConfirmation() {
     setIsPassengerInfoOpen,
   };
 }
-
