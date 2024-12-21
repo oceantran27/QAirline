@@ -133,9 +133,11 @@ export default function PostManagementPage() {
                     </Button>
                   </Link>
 
-                  <Button variant="outline" size="icon" as="a">
-                    <Eye className="h-4 w-4" />
-                  </Button>
+                  <Link href={`/news/${post.id}`} passHref>
+                    <Button variant="outline" size="icon" as="a">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </Link>
 
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
