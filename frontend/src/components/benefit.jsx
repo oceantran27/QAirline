@@ -10,6 +10,7 @@ import "react-multi-carousel/lib/styles.css";
 import Link from "next/link";
 import { HomeNewsCard } from "./NewsCards";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 // Import `Carousel` với dynamic import để tắt SSR
 const Carousel = dynamic(() => import("react-multi-carousel"), { ssr: false });
 
@@ -33,6 +34,42 @@ const responsive = {
 };
 
 export default function Benefit() {
+  const [featuredArticles, setFeaturedArticles] = useState([])
+
+  useEffect(() => {
+    getAllNews()
+  });
+
+  const getAllNews = async () => {
+    const getAllNewsApi = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/news/all`
+
+    try {
+      const response = await fetch(getAllNewsApi, {
+          method: "GET",
+      })
+      if (!response.ok) {
+          throw new Error("Send request failed")
+      }
+
+      const res = await response.json()
+
+      setFeaturedArticles(res.data.map(a => {return {
+        "slug": a.newsId, 
+        "image": a.image,
+        "title": a.title, 
+        "description": a.description, 
+        "author": a.authorId, 
+        "content": a.content,
+        "date": a.createAt.seconds ? new Date(a.createAt.seconds*1000).toISOString().split('T')[0] : a.createAt.split('T')[0],
+        "buttonText": "Đọc thêm",
+        "authorTitle": "Nhà báo",
+        "authorImage": "/AvatarUser/no_avatar.jpg",
+      }}))
+
+    } catch (error) {
+        alert("Đã xảy ra lối, vui lòng thử lại")
+    }
+  }
   return (
     <div>
       {/* Phần giới thiệu */}
@@ -109,7 +146,10 @@ export default function Benefit() {
               keyBoardControl
               itemClass="carouselItem"
             >
-              <HomeNewsCard
+              {featuredArticles.map((article, index) => (
+                <HomeNewsCard key={index} {...article} />
+              ))}
+              {/* <HomeNewsCard
                 slug="nhung-dieu-can-xem-va-lam-khi-den-tham-nhat-ban"
                 image="/News/home_post-1.jpg"
                 title="Những điều cần xem và làm khi đến thăm Nhật Bản"
@@ -147,7 +187,7 @@ export default function Benefit() {
                 author="Lê Minh Cường"
                 comments={2}
                 description="Những địa danh nổi tiếng mang vẻ đẹp mê hoặc trên thế giới."
-              />
+              /> */}
 
             </Carousel>
           </div>

@@ -154,9 +154,16 @@ const NewsDetail = () => {
               {relatedArticles.map((item) => (
                 <li key={item.slug} className="flex space-x-4">
                   <Link href={`/news/${item.slug}`} className="flex space-x-4">
-                    <img
+                    {/* <img
                       src={item.image}
                       alt={item.title}
+                      className="w-24 h-16 object-cover rounded"
+                    /> */}
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      width={96}
+                      height={64}
                       className="w-24 h-16 object-cover rounded"
                     />
                     <div>
