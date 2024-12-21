@@ -9,6 +9,7 @@ import { GiRuleBook } from "react-icons/gi";
 import "react-multi-carousel/lib/styles.css";
 import Link from "next/link";
 import { HomeNewsCard } from "./NewsCards";
+import Image from "next/image";
 // Import `Carousel` với dynamic import để tắt SSR
 const Carousel = dynamic(() => import("react-multi-carousel"), { ssr: false });
 
@@ -37,7 +38,11 @@ export default function Benefit() {
       {/* Phần giới thiệu */}
       <section className="lg:flex">
         <div className="lg:w-[45%]" data-aos="fade-down">
-          <img src="/bg-2.jpg" alt="Background" className="h-full" />
+        <Image 
+          src="/bg-2.jpg" 
+          alt="Background" 
+          className="h-full" 
+        />
         </div>
         <div className="relative lg:w-[55%] bg-[url(/bg-map-2.png)] bg-[#313041] bg-right-bottom bg-contain flex flex-col justify-center py-16">
           <div className="absolute lg:w-3 w-0 bg-orange left-0 rounded-r-[10px] top-[120px] bottom-[120px]"></div>
@@ -172,7 +177,13 @@ export default function Benefit() {
             </div>
           </div>
           <div className="flex justify-center lg:w-1/2 w-full lg:mt-0 mt-14">
-            <img src="/image-app.png" alt="" />
+          <Image 
+            src="/image-app.png" 
+            alt="Image description" 
+            width={500} 
+            height={500} 
+            priority 
+          />
           </div>
         </div>
       </div>
