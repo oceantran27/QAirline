@@ -1,0 +1,38 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --no-include-email --region ap-southeast-1) # THAY REGION CỦA BẠN
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/qairline-backend-repo # THAY BẰNG URI ECR CỦA BẠN
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image for backend...
+      # Build từ Dockerfile nằm trong thư mục cha (backend/)
+      - docker build -t $REPOSITORY_URI:latest ./backend/ # ĐƯỜNG DẪN TỪ GỐC REPO TỚI THƯ MỤC CHỨA DOCKERFILE
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images to ECR...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - echo Copying deployment files...
+      # Sao chép các file cần thiết vào thư mục artifact.
+      # Các đường dẫn nguồn phải tương ứng với cấu trúc repo QAirline/
+      - cp backend/docker-compose.yml .        # Lấy từ backend/docker-compose.yml
+      - cp backend/nginx/nginx.conf .          # Lấy từ backend/nginx/nginx.conf
+      - cp backend/ci-cd-configs/appspec.yml . # Lấy appspec.yml từ thư mục ci-cd-configs
+      - cp -r backend/ci-cd-configs/scripts .   # Sao chép thư mục scripts từ ci-cd-configs
+
+artifacts:
+  files:
+    - docker-compose.yml
+    - nginx.conf
+    - appspec.yml
+    - scripts/**/* # Bao gồm tất cả các file trong thư mục scripts
+  discard-paths: yes # Chỉ bao gồm file, không bao gồm đường dẫn gốc của chúng

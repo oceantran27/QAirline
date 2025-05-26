@@ -36,3 +36,5 @@ npm-debug.log
 private
 
 serviceAccountKey.json
+
+*.pem

@@ -1,16 +1,20 @@
-FROM node:20
+# Sử dụng base image Node.js
+FROM node:18-alpine
 
-# Làm việc trong thư mục app
+# Thiết lập thư mục làm việc bên trong container
 WORKDIR /app
 
-# Copy source
-COPY . .
+# Sao chép package.json và package-lock.json để cài đặt dependencies
+COPY src/package*.json ./
 
-# Cài đặt các packages
+# Cài đặt dependencies
 RUN npm install
 
-# Mở cổng cho ứng dụng
+# Sao chép mã nguồn ứng dụng (từ thư mục src/ của host vào /app của container)
+COPY src/ ./
+
+# Expose cổng mà ứng dụng Node.js lắng nghe
 EXPOSE 3030
 
-# Chạy ứng dụng
-CMD ["npm", "start"]
+# Lệnh chạy ứng dụng
+CMD ["node", "app.js"]
