@@ -18,6 +18,7 @@ const {
   CLOUD_NAME,
   CLOUD_API_KEY,
   CLOUD_API_SECRET,
+  MONGODB_URI,
 } = process.env;
 
 assert(PORT, "Port is required");
@@ -42,4 +43,5 @@ export default {
     api_key: CLOUD_API_KEY,
     api_secret: CLOUD_API_SECRET,
   },
+  documentDbUri: MONGODB_URI,
 };

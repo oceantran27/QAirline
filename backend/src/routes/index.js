@@ -16,7 +16,21 @@ const initWebRoutes = (app) => {
   app.use("/api/ticket", ticketRoutes);
   app.use("/api/news", newsRoutes);
   app.use("/api/statistic/", statisticRoutes);
-  app.use("/", (req, res) => res.send("Hello World!"));
+
+
+  // Health check route for ALB
+  app.get("/health", (req, res) => {
+    res.status(200).send("OK");
+  });
+
+  // Default home route (optional)
+  app.get("/", (req, res) => res.send("Hello World!"));
+
+  // Catch-all 404 route
+  app.use((req, res) => {
+    res.status(404).json({ message: "Not Found" });
+  });
+
   return app;
 };
 

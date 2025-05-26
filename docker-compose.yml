@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  backend:
+    image: 982081055699.dkr.ecr.ap-southeast-1.amazonaws.com/qairline-backend-repo:latest # CodeBuild/CodeDeploy sẽ cập nhật tag này
+    container_name: node-backend
+    restart: always
+    expose:
+      - "3030" # Cổng nội bộ mà Node.js lắng nghe
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-reverse
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf # Hoặc /etc/nginx/nginx.conf tùy cấu hình Nginx
+    ports:
+      - "80:80" # Nginx chỉ cần lắng nghe cổng 80 từ ALB
+    depends_on:
+      - backend
