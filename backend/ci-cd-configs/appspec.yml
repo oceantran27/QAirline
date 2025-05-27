@@ -2,15 +2,15 @@ version: 0.0
 os: linux
 files:
   - source: /docker-compose.yml
-    destination: /home/ec2-user/qairline-backend
+    destination: /home/ubuntu/qairline-backend
   - source: /nginx.conf
-    destination: /home/ec2-user/qairline-backend/nginx
+    destination: /home/ubuntu/qairline-backend/nginx
 
 permissions:
-  - object: /home/ec2-user/qairline-backend
+  - object: /home/ubuntu/qairline-backend
     pattern: "**"
-    owner: ec2-user
-    group: ec2-user
+    owner: ubuntu
+    group: ubuntu
 
 hooks:
   BeforeInstall:
@@ -20,12 +20,12 @@ hooks:
   AfterInstall:
     - location: scripts/stop_containers.sh
       timeout: 180
-      runas: ec2-user
+      runas: ubuntu
   ApplicationStart:
     - location: scripts/start_containers.sh
       timeout: 360
-      runas: ec2-user
+      runas: ubuntu
   ValidateService:
     - location: scripts/validate_service.sh
       timeout: 300
-      runas: ec2-user
+      runas: ubuntu
