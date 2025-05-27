@@ -4,14 +4,9 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      # Lấy ID tài khoản AWS một cách tường minh và gán vào biến CUSTOM_AWS_ACCOUNT_ID
       - export CUSTOM_AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
       - echo "AWS Account ID: $CUSTOM_AWS_ACCOUNT_ID" # Để kiểm tra trong log
-
-      # Sử dụng CUSTOM_AWS_ACCOUNT_ID để định nghĩa REPOSITORY_URI
-      - REPOSITORY_URI=$CUSTOM_AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/qairline-backend-repo # THAY BẰNG URI ECR CỦA BẠN (nếu tên repo khác)
-
-      # Bây giờ sử dụng REPOSITORY_URI đã được giải quyết cho lệnh docker login
+      - REPOSITORY_URI=$CUSTOM_AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/qairline-backend-repo
       - aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
 
   build:
