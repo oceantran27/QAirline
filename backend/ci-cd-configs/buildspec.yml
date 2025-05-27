@@ -1,5 +1,4 @@
 version: 0.2
-
 phases:
   pre_build:
     commands:
@@ -25,10 +24,14 @@ phases:
       - cp backend/nginx/nginx.conf .
       - cp backend/ci-cd-configs/appspec.yml .
       - cp -r backend/ci-cd-configs/scripts .
+
+      - echo "Setting execute permissions for deployment scripts..."
+      - chmod +x scripts/*.sh
+
 artifacts:
   files:
     - docker-compose.yml
     - nginx.conf
     - appspec.yml
     - scripts/**/*
-  discard-paths: yes
+  discard-paths: no

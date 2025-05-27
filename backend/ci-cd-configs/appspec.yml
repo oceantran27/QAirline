@@ -14,18 +14,18 @@ permissions:
 
 hooks:
   BeforeInstall:
-    - location: install_dependencies.sh
+    - location: scripts/install_dependencies.sh
       timeout: 300
       runas: root
   AfterInstall:
-    - location: stop_containers.sh
+    - location: scripts/stop_containers.sh
       timeout: 180
       runas: ec2-user
   ApplicationStart:
-    - location: start_containers.sh
+    - location: scripts/start_containers.sh
       timeout: 360
       runas: ec2-user
   ValidateService:
-    - location: validate_service.sh
+    - location: scripts/validate_service.sh
       timeout: 300
       runas: ec2-user
