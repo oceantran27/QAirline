@@ -8,14 +8,12 @@ phases:
       - echo "AWS Account ID: $CUSTOM_AWS_ACCOUNT_ID"
       - export REPOSITORY_URI="$CUSTOM_AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/qairline-backend-repo"
       - aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
-
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image for backend...
       - docker build -t $REPOSITORY_URI:latest ./backend/
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION
-
   post_build:
     commands:
       - echo Build completed on `date`
@@ -27,7 +25,6 @@ phases:
       - cp backend/nginx/nginx.conf .
       - cp backend/ci-cd-configs/appspec.yml .
       - cp -r backend/ci-cd-configs/scripts .
-
 artifacts:
   files:
     - docker-compose.yml
