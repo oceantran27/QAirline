@@ -4,15 +4,21 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/qairline-backend-repo
+      # Lấy ID tài khoản AWS một cách tường minh và gán vào biến CUSTOM_AWS_ACCOUNT_ID
+      - export CUSTOM_AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - echo "AWS Account ID: $CUSTOM_AWS_ACCOUNT_ID" # Để kiểm tra trong log
+
+      # Sử dụng CUSTOM_AWS_ACCOUNT_ID để định nghĩa REPOSITORY_URI
+      - REPOSITORY_URI=$CUSTOM_AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/qairline-backend-repo # THAY BẰNG URI ECR CỦA BẠN (nếu tên repo khác)
+
+      # Bây giờ sử dụng REPOSITORY_URI đã được giải quyết cho lệnh docker login
       - aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
 
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image for backend...
-      # Build từ Dockerfile nằm trong thư mục cha (backend/)
-      - docker build -t $REPOSITORY_URI:latest ./backend/ # ĐƯỜNG DẪN TỪ GỐC REPO TỚI THƯ MỤC CHỨA DOCKERFILE
+      - docker build -t $REPOSITORY_URI:latest ./backend/
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION
 
   post_build:
@@ -22,17 +28,15 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION
       - echo Copying deployment files...
-      # Sao chép các file cần thiết vào thư mục artifact.
-      # Các đường dẫn nguồn phải tương ứng với cấu trúc repo QAirline/
-      - cp backend/docker-compose.yml .        # Lấy từ backend/docker-compose.yml
-      - cp backend/nginx/nginx.conf .          # Lấy từ backend/nginx/nginx.conf
-      - cp backend/ci-cd-configs/appspec.yml . # Lấy appspec.yml từ thư mục ci-cd-configs
-      - cp -r backend/ci-cd-configs/scripts .   # Sao chép thư mục scripts từ ci-cd-configs
+      - cp backend/docker-compose.yml .
+      - cp backend/nginx/nginx.conf .
+      - cp backend/ci-cd-configs/appspec.yml .
+      - cp -r backend/ci-cd-configs/scripts .
 
 artifacts:
   files:
     - docker-compose.yml
     - nginx.conf
     - appspec.yml
-    - scripts/**/* # Bao gồm tất cả các file trong thư mục scripts
-  discard-paths: yes # Chỉ bao gồm file, không bao gồm đường dẫn gốc của chúng
+    - scripts/**/*
+  discard-paths: yes
